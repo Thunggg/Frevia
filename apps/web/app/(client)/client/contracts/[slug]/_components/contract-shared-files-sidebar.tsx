@@ -30,12 +30,16 @@ interface ContractSharedFilesSidebarProps {
   contractId: number;
   sharedFiles: SharedFileType[];
   isFreelancer: boolean;
+  contractStatus?: string;
+  contractExpiresAt?: string | Date | null;
 }
 
 export function ContractSharedFilesSidebar({
   contractId,
   sharedFiles = [],
   isFreelancer,
+  contractStatus,
+  contractExpiresAt,
 }: ContractSharedFilesSidebarProps) {
   const queryClient = useQueryClient();
   const format = useFormatter();
@@ -46,6 +50,18 @@ export function ContractSharedFilesSidebar({
   const canViewSharedFiles = can("GET", "/api/contracts/:contractId/files");
   const canUploadSharedFile = can("POST", "/api/contracts/:contractId/files");
   const canDeleteSharedFile = can("DELETE", "/api/contracts/:contractId/files/:fileId");
+
+  const isContractExpired =
+    contractExpiresAt &&
+    new Date(contractExpiresAt).getTime() < Date.now();
+
+  const isUploadAllowedStatus =
+    contractStatus === "ACTIVE" ||
+    contractStatus === "PENDING_SIGN" ||
+    contractStatus === "AWAITING_PAYMENT";
+
+  const canUpload =
+    canUploadSharedFile && isUploadAllowedStatus && !isContractExpired;
 
   const [isUploading, setIsUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -134,7 +150,7 @@ export function ContractSharedFilesSidebar({
           </span>
         </div>
 
-        {canUploadSharedFile && (
+        {canUpload && (
           <div>
             <input
               ref={fileInputRef}
@@ -147,7 +163,7 @@ export function ContractSharedFilesSidebar({
               variant="ghost"
               disabled={isUploading}
               onClick={() => fileInputRef.current?.click()}
-              className="h-7 px-2.5 rounded-lg text-xs font-medium text-[#0069D3] hover:bg-[#0069D3]/10 cursor-pointer"
+              className="h-7 px-2.5 text-xs font-medium text-[#0069D3] hover:bg-[#0069D3]/10 cursor-pointer"
             >
               {isUploading ? (
                 <Loader2 className="mr-1.5 size-3 animate-spin" />
@@ -166,24 +182,35 @@ export function ContractSharedFilesSidebar({
           {sharedFiles.map((file) => {
             const fileName = file.fileName || t("attachmentFallback");
             const fileUrl = file.fileUrl || "#";
+            const isContractPdf =
+              Boolean(fileName) &&
+              fileName.toLowerCase().startsWith("contract-") &&
+              fileName.toLowerCase().endsWith(".pdf");
 
             return (
               <div
                 key={file.id}
-                className="group flex items-center justify-between gap-3 rounded-xl border border-border/70 bg-background/80 p-2.5 hover:border-border transition-colors text-xs"
+                className="group flex items-center justify-between gap-3 border border-border/70 bg-background/80 p-2.5 hover:border-border transition-colors text-xs"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   {getFileIcon(fileName)}
                   <div className="min-w-0 flex-1">
-                    <a
-                      href={fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium text-foreground hover:text-[#0069D3] hover:underline truncate block"
-                      title={fileName}
-                    >
-                      {fileName}
-                    </a>
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <a
+                        href={fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-foreground hover:text-[#0069D3] hover:underline truncate block"
+                        title={fileName}
+                      >
+                        {fileName}
+                      </a>
+                      {isContractPdf && (
+                        <span className="shrink-0 inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-medium bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/40">
+                          Signed Contract
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[10px] text-muted-foreground block mt-0.5">
                       {formatDate(file.createdAt)}
                     </span>
@@ -202,8 +229,8 @@ export function ContractSharedFilesSidebar({
                     <Download className="size-3.5" />
                   </a>
 
-                  {/* Delete button (client or uploader) */}
-                  {!isFreelancer && canDeleteSharedFile && (
+                  {/* Delete button (client or uploader) - Disabled for official signed contract PDF */}
+                  {!isFreelancer && canDeleteSharedFile && !isContractPdf && (
                     <button
                       onClick={() => setFileToDelete({ id: file.id, fileName })}
                       disabled={deletingId === file.id}

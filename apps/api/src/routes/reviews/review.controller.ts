@@ -1,5 +1,6 @@
 import {
   Body,
+  Query,
   Controller,
   Delete,
   Get,
@@ -18,6 +19,8 @@ import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
   CreateReviewDto,
+  FreelancerReviewsQueryDto,
+  FreelancerReviewsDto,
   CreateReviewResponseDto,
   ReviewDto,
   ReviewListDto,
@@ -30,6 +33,15 @@ import { ReviewService } from './review.service';
 @Controller('reviews')
 export class ReviewController {
   constructor(private readonly service: ReviewService) {}
+
+  @Get('freelancers/:userId')
+  @ZodSerializerDto(FreelancerReviewsDto)
+  freelancerReviews(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Query() query: FreelancerReviewsQueryDto,
+  ) {
+    return this.service.listForFreelancer(userId, query);
+  }
 
   @Get('contracts/:contractId')
   @ZodSerializerDto(ReviewListDto)

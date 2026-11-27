@@ -61,6 +61,9 @@ export function MilestoneOverviewTab({
   const tPaymentStatus = useTranslations("paymentStatus");
   const { can, canAny } = useActionPermission();
   const isClient = !isFreelancer;
+  const isContractExpired = Boolean(
+    contract.expiresAt && new Date(contract.expiresAt).getTime() < Date.now(),
+  );
 
   const canViewDispute = can("GET", "/api/disputes/milestone/:milestoneId");
   const canCreateDispute = can("POST", "/api/disputes");
@@ -271,30 +274,50 @@ export function MilestoneOverviewTab({
           </div>
         )}
 
-        {milestone.status === "IN_PROGRESS" && (
-          <div className="flex items-start justify-between gap-3 border-l-2 border-border pl-3 py-1 text-xs">
+        {(milestone.status === "IN_PROGRESS" || milestone.status === "LATE") && (
+          <div
+            className={`flex items-start justify-between gap-3 border-l-2 ${
+              milestone.status === "LATE" ? "border-amber-500" : "border-border"
+            } pl-3 py-1 text-xs`}
+          >
             <div className="space-y-0.5">
-              <span className="font-medium text-foreground block">
-                {t("inProgressTitle")}
+              <span
+                className={`font-medium block ${
+                  milestone.status === "LATE"
+                    ? "text-amber-600"
+                    : "text-foreground"
+                }`}
+              >
+                {milestone.status === "LATE"
+                  ? t("lateTitle") || "Milestone Overdue"
+                  : t("inProgressTitle")}
               </span>
               <p className="text-muted-foreground leading-relaxed">
                 {t("inProgressDesc", { amount: `$${amountNumber.toFixed(2)}` })}
               </p>
             </div>
-            {isFreelancer && canSubmitWorkPermission && onSubmitWork && (
-              <Button
-                size="sm"
-                onClick={onSubmitWork}
-                className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 shrink-0 cursor-pointer"
-              >
-                <Upload className="mr-1 size-3" />
-                {tCard("deliverWork")}
-              </Button>
-            )}
+            {isFreelancer &&
+              canSubmitWorkPermission &&
+              onSubmitWork &&
+              !isContractExpired && (
+                <Button
+                  size="sm"
+                  onClick={onSubmitWork}
+                  className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 shrink-0 cursor-pointer"
+                >
+                  <Upload className="mr-1 size-3" />
+                  {milestone.status === "LATE"
+                    ? tCard("deliverWorkLate") || tCard("deliverWork")
+                    : tCard("deliverWork")}
+                </Button>
+              )}
           </div>
         )}
 
-        {milestone.status === "PENDING" && milestone.paymentStatus === "FUNDED" && (
+        {(milestone.status === "PENDING" ||
+          (milestone.status === "LATE" &&
+            (!submissions || submissions.length === 0))) &&
+          milestone.paymentStatus === "FUNDED" && (
           <div className="flex items-start justify-between gap-3 border-l-2 border-emerald-500 pl-3 py-1 text-xs">
             <div className="space-y-0.5">
               <span className="font-medium text-emerald-600 block">
@@ -337,7 +360,7 @@ export function MilestoneOverviewTab({
                 {t("awaitingDesc")}
               </p>
             </div>
-            {isClient && canFundPermission && onFund && (
+            {isClient && contract.status === "ACTIVE" && canFundPermission && onFund && (
               <Button
                 size="sm"
                 onClick={onFund}
@@ -469,7 +492,8 @@ export function MilestoneOverviewTab({
               {isFreelancer &&
                 milestone.status === "CHANGES_REQUESTED" &&
                 canSubmitWorkPermission &&
-                onSubmitWork && (
+                onSubmitWork &&
+                !isContractExpired && (
                   <Button
                     size="sm"
                     onClick={onSubmitWork}
@@ -511,7 +535,8 @@ export function MilestoneOverviewTab({
             {isFreelancer &&
               (milestone.status === "IN_PROGRESS" || milestone.status === "LATE") &&
               canSubmitWorkPermission &&
-              onSubmitWork && (
+              onSubmitWork &&
+              !isContractExpired && (
                 <Button
                   size="sm"
                   onClick={onSubmitWork}

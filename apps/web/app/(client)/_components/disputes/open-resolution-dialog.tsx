@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   AlertCircle,
+  FileText,
   Loader2,
   Paperclip,
   Scale,
-  ShieldAlert,
+  Upload,
+  X,
 } from "lucide-react";
 import {
   Sheet,
@@ -26,6 +28,7 @@ import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { disputeApiRequest } from "@/apiRequests/dispute";
 import type {
   DisputeDetailType,
+  DisputeFileType,
   DisputeResolutionTypeType,
   MilestoneType,
   SharedFileType,
@@ -69,6 +72,9 @@ export function OpenResolutionDialog({
   const [freelancerAmount, setFreelancerAmount] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [selectedFileIds, setSelectedFileIds] = useState<number[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<DisputeFileType[]>([]);
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const milestoneAmount = Number(milestone?.amount ?? 0);
@@ -78,6 +84,7 @@ export function OpenResolutionDialog({
       setReason("");
       setDescription("");
       setSelectedFileIds([]);
+      setUploadedFiles([]);
 
       // Default split based on role:
       // Client requesting dispute defaults to full refund request
@@ -162,12 +169,43 @@ export function OpenResolutionDialog({
       if (prev.includes(fileId)) {
         return prev.filter((id) => id !== fileId);
       }
-      if (prev.length >= 5) {
+      if (prev.length + uploadedFiles.length >= 5) {
         toastError({ message: t("maxEvidenceToast") });
         return prev;
       }
       return [...prev, fileId];
     });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    if (uploadedFiles.length + selectedFileIds.length + files.length > 5) {
+      toastError({ message: t("maxEvidenceToast") || "Maximum 5 evidence files allowed" });
+      return;
+    }
+
+    setIsUploadingFile(true);
+    try {
+      for (const file of files) {
+        const res = await disputeApiRequest.uploadEvidenceFile(file);
+        if (res.data) {
+          setUploadedFiles((prev) => [...prev, res.data]);
+        }
+      }
+    } catch (error) {
+      toastError({
+        message: getDisputeApiErrorMessage(error, "Failed to upload evidence file"),
+      });
+    } finally {
+      setIsUploadingFile(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveUploadedFile = (fileId: number) => {
+    setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));
   };
 
   const clientNum = parseFloat(clientAmount) || 0;
@@ -197,6 +235,11 @@ export function OpenResolutionDialog({
             ? "FULL_RELEASE"
             : "PARTIAL_REFUND";
 
+      const allEvidenceFiles = [
+        ...uploadedFiles.map((f) => ({ fileId: f.id })),
+        ...selectedFileIds.map((fileId) => ({ fileId })),
+      ];
+
       const payload = {
         milestoneId: milestone.id,
         reason: reason.trim(),
@@ -204,8 +247,8 @@ export function OpenResolutionDialog({
         resolutionType,
         proposedClientAmount: clientNum,
         proposedFreelancerAmount: freelancerNum,
-        ...(selectedFileIds.length > 0 && {
-          evidenceFiles: selectedFileIds.map((fileId) => ({ fileId })),
+        ...(allEvidenceFiles.length > 0 && {
+          evidenceFiles: allEvidenceFiles,
         }),
       };
 
@@ -265,13 +308,13 @@ export function OpenResolutionDialog({
           </SheetHeader>
 
           <div className="space-y-5 py-1">
-            {/* SECTION 1: Số tiền mong muốn phân chia */}
-            <div className="rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-4 space-y-3.5">
+            {/* SECTION 1: Số tiền mong muốn phân chia (Clean, minimal border & no heavy bg) */}
+            <div className="pb-4 border-b border-border/40 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-foreground">
                   {t("escrowSplitProposal")}
                 </span>
-                <span className="text-xs text-muted-foreground tabular-nums font-medium">
+                <span className="text-xs text-muted-foreground tabular-nums font-mono">
                   {t("totalAmount", {
                     amount: formatResolutionCurrency(milestoneAmount),
                   })}
@@ -279,7 +322,7 @@ export function OpenResolutionDialog({
               </div>
 
               {/* Split Amount Inputs */}
-              <div className="grid grid-cols-2 gap-3 pt-1">
+              <div className="grid grid-cols-2 gap-3 pt-0.5">
                 <div className="space-y-1.5">
                   <Label htmlFor="clientSplitInput" className="text-xs font-medium text-foreground">
                     {t("refundToClient")}
@@ -293,7 +336,7 @@ export function OpenResolutionDialog({
                     onChange={(e) => handleClientAmountChange(e.target.value)}
                     onBlur={handleClientBlur}
                     placeholder="0.00"
-                    className="h-9 text-xs tabular-nums font-medium"
+                    className="h-8 text-xs tabular-nums font-medium bg-transparent border-border/60"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -309,43 +352,46 @@ export function OpenResolutionDialog({
                     onChange={(e) => handleFreelancerAmountChange(e.target.value)}
                     onBlur={handleFreelancerBlur}
                     placeholder="0.00"
-                    className="h-9 text-xs tabular-nums font-medium"
+                    className="h-8 text-xs tabular-nums font-medium bg-transparent border-border/60"
                   />
                 </div>
               </div>
 
               {/* Quick Presets */}
-              <div className="flex items-center gap-2 pt-1 flex-wrap">
-                <span className="text-[11px] text-muted-foreground">
+              <div className="flex items-center gap-1.5 pt-0.5 flex-wrap">
+                <span className="text-[11px] text-muted-foreground mr-1">
                   {t("quickSplitPresets")}
                 </span>
                 <button
                   type="button"
                   onClick={() => handlePresetSplit(100)}
-                  className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors cursor-pointer ${clientNum === milestoneAmount
-                    ? "border-blue-600 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-medium"
-                    : "border-border hover:bg-muted/50 text-muted-foreground"
-                    }`}
+                  className={`text-[11px] px-2.5 py-0.5 rounded-full border transition-colors cursor-pointer ${
+                    clientNum === milestoneAmount
+                      ? "border-foreground bg-muted/60 text-foreground font-medium"
+                      : "border-border/60 hover:bg-muted/30 text-muted-foreground"
+                  }`}
                 >
                   {t("presetRefundClient")}
                 </button>
                 <button
                   type="button"
                   onClick={() => handlePresetSplit(50)}
-                  className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors cursor-pointer ${clientNum === Number((milestoneAmount / 2).toFixed(2))
-                    ? "border-zinc-900 dark:border-zinc-100 bg-zinc-100 dark:bg-zinc-800 font-medium"
-                    : "border-border hover:bg-muted/50 text-muted-foreground"
-                    }`}
+                  className={`text-[11px] px-2.5 py-0.5 rounded-full border transition-colors cursor-pointer ${
+                    clientNum === Number((milestoneAmount / 2).toFixed(2))
+                      ? "border-foreground bg-muted/60 text-foreground font-medium"
+                      : "border-border/60 hover:bg-muted/30 text-muted-foreground"
+                  }`}
                 >
                   {t("presetFiftyFifty")}
                 </button>
                 <button
                   type="button"
                   onClick={() => handlePresetSplit(0)}
-                  className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors cursor-pointer ${freelancerNum === milestoneAmount
-                    ? "border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-medium"
-                    : "border-border hover:bg-muted/50 text-muted-foreground"
-                    }`}
+                  className={`text-[11px] px-2.5 py-0.5 rounded-full border transition-colors cursor-pointer ${
+                    freelancerNum === milestoneAmount
+                      ? "border-foreground bg-muted/60 text-foreground font-medium"
+                      : "border-border/60 hover:bg-muted/30 text-muted-foreground"
+                  }`}
                 >
                   {t("presetPayFreelancer")}
                 </button>
@@ -393,44 +439,113 @@ export function OpenResolutionDialog({
               </p>
             </div>
 
-            {/* SECTION 4: Tệp bằng chứng (Tùy chọn) */}
-            {sharedFiles.length > 0 && (
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
+            {/* SECTION 4: Tệp bằng chứng (Bảng riêng & Bất biến không thể sửa/xóa) */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
                   <Paperclip className="size-3.5 text-muted-foreground" />
-                  {t("attachEvidence", { count: selectedFileIds.length })}
-                </Label>
-                <div className="max-h-28 overflow-y-auto rounded-xl border border-zinc-200/80 dark:border-zinc-800 divide-y divide-zinc-100 dark:divide-zinc-800/80">
-                  {sharedFiles.map((file) => {
-                    const checked = selectedFileIds.includes(file.id);
-                    return (
-                      <label
-                        key={file.id}
-                        className="flex items-center gap-2.5 px-3 py-2 text-xs hover:bg-zinc-50 dark:hover:bg-zinc-900/40 cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() => toggleEvidenceFile(file.id)}
-                          className="rounded border-zinc-300"
-                        />
-                        <span className="truncate text-foreground">
-                          {file.fileName || t("fileFallback", { id: file.id })}
-                        </span>
-                      </label>
-                    );
+                  {t("attachEvidence", {
+                    count: uploadedFiles.length + selectedFileIds.length,
                   })}
+                </Label>
+                <div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => void handleFileChange(e)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={
+                      isUploadingFile ||
+                      uploadedFiles.length + selectedFileIds.length >= 5
+                    }
+                    onClick={() => fileInputRef.current?.click()}
+                    className="h-7 px-2.5 text-[11px] gap-1 cursor-pointer"
+                  >
+                    {isUploadingFile ? (
+                      <Loader2 className="size-3 animate-spin" />
+                    ) : (
+                      <Upload className="size-3" />
+                    )}
+                    {t("evidenceUploadBtn")}
+                  </Button>
                 </div>
               </div>
-            )}
 
-            {/* Notice: Quy trình 2 bước rõ ràng */}
-            <div className="rounded-xl border border-blue-200/80 dark:border-blue-900/60 bg-blue-50/60 dark:bg-blue-950/30 p-3.5 space-y-1.5 text-xs text-blue-900 dark:text-blue-200">
-              <div className="flex items-center gap-1.5 font-medium text-blue-950 dark:text-blue-100">
-                <ShieldAlert className="size-4 shrink-0 text-blue-600 dark:text-blue-400" />
+              {/* Uploaded Files list */}
+              {uploadedFiles.length > 0 && (
+                <div className="space-y-1.5">
+                  {uploadedFiles.map((file) => (
+                    <div
+                      key={file.id}
+                      className="flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg border border-border bg-zinc-50 dark:bg-zinc-900/50 text-xs"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FileText className="size-3.5 text-blue-600 shrink-0" />
+                        <span className="truncate text-foreground font-medium">
+                          {file.fileName || `File #${file.id}`}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveUploadedFile(file.id)}
+                        className="text-muted-foreground hover:text-rose-600 p-0.5 rounded cursor-pointer"
+                        title={t("evidenceRemoveTooltip")}
+                      >
+                        <X className="size-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Shared files checkbox if available */}
+              {sharedFiles.length > 0 && (
+                <div className="pt-1">
+                  <span className="text-[11px] text-muted-foreground block mb-1">
+                    {t("evidenceSelectShared")}
+                  </span>
+                  <div className="max-h-24 overflow-y-auto rounded-lg border border-border divide-y divide-border/60">
+                    {sharedFiles.map((file) => {
+                      const checked = selectedFileIds.includes(file.id);
+                      return (
+                        <label
+                          key={file.id}
+                          className="flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-muted/40 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleEvidenceFile(file.id)}
+                            className="rounded border-zinc-300"
+                          />
+                          <span className="truncate text-foreground">
+                            {file.fileName || t("fileFallback", { id: file.id })}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <p className="text-[10px] text-muted-foreground italic">
+                {t("evidenceLockedNotice")}
+              </p>
+            </div>
+
+            {/* Notice: Quy trình 2 bước rõ ràng (Clean minimal text, no loud blue card) */}
+            <div className="border-l-2 border-border/80 pl-3 py-1 space-y-1 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1.5 font-medium text-foreground text-[11px]">
+                <Scale className="size-3.5 shrink-0 text-muted-foreground" />
                 <span>{t("twoTierNoticeTitle")}</span>
               </div>
-              <ul className="text-[11px] space-y-1 text-blue-800/90 dark:text-blue-300 list-disc list-inside">
+              <ul className="text-[11px] space-y-0.5 text-muted-foreground list-disc list-inside">
                 <li>{t("twoTierStep1")}</li>
                 <li>{t("twoTierStep2")}</li>
               </ul>

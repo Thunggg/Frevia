@@ -25,6 +25,7 @@ import {
   UserRound,
   Users,
 } from "@/components/icons";
+import { Scale } from "lucide-react";
 import { setLocaleCookie } from "@/i18n/actions";
 import { isLocale, type Locale } from "@/i18n/config";
 import { useLocale, useTranslations } from "next-intl";
@@ -125,6 +126,7 @@ export function ClientSidebar() {
   const { can } = useActionPermission();
   const canViewJobs = can("GET", "/api/manage-jobs");
   const canViewContracts = can("GET", "/api/contracts");
+  const canViewDisputes = can("GET", "/api/disputes");
   const canViewNotifications = can("GET", "/api/notifications");
   const { data: notifications = [] } = useNotifications(canViewNotifications);
   const { resolvedTheme, setTheme } = useTheme();
@@ -198,6 +200,16 @@ export function ClientSidebar() {
             href: "/client/contracts",
             labelKey: "navContracts",
             icon: FileText,
+            matchPrefix: true,
+          },
+        ]
+      : []),
+    ...(canViewDisputes
+      ? [
+          {
+            href: "/client/disputes",
+            labelKey: "navDisputes",
+            icon: Scale,
             matchPrefix: true,
           },
         ]

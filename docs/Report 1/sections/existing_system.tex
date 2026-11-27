@@ -12,7 +12,7 @@ Several freelance platforms currently dominate the digital labour market. This s
 \end{figure}
 
 \begin{itemize}[leftmargin=*]
-\item \textbf{Overview:} Upwork is a global freelance marketplace where clients publish jobs and freelancers submit proposals for hourly or fixed-price contracts.
+\item \textbf{Overview:} Upwork [2] is a global freelance marketplace where clients publish jobs and freelancers submit proposals for hourly or fixed-price contracts.
 \item \textbf{Link:} \url{https://www.upwork.com}
 \item \textbf{Main features:} Job posting, proposal submission, hourly and fixed-price contracts, milestone escrow, work diaries, direct messaging, client reviews, and payment protection.
 \item \textbf{Strengths:} A massive global user base, an established enterprise reputation system, verified payment methods, and an end-to-end contract-to-payment workflow.
@@ -37,7 +37,7 @@ Several freelance platforms currently dominate the digital labour market. This s
 \end{figure}
 
 \begin{itemize}[leftmargin=*]
-\item \textbf{Overview:} Fiverr is a service catalogue built from predefined packages, called gigs, in which freelancers publish a fixed scope and buyers purchase directly without prior bidding.
+\item \textbf{Overview:} Fiverr [3] is a service catalogue built from predefined packages, called gigs, in which freelancers publish a fixed scope and buyers purchase directly without prior bidding.
 \item \textbf{Link:} \url{https://www.fiverr.com}
 \item \textbf{Main features:} Gig packages with tiered pricing (Basic, Standard, Premium), direct checkout, order requirements, in-order messaging, delivery and revision cycles, and public review ratings.
 \item \textbf{Strengths:} Extremely low friction for buyers seeking standard tasks, transparent pricing, fast ordering, and a catalogue model that eliminates protracted proposal review.
@@ -62,7 +62,7 @@ Several freelance platforms currently dominate the digital labour market. This s
 \end{figure}
 
 \begin{itemize}[leftmargin=*]
-\item \textbf{Overview:} Freelancer is a large-scale project marketplace supporting competitive bidding, crowdsourced design contests, and milestone-based payments across global categories.
+\item \textbf{Overview:} Freelancer [4] is a large-scale project marketplace supporting competitive bidding, crowdsourced design contests, and milestone-based payments across global categories.
 \item \textbf{Link:} \url{https://www.freelancer.com}
 \item \textbf{Main features:} Project bidding, design contests, milestone escrow payments, internal messaging, preferred freelancer programs, and dispute resolution.
 \item \textbf{Strengths:} Broad category coverage, high bid volume providing diverse price points, and globally accessible milestone escrow capabilities.
@@ -85,7 +85,7 @@ Several freelance platforms currently dominate the digital labour market. This s
 \end{figure}
 
 \begin{itemize}[leftmargin=*]
-\item \textbf{Overview:} Toptal is an exclusive talent network that screens applicants rigorously (accepting only the ``top 3\%'') and matches clients with pre-vetted specialists via dedicated platform account managers.
+\item \textbf{Overview:} Toptal [5] is an exclusive talent network that screens applicants rigorously (accepting only the ``top 3\%'') and matches clients with pre-vetted specialists via dedicated platform account managers.
 \item \textbf{Link:} \url{https://www.toptal.com}
 \item \textbf{Main features:} Multi-tier applicant vetting (language proficiency, technical problem solving, live coding, trial projects), account-manager matching, and enterprise invoicing.
 \item \textbf{Strengths:} Exceptionally high talent quality, near-zero hiring risk for enterprise clients, and curated matches that save client screening time.
@@ -105,6 +105,7 @@ Several freelance platforms currently dominate the digital labour market. This s
 \begin{itemize}[leftmargin=*]
 \item \textbf{Overview:} FREVIA is a web-based freelance marketplace that places verification, escrow, and project governance at the centre of the transaction rather than treating them as optional add-ons.
 \item \textbf{Main features:} Email and Google authentication with one-time-code verification; multi-role accounts with a dynamic, database-driven RBAC permission model; freelancer, client, and expert profiles with administrative revision approval; AI-assisted identity verification (national ID OCR and facial liveness check); job posting with fixed-price budgets and multiple hiring positions; proposals with drafts and expiry; dual-signed contracts with a fixed flat platform fee; milestone funding and release through Stripe Escrow; escrow-backed dispute arbitration with formal review; contract reviews with responses; one-to-one real-time messaging; in-app notifications; an AI-moderated community forum; and announcement/advertisement banners.
+\Needspace{5\baselineskip}
 \item \textbf{Strengths:} 
     \begin{itemize}[leftmargin=*]
         \item \textbf{Governance and Escrow by Design:} Milestone escrow is integral to every contract; money is deposited before work starts and released only upon explicit deliverable sign-off.
@@ -112,6 +113,7 @@ Several freelance platforms currently dominate the digital labour market. This s
         \item \textbf{Transparent Arbitration:} Disagreements follow a structured 5-stage legal workflow with evidence submission, escrow partitioning, and formal appeal capabilities.
         \item \textbf{Cost Fairness:} A single flat platform fee per contract eliminates high percentage commission deductions.
     \end{itemize}
+\Needspace{5\baselineskip}
 \item \textbf{Limitations and Boundaries:}
     \begin{itemize}[leftmargin=*]
         \item \textbf{Cold-Start User Base:} As a new platform, FREVIA lacks the massive established liquidity and user network of Upwork or Fiverr; initial adoption requires strategic recruitment.
@@ -126,6 +128,8 @@ Table~\ref{tab:existing-comparison} synthesises the operational differences betw
 
 \begin{table}[H]
 \centering
+\caption{Comparative feature matrix between existing platforms and FREVIA}
+\label{tab:existing-comparison}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
 \begin{tabularx}{\textwidth}{|>{\bfseries}p{2.8cm}|X|X|X|X|p{2.8cm}|}
@@ -140,8 +144,6 @@ Identity Vetting & ID check & Minimal & Optional KYC & Multi-month top 3\% testi
 Candidate Screening & Manual cover letters & Catalogue ratings & Manual bid filtering & Platform recruiter & AI CV extraction \& match score \\ \hline
 Client Autonomy & Direct hiring & Direct purchase & Direct hiring & Delegated matching & Direct hiring with AI assistance \\ \hline
 \end{tabularx}
-\caption{Comparative feature matrix between existing platforms and FREVIA}
-\label{tab:existing-comparison}
 \end{table}
 
 \noindent\textbf{Summary of Differentiators:} The analysis shows that FREVIA does not attempt to reinvent milestone escrow or basic bidding, which are already present on Upwork and Freelancer. Instead, FREVIA addresses the concrete limitations of existing systems by delivering: (1) a transparent arbitration procedure with formal appeals and evidence disclosure, (2) an accessible flat-fee economic model that does not penalise freelancer earnings, (3) automated AI CV analysis to eliminate manual screening fatigue, and (4) an open marketplace that combines verified identity integrity with full client hiring autonomy.

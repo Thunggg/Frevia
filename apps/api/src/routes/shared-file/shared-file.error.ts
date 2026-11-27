@@ -22,6 +22,14 @@ export const SharedFileForbiddenException = () =>
     },
   ]);
 
+export const ContractPdfCannotBeDeletedException = () =>
+  new ForbiddenException([
+    {
+      message: 'Cannot delete official contract document',
+      path: 'id',
+    },
+  ]);
+
 export const SharedFileDeleteExpiredException = () =>
   new UnprocessableEntityException([
     {

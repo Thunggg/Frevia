@@ -223,9 +223,9 @@ describe('Job Management (UF-87 to UF-93)', () => {
       expect(parsed.success).toBe(false);
     });
 
-    // Schema bộ lọc từ chối khi số lượng limit vượt quá 20.
-    it('rejects limit > 20 through ViewListJobFilterSchema', () => {
-      const parsed = ViewListJobFilterSchema.safeParse({ page: 1, limit: 25 });
+    // Schema bộ lọc từ chối khi số lượng limit vượt quá 100.
+    it('rejects limit > 100 through ViewListJobFilterSchema', () => {
+      const parsed = ViewListJobFilterSchema.safeParse({ page: 1, limit: 101 });
       expect(parsed.success).toBe(false);
     });
   });

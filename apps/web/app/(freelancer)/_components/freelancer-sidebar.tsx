@@ -32,6 +32,7 @@ import {
   UserRound,
   Users,
 } from "@/components/icons";
+import { Scale } from "lucide-react";
 import { setLocaleCookie } from "@/i18n/actions";
 import { isLocale, type Locale } from "@/i18n/config";
 
@@ -141,6 +142,7 @@ export function FreelancerSidebar() {
   const { can } = useActionPermission();
   const canViewProposals = can("GET", "/api/proposals/my");
   const canViewContracts = can("GET", "/api/contracts");
+  const canViewDisputes = can("GET", "/api/disputes");
   const canViewNotifications = can("GET", "/api/notifications");
   const canViewJobAlerts = can("GET", "/api/job-alerts");
   const { data: notifications = [] } = useNotifications(canViewNotifications);
@@ -229,6 +231,16 @@ export function FreelancerSidebar() {
       icon: FileCheck,
       matchPrefix: true,
     },
+    ...(canViewDisputes
+      ? [
+          {
+            href: "/freelancer/disputes",
+            labelKey: "navDisputes",
+            icon: Scale,
+            matchPrefix: true,
+          },
+        ]
+      : []),
     {
       href: "/freelancer/payments",
       labelKey: "navBillingPayments",

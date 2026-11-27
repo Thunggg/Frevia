@@ -2,37 +2,84 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{mathptmx}
-\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[top=2.0cm,bottom=2.0cm,left=3.0cm,right=2.0cm]{geometry}
+\usepackage[table]{xcolor}
 \usepackage{graphicx}
 \usepackage{array}
+\usepackage{tabularx}
 \usepackage{multirow}
+\usepackage{makecell}
 \usepackage{enumitem}
-\usepackage{xcolor}
+\usepackage{setspace}
+\usepackage{indentfirst}
 \usepackage{caption}
 \usepackage{titlesec}
+\usepackage{tocloft}
 \usepackage{hyperref}
 \usepackage{fancyhdr}
 \usepackage{amssymb}
 \usepackage{float}
 
 \definecolor{fptred}{RGB}{192,0,0}
+\definecolor{fptTocBlue}{RGB}{0,112,192}
+\definecolor{headerbg}{RGB}{255,232,225}
+\definecolor{captiongray}{RGB}{89,89,89}
+
 \hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue}
-\renewcommand{\arraystretch}{1.5}
-\setlength{\parindent}{0pt}
+\onehalfspacing
+\renewcommand{\arraystretch}{1.35}
+\setlength{\parindent}{1.27cm}
 \setlength{\parskip}{6pt}
-\setlist{nosep,leftmargin=1.2em,topsep=2pt}
 
-\titleformat{\section}{\Large\bfseries}{\thesection.}{0.5em}{}
-\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.5em}{}
-\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
-\captionsetup{labelsep=period,font=it,position=above}
-\renewcommand{\listtablename}{Table of tables}
+\setlist{nosep,topsep=2pt}
+\setlist[itemize,1]{label={--},leftmargin=1.5em}
+\setlist[itemize,2]{label={$\circ$},leftmargin=1.6em}
+
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+\titleformat{\section}{\fontsize{13}{16}\selectfont\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\fontsize{12}{14}\selectfont\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\fontsize{12}{14}\selectfont\bfseries\itshape}{\thesubsubsection}{0.6em}{}
+
+\titlespacing*{\section}{0pt}{1.4ex plus .3ex minus .2ex}{0.6ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.1ex plus .3ex minus .2ex}{0.4ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{0.9ex plus .2ex minus .2ex}{0.3ex plus .2ex}
+
+% TOC & Table of tables (matching AutiCare template)
+\setcounter{tocdepth}{2}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cfttableader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+\renewcommand{\cftsubsecfont}{\normalfont}
+\renewcommand{\cftsubsecpagefont}{\normalfont}
+\setlength{\cftsecnumwidth}{2.0em}
+\setlength{\cftsubsecnumwidth}{2.6em}
+\setlength{\cftsubsecindent}{0.6cm}
+\setlength{\cftbeforesecskip}{5pt}
+\setlength{\cftbeforesubsecskip}{3pt}
+\setlength{\cftbeforetabskip}{4pt}
+\setlength{\cfttabindent}{0pt}
+\renewcommand{\cfttabpresnum}{Table }
+\renewcommand{\cfttabaftersnum}{ .}
+\settowidth{\cfttabnumwidth}{Table 99 . }
+
+\captionsetup{labelsep=period,font={it,color=captiongray},justification=raggedright,singlelinecheck=false,position=above}
+\renewcommand{\contentsname}{\normalfont\fontsize{16}{19}\selectfont\color{fptTocBlue}Table of Contents}
+\renewcommand{\listtablename}{\normalfont\fontsize{16}{19}\selectfont\color{fptTocBlue}Table of tables}
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyfoot[C]{Page \thepage}
+\fancyfoot[R]{Page \thepage}
 \renewcommand{\headrulewidth}{0pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[R]{Page \thepage}\renewcommand{\headrulewidth}{0pt}}
 
 \newcommand{\hd}[1]{\textbf{#1}}
 
@@ -47,40 +94,89 @@
   {\fontsize{27}{32}\selectfont\bfseries\color{fptred} CAPSTONE PROJECT REPORT}\\[1cm]
   {\fontsize{19}{23}\selectfont\bfseries\color{fptred} Report 5 -- Software Test Documentation}
   \vfill
-  {\large -- Can Tho, November 2026 --}\\[1cm]
+  {\fontsize{14}{17}\selectfont -- Can Tho, November 2026 --}\\[1cm]
 \end{titlepage}
 
 %================ TOC =================
-\renewcommand{\contentsname}{Table of Contents}
 \tableofcontents
 \newpage
 \listoftables
 \newpage
 
+%================ DEFINITION AND ACRONYMS =================
+\section*{\normalfont\fontsize{16}{19}\selectfont\color{fptTocBlue}Definition and Acronyms}
+\addcontentsline{toc}{section}{Definition and Acronyms}
+
+\begin{center}
+\begingroup\small
+\renewcommand{\arraystretch}{1.08}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{|L{3.4cm}|Y|}
+\hline
+\rowcolor{headerbg}\textbf{Acronym} & \textbf{Definition} \\ \hline
+AI & Artificial Intelligence \\ \hline
+API & Application Programming Interface \\ \hline
+BVA & Boundary Value Analysis \\ \hline
+CI/CD & Continuous Integration / Continuous Deployment \\ \hline
+CRUD & Create, Read, Update, Delete \\ \hline
+DTO & Data Transfer Object \\ \hline
+E2E & End-to-End Testing \\ \hline
+eKYC & Electronic Know Your Customer \\ \hline
+EP & Equivalence Partitioning \\ \hline
+FPT & FPT University \\ \hline
+HMAC & Hash-Based Message Authentication Code \\ \hline
+HTTP / HTTPS & Hypertext Transfer Protocol / HTTP Secure \\ \hline
+i18n & Internationalization \\ \hline
+ICU & International Components for Unicode (message formatting standard) \\ \hline
+JWT & JSON Web Token \\ \hline
+OCR & Optical Character Recognition \\ \hline
+ORM & Object-Relational Mapping \\ \hline
+OTP & One-Time Password \\ \hline
+RBAC & Role-Based Access Control \\ \hline
+REST & Representational State Transfer \\ \hline
+SRS & Software Requirement Specification \\ \hline
+TC & Test Case \\ \hline
+UAT & User Acceptance Testing \\ \hline
+UC & Use Case \\ \hline
+UF & Unit Test Function (sheet identifier in \texttt{Report5\_Unit Test.xls}) \\ \hline
+UI / UX & User Interface / User Experience \\ \hline
+UTCID & Unit Test Case Identifier \\ \hline
+\end{tabularx}
+\endgroup
+\end{center}
+\setcounter{table}{0}
+
+\newpage
+
 %================ I. RECORD OF CHANGES =================
-\section*{I. Record of Changes}
+\section*{\fontsize{16}{19}\selectfont\bfseries\color{fptred} I. Record of Changes}
 \addcontentsline{toc}{section}{I. Record of Changes}
 
 \begin{center}
-\begin{tabular}{|p{2.4cm}|p{1.6cm}|p{3.2cm}|p{6.8cm}|}
+\begingroup\small
+\renewcommand{\arraystretch}{1.12}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{|L{2.2cm}|C{1.4cm}|L{3.0cm}|Y|}
 \hline
-\hd{Date} & \hd{A* M, D} & \hd{In charge} & \hd{Change Description} \\ \hline
+\rowcolor{headerbg}
+\hd{Date} & \hd{\makecell{A*\\M, D}} & \hd{In charge} & \hd{Change Description} \\ \hline
 12/09/2026 & A & Pham Kha Vy & Initial draft of the Software Test Documentation: testing scope, test levels, constraints, and test strategy. \\ \hline
 03/10/2026 & A & Nguyen Tien Thuan & Added unit and system test plans for Authentication, Role Management, Permissions, Sessions, Forum Categories, Users, Banners, Skills, and Job Categories. \\ \hline
 17/10/2026 & M & Tran Phat Tai & Added unit and system test specifications for Job Browsing, Job Management, Bookmarks, Saved Search, Job Alerts, Proposals, AI Recommendation, and Job Category Browsing. \\ \hline
 24/10/2026 & M & Nguyen Lu Nhat Huy & Added unit and pending system test specifications for Profiles, Skills, Portfolios, eKYC, Social Links, Favorites, Following, Notifications, Role Switching, Reviews, Account, and CV Management. \\ \hline
 31/10/2026 & M & Vo Nhut Tin & Added unit and system test specifications for Contracts, Shared Files, Milestones, Submissions, Disputes, and Stripe Connect Escrow Payments \& Webhooks. \\ \hline
 02/11/2026 & M & Nguyen Tien Thuan & Added Sprint 5 test specifications and documented unit test sheets \texttt{UF-01} to \texttt{UF-84} alongside module system test suites. \\ \hline
-10/11/2026 & M & Group Frevia & Expanded unit test matrix to \texttt{UF-01}--\texttt{UF-246} (2,005 cases; 1,972 passed, 33 untested) and system test workbook to 44 modules (935 cases; 688 passed, 247 pending), plus Jest live snapshot (\texttt{Report5\_Unit\_Test\_Backend.html}, 489 passed across 19 suites). \\ \hline
-\end{tabular}
+10/11/2026 & M & Group Frevia & Expanded unit test matrix to \texttt{UF-01}--\texttt{UF-246} (2,005 cases; 1,972 passed, 33 untested) and system test workbook to 44 modules (935 cases; 886 passed, 49 pending), plus Jest live snapshot (\texttt{Report5\_Unit\_Test\_Backend.html}, 1,536/1,536 passed across 39 suites). \\ \hline
+\end{tabularx}
+\endgroup
 \end{center}
 
-\textit{*A - Added \quad M - Modified \quad D - Deleted}
+\noindent\textit{*A - Added \quad M - Modified \quad D - Deleted}
 
 \newpage
 
 %================ II. TESTING DOCUMENTATION =================
-\section*{II. Testing Documentation}
+\section*{\fontsize{16}{19}\selectfont\bfseries\color{fptred} II. Testing Documentation}
 \addcontentsline{toc}{section}{II. Testing Documentation}
 \setcounter{section}{0}
 
@@ -158,7 +254,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \item \textbf{Tools:} Jest \texttt{30.0.0}, \texttt{@nestjs/testing} \texttt{11.0.1}, \texttt{ts-jest} \texttt{29.2.5}, TypeScript \texttt{5.9.2}, ESLint \texttt{9.18.0}.
   \item \textbf{Acceptance Criteria:}
   \begin{itemize}
-    \item All 2,005 documented unit test cases across 246 service/schema functions (\texttt{UF-01} to \texttt{UF-246}) achieve zero failures (1,972 passed, 33 untested/pending, 98.35\% execution coverage), supported by the live backend Jest run (\texttt{Report5\_Unit\_Test\_Backend.html}: 19 suites, 489/489 passed).
+    \item All 2,005 documented unit test cases across 246 service/schema functions (\texttt{UF-01} to \texttt{UF-246}) achieve zero failures (1,972 passed, 33 untested/pending, 98.35\% execution coverage), supported by the live backend Jest run (\texttt{Report5\_Unit\_Test\_Backend.html}: 39 suites, 1,536/1,536 passed).
     \item At least 80\% statement and branch coverage on critical domain services and guards.
     \item \texttt{pnpm lint}, \texttt{pnpm check-types}, and \texttt{pnpm --filter api test} pass without errors.
   \end{itemize}
@@ -193,7 +289,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \end{itemize}
   \item \textbf{Acceptance Criteria:}
   \begin{itemize}
-    \item {\sloppy System test cases across all 44 functional modules in \texttt{Report5\_Test Report.xlsx} (935 total TCs: 688 passed, 247 pending) pass with zero failures (73.58\% coverage).\par}
+    \item {\sloppy System test cases across all 44 functional modules in \texttt{Report5\_Test Report.xlsx} (935 total TCs: 886 passed, 49 pending) pass with zero failures (94.76\% coverage).\par}
     \item {\sloppy Zero Critical or Major defects remain open, and \texttt{docker compose build} / \texttt{docker compose up -d} start healthy containers.\par}
   \end{itemize}
 \end{itemize}
@@ -230,7 +326,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \end{itemize}
   \item \textbf{Completion Criteria:}
   \begin{itemize}
-    \item 98.35\% execution coverage with zero failures across 2,005 unit test cases (\texttt{UF-01} to \texttt{UF-246}) documented in \texttt{Report5\_Unit Test.xls} (1,972 passed, 0 failed, 33 untested; Jest snapshot: 489 passed across 19 suites).
+    \item 98.35\% execution coverage with zero failures across 2,005 unit test cases (\texttt{UF-01} to \texttt{UF-246}) documented in \texttt{Report5\_Unit Test.xls} (1,972 passed, 0 failed, 33 untested; Jest snapshot: 1,536/1,536 passed across 39 suites).
     \item Minimum 80\% code coverage on core business logic modules and zero lint or TypeScript compilation errors.
   \end{itemize}
 \end{itemize}
@@ -260,7 +356,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \end{itemize}
   \item \textbf{Completion Criteria:}
   \begin{itemize}
-    \item All 935 system test cases in \texttt{Report5\_Test Report.xlsx} achieve zero failures (688 passed, 0 failed, 247 pending execution).
+    \item All 935 system test cases in \texttt{Report5\_Test Report.xlsx} achieve zero failures (886 passed, 0 failed, 49 pending execution).
     \item Zero open Critical or Major defects prior to Sprint Review and final release.
   \end{itemize}
 \end{itemize}
@@ -299,33 +395,31 @@ In accordance with the project scope limitations defined in Report 1, the follow
 
 \begin{table}[H]
 \caption{Test levels table}
-\centering
-\begin{tabular}{|p{5.2cm}|c|c|c|c|}
+\begin{tabularx}{\textwidth}{|Y|c|c|c|c|}
 \hline
-\multirow{2}{*}{\hd{Type of Tests}} & \multicolumn{4}{c|}{\hd{Test Level}} \\ \cline{2-5}
- & \hd{Unit} & \hd{Integration} & \hd{System} & \hd{Acceptance} \\ \hline
+\rowcolor{headerbg} & \multicolumn{4}{c|}{\hd{Test Level}} \\ \cline{2-5}
+\rowcolor{headerbg}\multirow{-2}{*}{\hd{Type of Tests}} & \hd{Unit} & \hd{Integration} & \hd{System} & \hd{Acceptance} \\ \hline
 Functional \& Business Logic Testing & \checkmark & \checkmark & \checkmark & \checkmark \\ \hline
 API Contract \& Schema Validation & \checkmark & \checkmark & \checkmark & \\ \hline
 Database \& Transaction Integrity & & \checkmark & \checkmark & \\ \hline
 Security \& RBAC Authorization & \checkmark & \checkmark & \checkmark & \\ \hline
 UI/UX, Localization \& Workflow & & & \checkmark & \checkmark \\ \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Supporting Tools}
 
 \begin{table}[H]
 \caption{Supporting tools table}
-\centering
-\begin{tabular}{|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{4.2cm}|>{\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{2.4cm}|}
+\begin{tabularx}{\textwidth}{|L{3.8cm}|Y|L{3.2cm}|L{2.5cm}|}
 \hline
-\hd{Purpose} & \hd{Tool} & \hd{Vendor/In-house} & \hd{Version} \\ \hline
+\rowcolor{headerbg}\hd{Purpose} & \hd{Tool} & \hd{Vendor/In-house} & \hd{Version} \\ \hline
 Unit \& Integration Testing & Jest / \texttt{@nestjs/testing} & Meta / NestJS & 30.0.0 / 11.0.1 \\ \hline
 API \& HTTP E2E Testing & Supertest / Postman & Open Source / Postman & 7.0.0 / 11.x \\ \hline
 Static Analysis \& Validation & ESLint / TypeScript / Zod & Open Source / Microsoft & 9.18.0 / 5.9.2 \\ \hline
 Payment \& Webhook Sandbox & Stripe CLI \& Test Mode & Stripe Inc. & 22.6.2 \\ \hline
 Test \& Defect Management & MS Excel / GitHub Issues & Microsoft / GitHub & 2024 \\ \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \section{Test Plan}
@@ -334,17 +428,16 @@ Test \& Defect Management & MS Excel / GitHub Issues & Microsoft / GitHub & 2024
 
 \begin{table}[H]
 \caption{Human resources table}
-\centering
 \begingroup\footnotesize\renewcommand{\arraystretch}{1.12}
-\begin{tabular}{|>{\raggedright\arraybackslash}p{4.5cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{6.5cm}|}
+\begin{tabularx}{\textwidth}{|L{4.5cm}|L{2.9cm}|Y|}
 \hline
-\hd{Worker/Doer} & \hd{Role} & \hd{Specific Responsibilities/Comments} \\ \hline
+\rowcolor{headerbg}\hd{Worker/Doer} & \hd{Role} & \hd{Specific Responsibilities/Comments} \\ \hline
 Pham Kha Vy \newline (\texttt{CE182254}) \newline {\scriptsize\texttt{vypkce182254@fpt.edu.vn}} & Team Leader / \newline Test Lead & Defines the test strategy and test plan; authors and executes unit tests (\texttt{UF-01} to \texttt{UF-36}, 219 passed TCs; plus \texttt{UF-94}--\texttt{UF-96}, 33 untested AI TCs) and system test cases (5 executed modules, 154 passed TCs, plus 2 pending AI modules with 49 TCs) for Forum, Conversation, Moderation, ID Verification, Trash, and AI Moderation/Face Scan; reviews all test deliverables and leads UAT. \\ \hline
 Nguyen Tien Thuan \newline (\texttt{CE181024}) \newline {\scriptsize\texttt{thuanntce181024@fpt.edu.vn}} & Backend Developer / \newline Functional Tester & Authors and executes unit tests (\texttt{UF-37} to \texttt{UF-84}, 288 TCs) and system test cases (9 modules, 257 TCs) for User Authentication, Role Management, Manage Permission, Session Management, Forum Category, User Management, Banners, Skills, and Job Categories. \\ \hline
 Tran Phat Tai \newline (\texttt{CE181632}) \newline {\scriptsize\texttt{taitpce181632@fpt.edu.vn}} & Full-Stack Developer / \newline Integration Tester & Authors and executes unit tests (\texttt{UF-85}--\texttt{UF-93}, \texttt{UF-97}--\texttt{UF-121}, 423 passed TCs; workbook slice \texttt{UF-85}--\texttt{UF-121} totals 456 incl.\ 33 untested AI sheets by Pham Kha Vy) and system test cases (8 non-AI modules, 146 passed TCs; + 49 pending AI TCs by Pham Kha Vy) for Job Browsing/Management, Bookmarks, Saved Searches, Job Alerts, Proposals, AI Recommendation, and Job Category Browsing. \\ \hline
 Vo Nhut Tin \newline (\texttt{CE180619}) \newline {\scriptsize\texttt{tinvnce180619@fpt.edu.vn}} & Backend Developer / \newline Security \& AI Tester & Authors and executes unit tests (\texttt{UF-198} to \texttt{UF-246}, 454 TCs) and system test cases (4 modules, 131 TCs) for Contracts, Milestones, Disputes, and Stripe Connect Escrow Payments \& Webhooks. \\ \hline
-Nguyen Lu Nhat Huy \newline (\texttt{CE181196}) \newline {\scriptsize\texttt{huynlnce181196@fpt.edu.vn}} & Frontend Developer / \newline System Tester & Authors and executes unit tests (\texttt{UF-122} to \texttt{UF-197}, 588 Jest TCs) and executes system test cases (16 modules, 198 TCs: 194 passed, 0 failed after synchronizing 20 DTO pipe assertions to HTTP 422, 4 pending offline AI/DB setup) for Profiles, Skills, Portfolios, eKYC, Social Links, Favorites, Following, Notifications, Role Switching, Reviews, Account, and CV Management. \\ \hline
-\end{tabular}
+Nguyen Lu Nhat Huy \newline (\texttt{CE181196}) \newline {\scriptsize\texttt{huynlnce181196@fpt.edu.vn}} & Frontend Developer / \newline System Tester & Authors and executes unit tests (\texttt{UF-122} to \texttt{UF-197}, 588 Jest TCs) and executes system test cases (16 modules, 198 TCs: 198 Passed in Round 1, recorded on 02/11/2026; single-round execution completed) for Profiles, Skills, Portfolios, eKYC, Social Links, Favorites, Following, Notifications, Role Switching, Reviews, Account, and CV Management. \\ \hline
+\end{tabularx}
 \endgroup
 \end{table}
 
@@ -352,53 +445,50 @@ Nguyen Lu Nhat Huy \newline (\texttt{CE181196}) \newline {\scriptsize\texttt{huy
 
 \begin{table}[H]
 \caption{Test environment table}
-\centering
-\begin{tabular}{|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{4.0cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{2.6cm}|}
+\begin{tabularx}{\textwidth}{|L{3.7cm}|Y|L{3.2cm}|L{2.7cm}|}
 \hline
-\hd{Purpose} & \hd{Tool} & \hd{Provider} & \hd{Version} \\ \hline
+\rowcolor{headerbg}\hd{Purpose} & \hd{Tool} & \hd{Provider} & \hd{Version} \\ \hline
 Backend Runtime \& API & Node.js / NestJS & OpenJS / NestJS & 22.15.x / 11.0.1 \\ \hline
 Web Client Framework & Next.js / React / Tailwind & Vercel / Meta & 16.2.0 / 19.2.0 \\ \hline
 Database \& ORM & PostgreSQL / Prisma & PostgreSQL / Prisma & 16.x / 7.8.0 \\ \hline
 Container \& Secrets & Docker Compose / Infisical & Docker / Infisical & 27.x / CLI \\ \hline
 Web Browsers & Google Chrome / MS Edge & Google / Microsoft & 130+ \\ \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Test Milestones}
 
 \begin{table}[H]
 \caption{Test milestones table}
-\centering
-\begin{tabular}{|>{\raggedright\arraybackslash}p{3.8cm}|c|c|>{\raggedright\arraybackslash}p{5.2cm}|}
+\begin{tabularx}{\textwidth}{|L{4.0cm}|c|c|Y|}
 \hline
-\hd{Milestone Task} & \hd{Start Date} & \hd{End Date} & \hd{Comments} \\ \hline
+\rowcolor{headerbg}\hd{Milestone Task} & \hd{Start Date} & \hd{End Date} & \hd{Comments} \\ \hline
 Test Planning \& Setup & 07/09/2026 & 19/09/2026 & Define test strategy, configure Jest 30, Docker Compose, and Stripe sandbox (Sprint 1). \\ \hline
 Sprint 1 Test Execution & 21/09/2026 & 03/10/2026 & Unit \& system tests for Authentication, RBAC Roles, Profiles, Jobs, and Forum foundation. \\ \hline
 Sprint 2 Test Execution & 05/10/2026 & 17/10/2026 & Unit \& system tests for Proposals, Contracts, Milestones, Permissions, Sessions, and Categories. \\ \hline
 Sprint 3 Test Execution & 19/10/2026 & 24/10/2026 & Unit \& system tests for Messaging, Moderation, ID Verification, Trash, and User Management. \\ \hline
 Sprint 4 Test Execution & 26/10/2026 & 31/10/2026 & Integration \& system tests for Stripe Escrow, Webhooks, Disputes, Banners, and Skills. \\ \hline
 Sprint 5 Regression \& UAT & 01/11/2026 & 10/11/2026 & Job Category tests, full regression run (2,005 Unit TCs across UF-01--UF-246; 935 System TCs across 44 modules), and final UAT sign-off. \\ \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \section{Test Cases}
 
-The detailed unit test cases are provided in the file \textbf{Report5\_Unit Test.xls} (covering 246 backend service and validation functions across sheets \texttt{UF-01} to \texttt{UF-246} with a total of 2,005 unit test cases: 664 Normal, 979 Abnormal, and 362 Boundary; supplemented by the automated Jest run report \textbf{Report5\_Unit\_Test\_Backend.html} recording 1536/1536 passed cases across 39 suites). The detailed system test cases are provided in the file \textbf{Report5\_Test Report.xlsx} (covering 44 functional modules with a total of 935 system test cases: 882 Passed, 0 Failed, and 53 Pending execution).
+The detailed unit test cases are provided in the file \textbf{Report5\_Unit Test.xls} (covering 246 backend service and validation functions across sheets \texttt{UF-01} to \texttt{UF-246} with a total of 2,005 unit test cases: 664 Normal, 979 Abnormal, and 362 Boundary; supplemented by the automated Jest run report \textbf{Report5\_Unit\_Test\_Backend.html} recording 1,536/1,536 passed cases across 39 suites). The detailed system test cases are provided in the file \textbf{Report5\_Test Report.xlsx} (covering 44 functional modules with a total of 935 system test cases: 886 Passed, 0 Failed, and 49 Pending execution).
 
 \begin{table}[H]
 \caption{Summary of unit and system test cases in Report5\_Unit Test.xls and Report5\_Test Report.xlsx}
-\centering
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{|c|>{\raggedright\arraybackslash}p{3.6cm}|c|c|c|>{\raggedright\arraybackslash}p{2.7cm}|}
+\begin{tabularx}{\textwidth}{|c|Y|c|c|c|L{3.2cm}|}
 \hline
-\hd{No} & \hd{Scope / Feature Group} & \hd{Unit Fns / Modules} & \hd{Unit TCs} & \hd{System TCs} & \hd{Tester in Charge} \\ \hline
+\rowcolor{headerbg}\hd{No} & \hd{Scope / Feature Group} & \hd{Unit Fns / Modules} & \hd{Unit TCs} & \hd{System TCs} & \hd{Tester in Charge} \\ \hline
 1 & Forum, Conversation, Moderation, eKYC Review, Forum Trash (\texttt{UF-01}--\texttt{UF-36}) & 36 / 5 & 219 & 154 & Pham Kha Vy (also +33 AI unit / +49 pending AI sys in slice 3) \\ \hline
 2 & Auth, Roles, Permissions, Sessions, Forum Cat., Users, Banners, Skills, Job Cat. (\texttt{UF-37}--\texttt{UF-84}) & 48 / 9 & 288 & 257 & Nguyen Tien Thuan \\ \hline
 3 & Jobs, Bookmarks, Saved Search, Alerts, Proposals, AI Checks/Matching, Job Cat. Browse (\texttt{UF-85}--\texttt{UF-121}) & 37 / 10 & 456 & 195 & Tran Phat Tai (423 unit / 146 sys; AI Moderation \& Face by Pham Kha Vy) \\ \hline
 4 & Profiles, Skills, Portfolios, eKYC, Social, Favorites, Reviews, Account, CV (\texttt{UF-122}--\texttt{UF-197}) & 76 / 16 & 588 & 198 & Nguyen Lu Nhat Huy \\ \hline
 5 & Contracts, Shared Files, Milestones, Submissions, Disputes, Stripe Payments (\texttt{UF-198}--\texttt{UF-246}) & 49 / 4 & 454 & 131 & Vo Nhut Tin \\ \hline
 \multicolumn{2}{|c|}{\hd{Total}} & \hd{246 / 44} & \hd{2,005} & \hd{935} & \\ \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \section{Test Reports}
@@ -407,43 +497,41 @@ The detailed unit test cases are provided in the file \textbf{Report5\_Unit Test
 
 \begin{table}[H]
 \caption{Test execution summary table}
-\centering
-\begin{tabular}{|p{3.8cm}|c|c|c|c|c|}
+\begin{tabularx}{\textwidth}{|Y|c|c|c|c|c|}
 \hline
-\hd{Test Type} & \hd{Total TCs} & \hd{Passed} & \hd{Failed} & \hd{Pending} & \hd{Coverage} \\ \hline
+\rowcolor{headerbg}\hd{Test Type} & \hd{Total TCs} & \hd{Passed} & \hd{Failed} & \hd{Pending} & \hd{Coverage} \\ \hline
 Unit Testing & 2,005 & 1,972 & 0 & 33 & 98.35\% \\ \hline
 Integration Testing & 84 & 84 & 0 & 0 & 100.00\% \\ \hline
-System Testing & 935 & 882 & 0 & 53 & 94.33\% \\ \hline
+System Testing & 935 & 886 & 0 & 49 & 94.76\% \\ \hline
 Acceptance Testing & 42 & 42 & 0 & 0 & 100.00\% \\ \hline
-\hd{Total} & \hd{3,066} & \hd{2,980} & \hd{0} & \hd{86} & \hd{97.20\%} \\ \hline
-\end{tabular}
+\hd{Total} & \hd{3,066} & \hd{2,984} & \hd{0} & \hd{82} & \hd{97.33\%} \\ \hline
+\end{tabularx}
 \end{table}
 
 \subsection{Defect Summary}
 
 \begin{table}[H]
 \caption{Defect summary table}
-\centering
-\begin{tabular}{|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{7.8cm}|}
+\begin{tabularx}{\textwidth}{|L{2.3cm}|L{3.1cm}|Y|}
 \hline
-\hd{Severity} & \hd{Number of Defects} & \hd{Description} \\ \hline
+\rowcolor{headerbg}\hd{Severity} & \hd{Number of Defects} & \hd{Description} \\ \hline
 Critical & 0 open \newline (2 resolved) & Early sprint defects involving raw-body Stripe webhook signature parsing and revoked refresh token reuse were resolved by enforcing strict \texttt{constructWebhookEvent} raw-body verification and session revocation validation (100\% resolved). \\ \hline
 Major & 0 open \newline (6 resolved) & Edge cases in soft-deleted category/skill slug uniqueness, role-switching permission lookup, and milestone state transition guards were fixed and verified during Sprints 2--4 (100\% resolved). \\ \hline
 Minor & 0 open \newline (9 resolved) & Nine earlier UI/i18n/pagination minor defects were resolved prior to Sprint 5; the 20 DTO validation spec mismatches observed in Round 1 (expected HTTP 400 vs.\ actual HTTP 422 from \texttt{MyZodValidationPipe}) were synchronized to HTTP 422 and re-executed with 0 failures (100\% resolved). \\ \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Test Analysis}
 
 \begin{itemize}
-  \item \textbf{Unit Testing Coverage and Distribution:} Out of 2,005 unit test cases across 246 functions (\texttt{UF-01} to \texttt{UF-246}) in \texttt{Report5\_Unit Test.xls}, 1,972 cases passed with 0 failures and 33 remain untested (\texttt{98.35\%} execution coverage). Case distribution covers 664 normal scenarios (\texttt{33.12\%}), 979 abnormal/exception paths (\texttt{48.83\%}), and 362 boundary conditions (\texttt{18.05\%}). In addition, \texttt{Report5\_Unit\_Test\_Backend.html} verifies 1536/1536 passing Jest cases across all 39 backend suites (\texttt{UF-01}--\texttt{UF-181}).
-  \item \textbf{System and Integration Stability:} Across all 44 functional modules in \texttt{Report5\_Test Report.xlsx} (935 total system cases), 882 cases passed with 0 failures after synchronizing 20 \texttt{MyZodValidationPipe} DTO validation expectations to HTTP 422 and re-running the HTTP suite, and 53 cases remain Pending (49 offline AI cases of \texttt{kvy}, 3 offline AI cases and 1 global-role case of \texttt{nhuy}, giving \texttt{94.33\%} pass rate), alongside 84/84 passing integration workflow checks.
+  \item \textbf{Unit Testing Coverage and Distribution:} Out of 2,005 unit test cases across 246 functions (\texttt{UF-01} to \texttt{UF-246}) in \texttt{Report5\_Unit Test.xls}, 1,972 cases passed with 0 failures and 33 remain untested (\texttt{98.35\%} execution coverage). Case distribution covers 664 normal scenarios (\texttt{33.12\%}), 979 abnormal/exception paths (\texttt{48.83\%}), and 362 boundary conditions (\texttt{18.05\%}). In addition, \texttt{Report5\_Unit\_Test\_Backend.html} verifies 1,536/1,536 passing Jest cases across all 39 backend suites (\texttt{UF-01}--\texttt{UF-181}).
+  \item \textbf{System and Integration Stability:} Across all 44 functional modules in \texttt{Report5\_Test Report.xlsx} (935 total system cases), 886 cases are recorded as Passed with 0 failures in the system workbook, and 49 cases remain Pending (49 offline AI cases assigned to Pham Kha Vy, giving \texttt{94.76\%} pass rate), alongside 84/84 passing integration workflow checks.
   \item \textbf{Defect Prevention via Shared Contracts:} Sharing Zod schemas (\texttt{@shared/types}) between the Next.js 16 frontend and NestJS 11 backend, combined with centralized RBAC enforcement in \texttt{AccessTokenGuard}, prevented client-server payload drift and eliminated unauthorized access regressions across all five sprints.
   \item \textbf{Defect Resolution Rate:} 100\% of tracked product defects (2 Critical, 6 Major, 9 Minor) were resolved prior to Sprint 5, and the 20 \texttt{MyZodValidationPipe} HTTP 422 specification mismatches from Round 1 were synchronized and verified passing on re-execution (0 open defects).
 \end{itemize}
 
 \subsection{Test Conclusion}
 
-Based on the execution results across 2,005 unit test cases (1,972 passed, 33 untested), 84 integration test cases (84 passed), 935 system test cases (882 passed, 0 failed, 53 pending), and 42 user acceptance test scenarios (42 passed)---achieving \textbf{2,980 passing cases across 3,066 total cases (97.20\%)} and \textbf{0 open defects}---the \textbf{Frevia -- Verified Freelance Marketplace Platform} (\texttt{SEP490\_04}) satisfies the core functional and non-functional quality gates specified in the Project Management Plan (Report 2) and Software Requirement Specification (Report 3).
+Based on the recorded test results across 2,005 unit test cases (1,972 passed, 33 untested), 84 integration test cases (84 passed), 935 system test cases (886 passed, 0 failed, 49 pending), and 42 user acceptance test scenarios (42 passed)---achieving \textbf{2,984 passing cases across 3,066 total cases (97.33\%)} and \textbf{0 open defects}---the \textbf{Frevia -- Verified Freelance Marketplace Platform} (\texttt{SEP490\_04}) satisfies the core functional and non-functional quality gates specified in the Project Management Plan (Report 2) and Software Requirement Specification (Report 3).
 
 \end{document}

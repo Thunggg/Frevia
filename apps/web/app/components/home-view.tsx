@@ -219,7 +219,7 @@ export function HomeView({ categories = [] }: HomeViewProps) {
               </div>
 
               <Link
-                href="/find-work"
+                href="/job"
                 className="inline-flex items-center gap-2 text-sm font-semibold text-[#0069D3] hover:text-blue-700 dark:hover:text-blue-400 group"
               >
                 <span>{tCategories("viewAll")}</span>
@@ -246,7 +246,7 @@ export function HomeView({ categories = [] }: HomeViewProps) {
                   return (
                     <Link
                       key={category.id}
-                      href={`/find-work?category=${category.slug}`}
+                      href={`/job?category=${category.slug}`}
                       className={`group relative flex flex-col justify-between overflow-hidden rounded-sm sm:rounded-sm p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl border min-h-[230px] sm:min-h-[250px] ${themeStyles.card}`}
                     >
 
@@ -302,7 +302,7 @@ export function HomeView({ categories = [] }: HomeViewProps) {
 
                   <div className="pt-2">
                     <Link
-                      href="/find-work"
+                      href="/job"
                       className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-xs sm:text-sm font-bold text-zinc-950 transition-all hover:bg-zinc-200 shadow-md"
                     >
                       <span>{tAi("bannerBtn")}</span>

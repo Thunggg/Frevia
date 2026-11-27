@@ -120,7 +120,8 @@ export function MilestoneSubmissionsTab({
 
     if (
       isFreelancer &&
-      milestone.status === "PENDING" &&
+      (milestone.status === "PENDING" ||
+        (milestone.status === "LATE" && submissions.length === 0)) &&
       milestone.paymentStatus === "FUNDED" &&
       canStartWork &&
       onStartWork

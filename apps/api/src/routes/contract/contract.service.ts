@@ -430,6 +430,10 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
           contractId,
         );
 
+      if (milestones.length === 0) {
+        throw ContractHasUnsettledMilestonesException();
+      }
+
       const hasUnsettled = milestones.some(
         (m) =>
           m.paymentStatus !== MilestonePaymentStatus.RELEASED &&
@@ -437,6 +441,14 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
       );
 
       if (hasUnsettled) {
+        throw ContractHasUnsettledMilestonesException();
+      }
+
+      const hasReleased = milestones.some(
+        (m) => m.paymentStatus === MilestonePaymentStatus.RELEASED,
+      );
+
+      if (!hasReleased) {
         throw ContractHasUnsettledMilestonesException();
       }
 
@@ -478,8 +490,23 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
         throw ContractAlreadyCancelledException();
       if (contract.status === ContractStatus.COMPLETED)
         throw ContractAlreadyCompletedException();
+      if (
+        contract.status === ContractStatus.REJECTED ||
+        contract.status === ContractStatus.EXPIRED
+      ) {
+        throw ContractForbiddenException();
+      }
       if (contract.status === ContractStatus.DISPUTED) {
         throw ContractDisputedException();
+      }
+
+      // Freelancer chỉ được phép cancel khi hợp đồng đã ACTIVE.
+      // Khi ở trạng thái PENDING_SIGN hoặc AWAITING_PAYMENT, freelancer phải dùng rejectContract (từ chối offer).
+      if (
+        contract.freelancerId === userId &&
+        contract.status !== ContractStatus.ACTIVE
+      ) {
+        throw ContractForbiddenException();
       }
 
       if (

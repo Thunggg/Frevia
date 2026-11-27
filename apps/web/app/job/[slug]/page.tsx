@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
-import { hasActionPermission } from "@/lib/admin-access";
 import proposalServerRequest from "@/apiRequests/proposal.server";
-import type { JobType } from "@shared/types";
-
-import { JobDetailContent } from "../../(freelancer)/freelancer/jobs/[slug]/job-detail-content";
+import { hasActionPermission } from "@/lib/admin-access";
+import { type JobType } from "@shared/types";
+import { JobDetailContent } from "@/app/(freelancer)/freelancer/jobs/[slug]/job-detail-content";
 
 type PublicJobDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -17,7 +15,7 @@ export async function generateMetadata({
   params,
 }: PublicJobDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  if (!slug.trim()) return {};
+  if (!slug?.trim()) return {};
   const job = await jobServerRequest.getJobDetail(slug);
   if (!job) return {};
 
@@ -34,7 +32,7 @@ export default async function PublicJobDetailPage({
 }: PublicJobDetailPageProps) {
   const { slug } = await params;
 
-  if (!slug.trim()) {
+  if (!slug?.trim()) {
     notFound();
   }
 
@@ -47,7 +45,11 @@ export default async function PublicJobDetailPage({
     notFound();
   }
 
-  const role = user ? "FREELANCER" : "GUEST";
+  const role = user
+    ? user.roles?.some((r) => r.name === "FREELANCER")
+      ? "FREELANCER"
+      : "CLIENT"
+    : "GUEST";
   const relatedSearch = job.skills[0]?.skill.name;
   const canCheckBookmark = hasActionPermission(
     user,
@@ -81,16 +83,18 @@ export default async function PublicJobDetailPage({
     .slice(0, 3);
 
   return (
-    <JobDetailContent
-      job={job}
-      role={role}
-      initialIsBookmarked={bookmarkStatus?.isBookmarked ?? false}
-      relatedJobs={relatedJobs}
-      relatedSkill={relatedSearch}
-      existingProposal={existingProposal}
-      embedded={false}
-      basePath="/find-work"
-      currentUserId={user?.id}
-    />
+    <div className="mx-auto max-w-7xl">
+      <JobDetailContent
+        job={job}
+        role={role}
+        initialIsBookmarked={bookmarkStatus?.isBookmarked ?? false}
+        relatedJobs={relatedJobs}
+        relatedSkill={relatedSearch}
+        existingProposal={existingProposal}
+        embedded={false}
+        basePath="/job"
+        currentUserId={user?.id}
+      />
+    </div>
   );
 }

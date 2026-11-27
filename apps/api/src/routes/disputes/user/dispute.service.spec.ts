@@ -19,6 +19,7 @@ describe('DisputeService', () => {
   let service: DisputeService;
   let repo: jest.Mocked<DisputeRepository>;
   let paymentService: jest.Mocked<PaymentService>;
+  let cloudinaryService: any;
 
   const mockMilestone = {
     id: 10,
@@ -94,11 +95,20 @@ describe('DisputeService', () => {
   };
 
   beforeEach(() => {
+    cloudinaryService = {
+      isConfigured: jest.fn().mockReturnValue(true),
+      uploadFile: jest.fn().mockResolvedValue({
+        secure_url: 'https://cloudinary.com/test.png',
+        public_id: 'test-public-id',
+      }),
+    } as any;
+
     repo = {
       findMilestoneWithContract: jest.fn(),
       findDisputeById: jest.fn(),
       findDisputeByMilestoneId: jest.fn(),
-      findSharedFilesByIds: jest.fn(),
+      findDisputeFilesByIds: jest.fn(),
+      createDisputeFile: jest.fn(),
       createDisputeTransaction: jest.fn(),
       declineDisputeTransaction: jest.fn(),
       acceptExtendDeadlineTransaction: jest.fn(),
@@ -115,7 +125,7 @@ describe('DisputeService', () => {
       executeDisputeSettlementPayout: jest.fn().mockResolvedValue(undefined),
     } as unknown as jest.Mocked<PaymentService>;
 
-    service = new DisputeService(repo, paymentService);
+    service = new DisputeService(repo, paymentService, cloudinaryService);
   });
 
   describe('createDispute', () => {
@@ -418,6 +428,49 @@ describe('DisputeService', () => {
         service.respondToDispute(2, 5, { action: 'ACCEPT' }),
       ).rejects.toThrow(UnprocessableEntityException);
       expect(repo.finalizeDisputeTransaction).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('uploadEvidenceFile', () => {
+    it('throws BadRequestException when file is missing', async () => {
+      await expect(service.uploadEvidenceFile(1, undefined)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('uploads file via Cloudinary when configured and creates disputeFile', async () => {
+      const mockFile = {
+        originalname: 'test-evidence.png',
+        size: 1024,
+        mimetype: 'image/png',
+        buffer: Buffer.from('test'),
+      } as Express.Multer.File;
+
+      repo.createDisputeFile.mockResolvedValue({
+        id: 1,
+        uploaderId: 1,
+        fileUrl: 'https://cloudinary.com/test.png',
+        publicId: 'test-public-id',
+        fileName: 'test-evidence.png',
+        fileSize: 1024,
+        fileType: 'image/png',
+        createdAt: new Date(),
+      } as any);
+
+      const res = await service.uploadEvidenceFile(1, mockFile);
+      expect(cloudinaryService.uploadFile).toHaveBeenCalledWith(
+        mockFile,
+        'frevia/disputes',
+      );
+      expect(repo.createDisputeFile).toHaveBeenCalledWith({
+        uploaderId: 1,
+        fileUrl: 'https://cloudinary.com/test.png',
+        publicId: 'test-public-id',
+        fileName: 'test-evidence.png',
+        fileSize: 1024,
+        fileType: 'image/png',
+      });
+      expect(res.id).toBe(1);
     });
   });
 });

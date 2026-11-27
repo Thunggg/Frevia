@@ -244,7 +244,7 @@ export const ViewListJobFilterSchema = z
       .number()
       .int(BrowseJobMessage.INVALID_LIMIT)
       .min(1, BrowseJobMessage.INVALID_LIMIT)
-      .max(20, BrowseJobMessage.INVALID_LIMIT)
+      .max(100, BrowseJobMessage.INVALID_LIMIT)
       .default(10),
 
     search: z

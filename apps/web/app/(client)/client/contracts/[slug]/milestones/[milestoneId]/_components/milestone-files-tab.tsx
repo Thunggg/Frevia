@@ -6,6 +6,7 @@ import {
   Download,
   FileText,
   Loader2,
+  Lock,
   Trash2,
   UploadCloud,
 } from "lucide-react";
@@ -29,6 +30,7 @@ interface MilestoneFilesTabProps {
   files: MilestoneFileType[];
   onFilesChanged: () => void;
   isFreelancer?: boolean;
+  contractExpiresAt?: string | Date | null;
 }
 
 export function MilestoneFilesTab({
@@ -36,6 +38,7 @@ export function MilestoneFilesTab({
   milestoneId,
   files,
   onFilesChanged,
+  contractExpiresAt,
 }: MilestoneFilesTabProps) {
   const format = useFormatter();
   const t = useTranslations("milestoneWorkspace.files");
@@ -45,6 +48,10 @@ export function MilestoneFilesTab({
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [fileToDelete, setFileToDelete] = useState<MilestoneFileType | null>(null);
+
+  const isContractExpired = Boolean(
+    contractExpiresAt && new Date(contractExpiresAt).getTime() <= Date.now()
+  );
 
   const canViewFiles = can("GET", "/api/contracts/:contractId/milestones/:milestoneId/files");
   const canUploadFile = can("POST", "/api/contracts/:contractId/milestones/:milestoneId/files");
@@ -63,6 +70,10 @@ export function MilestoneFilesTab({
   };
 
   const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isContractExpired) {
+      toastError({ message: t("contractExpiredUploadDisabled") });
+      return;
+    }
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
 
@@ -97,6 +108,11 @@ export function MilestoneFilesTab({
 
   const handleConfirmDelete = async () => {
     if (!fileToDelete) return;
+    if (fileToDelete.isSubmitted) {
+      toastError({ message: t("cannotDeleteSubmitted") });
+      setFileToDelete(null);
+      return;
+    }
     try {
       setDeletingId(fileToDelete.id);
       await contractApiRequest.deleteMilestoneFile(
@@ -154,12 +170,13 @@ export function MilestoneFilesTab({
               ref={fileInputRef}
               onChange={(e) => void handleUploadFile(e)}
               className="hidden"
+              disabled={isContractExpired || uploading}
             />
             <Button
               size="sm"
-              disabled={uploading}
+              disabled={uploading || isContractExpired}
               onClick={() => fileInputRef.current?.click()}
-              className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-4 shadow-2xs cursor-pointer"
+              className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-4 shadow-2xs cursor-pointer disabled:opacity-50"
             >
               {uploading ? (
                 <>
@@ -176,6 +193,12 @@ export function MilestoneFilesTab({
           </div>
         )}
       </div>
+
+      {isContractExpired && (
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-300">
+          {t("contractExpiredUploadDisabled")}
+        </div>
+      )}
 
       {files.length > 0 ? (
         <div className="divide-y divide-border/40">
@@ -203,6 +226,13 @@ export function MilestoneFilesTab({
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0">
+                {file.isSubmitted && (
+                  <span className="inline-flex items-center gap-1 rounded bg-zinc-200/70 px-2 py-0.5 text-[10px] font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                    <Lock className="size-2.5" />
+                    {t("submittedBadge")}
+                  </span>
+                )}
+
                 {file.fileUrl && (
                   <Button
                     asChild
@@ -222,7 +252,7 @@ export function MilestoneFilesTab({
                   </Button>
                 )}
 
-                {canDeleteFile && (
+                {!file.isSubmitted && canDeleteFile && (
                   <Button
                     variant="ghost"
                     size="sm"

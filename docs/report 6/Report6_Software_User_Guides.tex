@@ -3,11 +3,11 @@
 \usepackage[T1]{fontenc}
 \usepackage{mathptmx}
 \usepackage{amsmath}
-\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[a4paper,top=2.0cm,bottom=2.0cm,left=3.0cm,right=2.0cm]{geometry}
+\usepackage[table]{xcolor}
 \usepackage{graphicx}
 \usepackage{array}
 \usepackage{hhline}
-\usepackage[table]{xcolor}
 \usepackage{titlesec}
 \usepackage{fancyhdr}
 \usepackage{listings}
@@ -16,32 +16,64 @@
 \usepackage{float}
 \usepackage{tcolorbox}
 \usepackage{booktabs}
-\usepackage[titles]{tocloft}
+\usepackage{needspace}
+\usepackage{caption}
+\usepackage{tocloft}
 \usepackage{hyperref}
-
-\numberwithin{figure}{section}
-
-% Table of Contents formatting
-\setcounter{tocdepth}{3}
-\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
-\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
-\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
-\renewcommand{\cftsecfont}{\normalfont\bfseries}
-\renewcommand{\cftsecpagefont}{\normalfont\bfseries}
-\setlength{\cftbeforesecskip}{5pt}
-\setlength{\cftbeforesubsecskip}{2.5pt}
-\setlength{\cftbeforesubsubsecskip}{1.5pt}
-\setlength{\cftsecindent}{0.2cm}
-\setlength{\cftsubsecindent}{0.7cm}
-\setlength{\cftsubsubsecindent}{1.2cm}
-\cftsetpnumwidth{2.0em}
-\cftsetrmarg{3.2em plus 1fil}
 
 % Color definitions
 \definecolor{fptred}{RGB}{192,0,0}
-\definecolor{fptblue}{RGB}{46,117,181}
+\definecolor{fptblue}{RGB}{46,116,181}
+\definecolor{captiongray}{RGB}{68,84,106}
 \definecolor{hdrfill}{RGB}{255,232,225}
 \definecolor{codebg}{RGB}{248,249,250}
+
+% Table of Contents, Figures, and Tables formatting (AutiCare Report 6 style)
+\setcounter{tocdepth}{2}
+\renewcommand{\contentsname}{Table of Contents}
+\renewcommand{\listfigurename}{Table of Figures}
+\renewcommand{\listtablename}{Table of Tables}
+\renewcommand{\cfttoctitlefont}{\normalfont\fontsize{16}{19}\selectfont\color{fptblue}}
+\renewcommand{\cftloftitlefont}{\normalfont\fontsize{16}{19}\selectfont\color{fptblue}}
+\renewcommand{\cftlottitlefont}{\normalfont\fontsize{16}{19}\selectfont\color{fptblue}}
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{8pt}
+\setlength{\cftbeforeloftitleskip}{0pt}
+\setlength{\cftafterloftitleskip}{8pt}
+\setlength{\cftbeforelottitleskip}{0pt}
+\setlength{\cftafterlottitleskip}{8pt}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftfigleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cfttableader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+\renewcommand{\cftsubsecfont}{\normalfont}
+\renewcommand{\cftsubsecpagefont}{\normalfont}
+\renewcommand{\cftsecaftersnum}{.}
+\setlength{\cftbeforesecskip}{4pt}
+\setlength{\cftbeforesubsecskip}{2pt}
+\setlength{\cftsecindent}{0pt}
+\setlength{\cftsubsecindent}{0.55cm}
+\setlength{\cftfigindent}{0pt}
+\setlength{\cfttabindent}{0pt}
+\renewcommand{\cftfigpresnum}{Figure }
+\renewcommand{\cftfigaftersnum}{.\ }
+\setlength{\cftfignumwidth}{5.8em}
+\renewcommand{\cfttabpresnum}{Table }
+\renewcommand{\cfttabaftersnum}{.\ }
+\setlength{\cfttabnumwidth}{5.2em}
+\cftsetpnumwidth{2.0em}
+\cftsetrmarg{3.2em plus 1fil}
+
+% Caption formatting
+\setlength{\LTcapwidth}{\textwidth}
+\captionsetup[table]{labelsep=period,font={normalfont,color=captiongray},labelfont={normalfont,color=captiongray},justification=raggedright,singlelinecheck=false,position=above,skip=6pt}
+\captionsetup[figure]{labelsep=period,font={normalfont,color=captiongray},labelfont={normalfont,color=captiongray},justification=centering,position=below,skip=6pt}
+
+% List bullets matching AutiCare Report 6
+\setlist[itemize,1]{label=--}
+\setlist[itemize,2]{label=$\circ$}
 
 \hypersetup{
   colorlinks=true,
@@ -50,30 +82,33 @@
   citecolor=black
 }
 
-\renewcommand{\arraystretch}{1.5}
+\renewcommand{\arraystretch}{1.45}
+\setlength{\arrayrulewidth}{0.6pt}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt}
+\setlength{\parskip}{5pt}
 
 % Column specifications
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
 
-% Section title styling
-\titleformat{\section}{\Large\bfseries\color{fptred}}{\thesection.}{0.5em}{}
-\titleformat{\subsection}{\large\bfseries\color{fptblue}}{\thesubsection}{0.5em}{}
-\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
+% Section title styling (AutiCare Report 6 style)
+\titleformat{\section}{\fontsize{13}{16}\selectfont\bfseries\color{black}}{\thesection.}{0.45em}{}
+\titleformat{\subsection}{\fontsize{12}{15}\selectfont\bfseries\color{black}}{\thesubsection}{0.45em}{}
+\titleformat{\subsubsection}{\fontsize{12}{15}\selectfont\bfseries\itshape\color{black}}{\thesubsubsection}{0.45em}{}
 
-% Header and Footer
+% Header and Footer (no running header, right-aligned Page X footer)
 \pagestyle{fancy}
 \fancyhf{}
-\setlength{\headheight}{15pt}
-\addtolength{\topmargin}{-3pt}
-\fancyhead[L]{\small\itshape Frevia Platform -- Report 6: Software User Guides}
-\fancyhead[R]{\small\itshape Capstone Project}
-\fancyfoot[C]{Page \thepage}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[R]{Page \thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[R]{Page \thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
 
 % Custom macros
 \newcommand{\hd}[1]{\textbf{#1}}
@@ -110,22 +145,27 @@
 \end{titlepage}
 
 % =============================================================================
-% TABLE OF CONTENTS
+% TABLE OF CONTENTS, FIGURES, AND TABLES
 % =============================================================================
-\renewcommand{\contentsname}{\color{fptblue}\Large Table of Contents}
+\pagenumbering{arabic}
 \tableofcontents
+\newpage
+
+\listoffigures
+\newpage
+
+\listoftables
 \newpage
 
 % =============================================================================
 % I. RECORD OF CHANGES
 % =============================================================================
-\section*{\color{fptred} I. Record of Changes}
+\section*{\fontsize{16}{19}\selectfont\bfseries\color{fptred}I. Record of Changes}
 \addcontentsline{toc}{section}{I. Record of Changes}
 
-\begin{center}
-\renewcommand{\arraystretch}{1.45}
+\renewcommand{\arraystretch}{1.4}
 \setlength{\tabcolsep}{5pt}
-\begin{longtable}{|C{2.3cm}|C{1.5cm}|C{2.4cm}|L{8.9cm}|}
+\begin{longtable}{|C{2.2cm}|C{1.7cm}|C{2.1cm}|L{8.5cm}|}
 \hline
 \rowcolor{hdrfill}\hd{Date} & \hd{\shortstack{A*, M, D}} & \hd{In charge} & \hd{Change Description} \\ \hline
 \endfirsthead
@@ -143,8 +183,10 @@
 19/11/2026 & M & TinVN & Reviewed authentication, session revocation, and administrator RBAC user instructions and verified expected output cases. \\ \hline
 21/11/2026 & M & HuyNLN & Cross-checked troubleshooting notes, figure numbering, and screenshot annotations across installation and user manual sections. \\ \hline
 24/11/2026 & M & ThuanNT & Updated cover page (November 2026), reformatted Table of Contents, consolidated Record of Changes, and compiled final PDF. \\ \hline
+27/11/2026 & M & VyPK & Added User Manuals for Forum (M14), Conversation (M27), Moderation/eKYC/Trash (M34--M36), and AI Features (M44--M45). \\ \hline
+27/11/2026 & M & ThuanNT & Updated 25 screenshots with English annotations (Sprints 1--5 including Banners M15.04) and standardized Report 6 formatting. \\ \hline
 \end{longtable}
-\end{center}
+\setcounter{table}{0}
 
 \textit{*A - Added \quad M - Modified \quad D - Deleted}
 
@@ -153,7 +195,7 @@
 % =============================================================================
 % II. RELEASE PACKAGE & USER GUIDES
 % =============================================================================
-\section*{\color{fptred} II. Release Package \& User Guides}
+\section*{\fontsize{16}{19}\selectfont\bfseries\color{fptred}II. Release Package \& User Guides}
 \addcontentsline{toc}{section}{II. Release Package \& User Guides}
 \setcounter{section}{0}
 
@@ -169,7 +211,19 @@
 % Input Part B: Module 14 - Admin RBAC & User Management (M14.01 - M14.08)
 \input{sections/sec3_m14_admin_rbac_users.tex}
 
-% Input Part B: Module 15 - Admin Master Data Catalogs (M15.01 - M15.03)
+% Input Part B: Module 15 - Admin Master Data Catalogs (M15.01 - M15.04)
 \input{sections/sec3_m15_admin_catalogs.tex}
+
+% Input Part B: Module 14 - Forum Management (UC-14.01 - UC-14.17)
+\input{sections/sec3_m14_forum_management.tex}
+
+% Input Part B: Module 27 - Conversation Management (UC-27.01 - UC-27.08)
+\input{sections/sec3_m27_conversation_management.tex}
+
+% Input Part B: Module 34-36 - Moderation, ID Verification, Forum Trash
+\input{sections/sec3_m34_moderation_management.tex}
+
+% Input Part B: Module 44-45 - AI Features
+\input{sections/sec3_m44_ai_features.tex}
 
 \end{document}
