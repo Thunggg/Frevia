@@ -5,49 +5,49 @@
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         
-        <!-- AuthGuard -->
-        <mxCell id="guard" value="&lt;&lt;guard&gt;&gt;&#xa;AuthGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="60" y="140" width="380" height="200" as="geometry" />
+        
+        <mxCell id="guard" value="&lt;&lt;guard&gt;&gt;&#10;AuthGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="160" y="140" width="420" height="200" as="geometry" />
         </mxCell>
         <mxCell id="guard_r0" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="guard" vertex="1">
-          <mxGeometry y="44" width="380" height="26" as="geometry" />
+          <mxGeometry y="44" width="420" height="26" as="geometry" />
         </mxCell>
         <mxCell id="guard_r1" value="-tokenService: TokenService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="guard" vertex="1">
-          <mxGeometry y="70" width="380" height="26" as="geometry" />
+          <mxGeometry y="70" width="420" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="guard_r2" value="-sessionRepo: SessionRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="guard" vertex="1">
-          <mxGeometry y="96" width="380" height="26" as="geometry" />
+        <mxCell id="guard_r2" value="-sharedSessionRepository: SharedSessionRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="guard" vertex="1">
+          <mxGeometry y="96" width="420" height="26" as="geometry" />
         </mxCell>
         <mxCell id="guard_r3" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;" parent="guard" vertex="1">
-          <mxGeometry y="122" width="380" height="8" as="geometry" />
+          <mxGeometry y="122" width="420" height="8" as="geometry" />
         </mxCell>
         <mxCell id="guard_r4" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="guard" vertex="1">
-          <mxGeometry y="130" width="380" height="28" as="geometry" />
+          <mxGeometry y="130" width="420" height="28" as="geometry" />
         </mxCell>
         <mxCell id="guard_r5" value="-extractTokenFromHeader(request: Request): string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="guard" vertex="1">
-          <mxGeometry y="158" width="380" height="28" as="geometry" />
+          <mxGeometry y="158" width="420" height="28" as="geometry" />
         </mxCell>
 
-        <!-- TokenService -->
-        <mxCell id="tokensvc" value="&lt;&lt;utility&gt;&gt;&#xa;TokenService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="520" y="140" width="380" height="160" as="geometry" />
+        
+        <mxCell id="tokensvc" value="&lt;&lt;utility&gt;&gt;&#10;TokenService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="680" y="140" width="450" height="160" as="geometry" />
         </mxCell>
         <mxCell id="tokensvc_r0" value="-jwtService: JwtService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="tokensvc" vertex="1">
-          <mxGeometry y="44" width="380" height="26" as="geometry" />
+          <mxGeometry y="44" width="450" height="26" as="geometry" />
         </mxCell>
         <mxCell id="tokensvc_r1" value="-accessSecret: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="tokensvc" vertex="1">
-          <mxGeometry y="70" width="380" height="26" as="geometry" />
+          <mxGeometry y="70" width="450" height="26" as="geometry" />
         </mxCell>
         <mxCell id="tokensvc_r2" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;" parent="tokensvc" vertex="1">
-          <mxGeometry y="96" width="380" height="8" as="geometry" />
+          <mxGeometry y="96" width="450" height="8" as="geometry" />
         </mxCell>
         <mxCell id="tokensvc_r3" value="+verifyAccessToken(token: string): Promise&lt;AccessTokenPayload&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="tokensvc" vertex="1">
-          <mxGeometry y="104" width="380" height="28" as="geometry" />
+          <mxGeometry y="104" width="450" height="28" as="geometry" />
         </mxCell>
 
-        <!-- AccessTokenPayload -->
-        <mxCell id="payload" value="&lt;&lt;interface&gt;&gt;&#xa;AccessTokenPayload" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="980" y="140" width="300" height="174" as="geometry" />
+        
+        <mxCell id="payload" value="&lt;&lt;interface&gt;&gt;&#10;AccessTokenPayload" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="1220" y="140" width="300" height="174" as="geometry" />
         </mxCell>
         <mxCell id="payload_r0" value="+userId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="payload" vertex="1">
           <mxGeometry y="44" width="300" height="26" as="geometry" />
@@ -65,40 +65,35 @@
           <mxGeometry y="148" width="300" height="26" as="geometry" />
         </mxCell>
 
-        <!-- SessionRepository -->
-        <mxCell id="sessionrepo" value="SessionRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="60" y="420" width="380" height="140" as="geometry" />
+        
+        <mxCell id="sessionrepo" value="&lt;&lt;repository&gt;&gt;&#10;SharedSessionRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="60" y="420" width="620" height="122" as="geometry" />
         </mxCell>
         <mxCell id="sessionrepo_r0" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="sessionrepo" vertex="1">
-          <mxGeometry y="32" width="380" height="26" as="geometry" />
+          <mxGeometry y="44" width="620" height="26" as="geometry" />
         </mxCell>
         <mxCell id="sessionrepo_r1" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;" parent="sessionrepo" vertex="1">
-          <mxGeometry y="58" width="380" height="8" as="geometry" />
+          <mxGeometry y="70" width="620" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="sessionrepo_r2" value="+findById(sessionId: number): Promise&lt;Session | null&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="sessionrepo" vertex="1">
-          <mxGeometry y="66" width="380" height="28" as="geometry" />
+        <mxCell id="sessionrepo_r2" value="+findByIdAndUserIdWithUser(sessionId: number, userId: number): Promise&lt;Session | null&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="sessionrepo" vertex="1">
+          <mxGeometry y="78" width="620" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="sessionrepo_r3" value="+updateLastActive(sessionId: number): Promise&lt;Session&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="sessionrepo" vertex="1">
-          <mxGeometry y="94" width="380" height="28" as="geometry" />
-        </mxCell>
-
-        <!-- PrismaService -->
-        <mxCell id="prisma" value="PrismaService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="520" y="420" width="320" height="110" as="geometry" />
+        <mxCell id="prisma" value="&lt;&lt;service&gt;&gt;&#10;PrismaService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="760" y="420" width="320" height="122" as="geometry" />
         </mxCell>
         <mxCell id="prisma_r0" value="+session: PrismaClient.SessionDelegate" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="prisma" vertex="1">
-          <mxGeometry y="32" width="320" height="26" as="geometry" />
+          <mxGeometry y="44" width="320" height="26" as="geometry" />
         </mxCell>
         <mxCell id="prisma_r1" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;" parent="prisma" vertex="1">
-          <mxGeometry y="58" width="320" height="8" as="geometry" />
+          <mxGeometry y="70" width="320" height="8" as="geometry" />
         </mxCell>
         <mxCell id="prisma_r2" value="+$connect(): Promise&lt;void&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="prisma" vertex="1">
-          <mxGeometry y="66" width="320" height="28" as="geometry" />
+          <mxGeometry y="78" width="320" height="28" as="geometry" />
         </mxCell>
 
-        <!-- Session Entity -->
-        <mxCell id="session" value="&lt;&lt;schema&gt;&gt;&#xa;Session" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="980" y="380" width="300" height="200" as="geometry" />
+        
+        <mxCell id="session" value="&lt;&lt;schema&gt;&gt;&#10;Session" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="1160" y="380" width="300" height="200" as="geometry" />
         </mxCell>
         <mxCell id="session_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="session" vertex="1">
           <mxGeometry y="44" width="300" height="26" as="geometry" />
@@ -119,7 +114,7 @@
           <mxGeometry y="174" width="300" height="26" as="geometry" />
         </mxCell>
 
-        <!-- Relationships -->
+        
         <mxCell id="edge1" value="uses" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="guard" target="tokensvc" edge="1">
           <mxGeometry width="160" relative="1" as="geometry" />
         </mxCell>

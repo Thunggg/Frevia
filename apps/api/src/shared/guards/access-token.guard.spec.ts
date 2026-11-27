@@ -6,15 +6,15 @@ import {
 import { Reflector } from '@nestjs/core';
 import { REQUEST_USER_KEY } from '@shared/types';
 import { AuthGuard } from './access-token.guard';
-import { PrismaService } from '../services/prisma.service';
+import { SharedSessionRepository } from '../repositories/shared-session.repo';
 import { TokenService } from '../services/token.service';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
   let reflector: Reflector;
   let tokenService: TokenService;
-  let prisma: PrismaService;
-  let sessionFindFirstMock: jest.Mock;
+  let sharedSessionRepository: SharedSessionRepository;
+  let findSessionMock: jest.Mock;
 
   beforeEach(() => {
     reflector = {
@@ -25,14 +25,12 @@ describe('AuthGuard', () => {
       verifyAccessToken: jest.fn(),
     } as unknown as TokenService;
 
-    sessionFindFirstMock = jest.fn();
-    prisma = {
-      session: {
-        findFirst: sessionFindFirstMock,
-      },
-    } as unknown as PrismaService;
+    findSessionMock = jest.fn();
+    sharedSessionRepository = {
+      findByIdAndUserIdWithUser: findSessionMock,
+    } as unknown as SharedSessionRepository;
 
-    guard = new AuthGuard(tokenService, prisma, reflector);
+    guard = new AuthGuard(tokenService, sharedSessionRepository, reflector);
   });
 
   const createMockContext = (authHeader?: string): ExecutionContext => {
@@ -57,6 +55,27 @@ describe('AuthGuard', () => {
 
     const result = await guard.canActivate(context);
     expect(result).toBe(true);
+  });
+
+  it('attaches user payload on public endpoints when valid bearer token and active session exist', async () => {
+    (reflector.getAllAndOverride as jest.Mock).mockReturnValue(true);
+    const context = createMockContext('Bearer valid-token');
+    const payload = { userId: 1, sessionId: 10, roleId: 2, roleName: 'CLIENT' };
+    (tokenService.verifyAccessToken as jest.Mock).mockResolvedValue(payload);
+    findSessionMock.mockResolvedValue({
+      id: 10,
+      user: { isBanned: false, deletedAt: null },
+    });
+
+    const result = await guard.canActivate(context);
+
+    expect(result).toBe(true);
+    expect(findSessionMock).toHaveBeenCalledWith(10, 1);
+    const request = context.switchToHttp().getRequest() as Record<
+      string,
+      unknown
+    >;
+    expect(request[REQUEST_USER_KEY]).toEqual(payload);
   });
 
   it('throws UnauthorizedException when authorization header is missing', async () => {
@@ -87,18 +106,12 @@ describe('AuthGuard', () => {
       userId: 1,
       sessionId: 10,
     });
-    sessionFindFirstMock.mockResolvedValue(null);
+    findSessionMock.mockResolvedValue(null);
 
     await expect(guard.canActivate(context)).rejects.toThrow(
       UnauthorizedException,
     );
-    expect(sessionFindFirstMock).toHaveBeenCalledWith({
-      where: { id: 10, userId: 1 },
-      select: {
-        id: true,
-        user: { select: { isBanned: true, deletedAt: true } },
-      },
-    });
+    expect(findSessionMock).toHaveBeenCalledWith(10, 1);
   });
 
   it('throws ForbiddenException when user is banned (isBanned = true)', async () => {
@@ -108,7 +121,7 @@ describe('AuthGuard', () => {
       userId: 1,
       sessionId: 10,
     });
-    sessionFindFirstMock.mockResolvedValue({
+    findSessionMock.mockResolvedValue({
       id: 10,
       user: { isBanned: true, deletedAt: null },
     });
@@ -125,7 +138,7 @@ describe('AuthGuard', () => {
       userId: 1,
       sessionId: 10,
     });
-    sessionFindFirstMock.mockResolvedValue({
+    findSessionMock.mockResolvedValue({
       id: 10,
       user: { isBanned: false, deletedAt: new Date() },
     });
@@ -140,7 +153,7 @@ describe('AuthGuard', () => {
     const context = createMockContext('Bearer valid-token');
     const payload = { userId: 1, sessionId: 10, roleId: 2, roleName: 'CLIENT' };
     (tokenService.verifyAccessToken as jest.Mock).mockResolvedValue(payload);
-    sessionFindFirstMock.mockResolvedValue({
+    findSessionMock.mockResolvedValue({
       id: 10,
       user: { isBanned: false, deletedAt: null },
     });
