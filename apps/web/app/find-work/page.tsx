@@ -36,17 +36,17 @@ export default async function FindWorkPage({
     category,
   };
 
-  // Map budget
-  if (budget === "under-5m") {
-    filter.budgetMax = 5000000;
-  } else if (budget === "5m-20m") {
-    filter.budgetMin = 5000000;
-    filter.budgetMax = 20000000;
-  } else if (budget === "20m-50m") {
-    filter.budgetMin = 20000000;
-    filter.budgetMax = 50000000;
-  } else if (budget === "over-50m") {
-    filter.budgetMin = 50000000;
+  // Map budget (USD)
+  if (budget === "under-100") {
+    filter.budgetMax = 100;
+  } else if (budget === "100-500") {
+    filter.budgetMin = 100;
+    filter.budgetMax = 500;
+  } else if (budget === "500-2000") {
+    filter.budgetMin = 500;
+    filter.budgetMax = 2000;
+  } else if (budget === "over-2000") {
+    filter.budgetMin = 2000;
   }
 
   // Map sort

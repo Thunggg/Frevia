@@ -119,7 +119,7 @@ export function FindWorkGuestView({
                   <Search className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     type="text"
-                    placeholder="Tìm theo chức danh, kỹ năng hoặc từ khóa..."
+                    placeholder="Tìm kiếm theo tiêu đề công việc..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="h-10 border-0 bg-transparent pl-10 pr-4 text-xs sm:text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -157,10 +157,10 @@ export function FindWorkGuestView({
                   className="h-10 rounded-lg border-0 bg-transparent px-3 text-xs sm:text-sm font-medium text-foreground focus:outline-hidden"
                 >
                   <option value="">Mọi mức ngân sách</option>
-                  <option value="under-5m">Dưới 5 triệu</option>
-                  <option value="5m-20m">5 triệu - 20 triệu</option>
-                  <option value="20m-50m">20 triệu - 50 triệu</option>
-                  <option value="over-50m">Trên 50 triệu</option>
+                  <option value="under-100">Dưới $100</option>
+                  <option value="100-500">$100 - $500</option>
+                  <option value="500-2000">$500 - $2,000</option>
+                  <option value="over-2000">Trên $2,000</option>
                 </select>
 
                 <Button
