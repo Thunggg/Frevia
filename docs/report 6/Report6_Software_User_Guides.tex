@@ -14,7 +14,6 @@
 \usepackage{enumitem}
 \usepackage{longtable}
 \usepackage{float}
-\usepackage{tcolorbox}
 \usepackage{booktabs}
 \usepackage[titles]{tocloft}
 \usepackage{hyperref}
@@ -44,6 +43,7 @@
 \definecolor{codebg}{RGB}{248,249,250}
 
 \hypersetup{
+  hypertexnames=false,
   colorlinks=true,
   linkcolor=black,
   urlcolor=fptblue,
@@ -53,6 +53,7 @@
 \renewcommand{\arraystretch}{1.5}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt}
+\setlength{\emergencystretch}{2em}
 
 % Column specifications
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
@@ -89,6 +90,7 @@
   showstringspaces=false
 }
 
+\newcommand{\ReportSixCombined}{}
 \begin{document}
 
 % =============================================================================
@@ -123,9 +125,10 @@
 \addcontentsline{toc}{section}{I. Record of Changes}
 
 \begin{center}
-\renewcommand{\arraystretch}{1.45}
+\small
+\renewcommand{\arraystretch}{1.25}
 \setlength{\tabcolsep}{5pt}
-\begin{longtable}{|C{2.3cm}|C{1.5cm}|C{2.4cm}|L{8.9cm}|}
+\begin{longtable}{|C{2.3cm}|C{1.7cm}|C{2.4cm}|L{8.7cm}|}
 \hline
 \rowcolor{hdrfill}\hd{Date} & \hd{\shortstack{A*, M, D}} & \hd{In charge} & \hd{Change Description} \\ \hline
 \endfirsthead
@@ -143,6 +146,7 @@
 19/11/2026 & M & TinVN & Reviewed authentication, session revocation, and administrator RBAC user instructions and verified expected output cases. \\ \hline
 21/11/2026 & M & HuyNLN & Cross-checked troubleshooting notes, figure numbering, and screenshot annotations across installation and user manual sections. \\ \hline
 24/11/2026 & M & ThuanNT & Updated cover page (November 2026), reformatted Table of Contents, consolidated Record of Changes, and compiled final PDF. \\ \hline
+27/11/2026 & M & HuyNLN & Integrated reviewed A1--A3 and assigned Client/Freelancer, identity, Expert, review, banner and approval guides; updated UI illustrations and verified the combined layout. \\ \hline
 \end{longtable}
 \end{center}
 
@@ -158,7 +162,8 @@
 \setcounter{section}{0}
 
 % Input Part A: Deliverable Package & Installation Guides
-\input{sections/sec1_deliverables_install.tex}
+% Use the reviewed assigned A1--A3 contribution once; keep the earlier source file intact.
+\input{sections/sec1_install.tex}
 
 % Input Part A (cont): Docker Compose, Local Dev, Ports & Verification
 \input{sections/sec2_docker_ai.tex}
@@ -166,10 +171,21 @@
 % Input Part B: User Manual - Overview & Module 2 (M2.01 - M2.07)
 \input{sections/sec3_m02_auth_session.tex}
 
+% Assigned Client/Freelancer account, public profile and Expert guides
+\clearpage
+\input{sections/sec3_m03_account.tex}
+\input{sections/sec3_m05_ekyc.tex}
+
 % Input Part B: Module 14 - Admin RBAC & User Management (M14.01 - M14.08)
 \input{sections/sec3_m14_admin_rbac_users.tex}
 
 % Input Part B: Module 15 - Admin Master Data Catalogs (M15.01 - M15.03)
+\begingroup
+\sloppy
 \input{sections/sec3_m15_admin_catalogs.tex}
+\endgroup
+
+% Assigned reviews, banners and approval workflows
+\input{sections/sec3_m16_reviews.tex}
 
 \end{document}

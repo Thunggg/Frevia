@@ -1,0 +1,379 @@
+\ifdefined\pdfminorversion\pdfminorversion=7\fi
+\documentclass[12pt,a4paper]{article}
+
+%====================================================
+% ENCODING & LANGUAGE
+%====================================================
+\usepackage[T5,T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese,english]{babel}
+
+%====================================================
+% FONT & MATH
+%====================================================
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+%====================================================
+% GRAPHICS & PATHS
+%====================================================
+\usepackage{graphicx}
+\graphicspath{
+  {./images/}
+  {../Report 1/}{../Report 1/image/}
+  {../Report 2/}{../Report 2/image/}{../Report 2/images/}
+  {../Report 3/}{../Report 3/image/}
+  {../Report 4/}{../Report 4/images/}
+  {../Report 5/}
+  {../report 6/}{../report 6/images/}
+}
+
+%====================================================
+% TABLES
+%====================================================
+\usepackage[table]{xcolor}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{hhline}
+\usepackage{needspace}
+\usepackage{pdflscape}
+
+%====================================================
+% PAGE LAYOUT
+%====================================================
+\usepackage{geometry}
+\geometry{
+    top=2.54cm,
+    bottom=2.54cm,
+    left=2.54cm,
+    right=2.54cm,
+    headheight=15pt
+}
+
+\setlength{\emergencystretch}{3em}
+
+%====================================================
+% SPACING
+%====================================================
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1.0cm}
+\setlength{\parskip}{5pt}
+
+%====================================================
+% COLORS
+%====================================================
+\definecolor{fptred}{RGB}{192,0,0}
+\definecolor{fptBlue}{RGB}{0,0,139}
+\definecolor{fptblue}{RGB}{46,117,181}
+\definecolor{wordblue}{RGB}{79,129,189}
+\definecolor{fptOrange}{RGB}{255,140,0}
+\definecolor{fptLightOrange}{RGB}{255,224,178}
+\definecolor{fptHeader}{RGB}{255,232,225}
+\definecolor{headerbg}{RGB}{255,232,225}
+\definecolor{tableHeaderOrange}{RGB}{255,232,225}
+\definecolor{hdrfill}{RGB}{255,232,225}
+\definecolor{fptHeaderText}{RGB}{110,37,0}
+\definecolor{fptTocBlue}{RGB}{46,116,181}
+\definecolor{codebg}{RGB}{248,249,250}
+
+%====================================================
+% SECTION NUMBERING & FORMATTING
+%====================================================
+\usepackage{titlesec}
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+
+% Part: I., II., ... (Roman numeral)
+\titleformat{\part}
+  {\normalfont\fontsize{16}{19}\selectfont\bfseries\color{fptred}}
+  {\thepart}{0.8em}{}
+
+% Section: 1., 2., ...
+\titleformat{\section}
+  {\normalfont\fontsize{13}{16}\selectfont\bfseries\color{black}}
+  {\thesection}{0.8em}{}
+
+% Subsection: 1.1, 1.2, ...
+\titleformat{\subsection}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries\color{black}}
+  {\thesubsection}{0.8em}{}
+
+% Subsubsection: 1.1.1, ...
+\titleformat{\subsubsection}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries\itshape\color{black}}
+  {\thesubsubsection}{0.8em}{}
+
+\renewcommand{\thepart}{\Roman{part}.}
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+% Reset section counter at every \part (I, II, III, IV, V, VI, VII)
+\makeatletter
+\@addtoreset{section}{part}
+\makeatother
+
+\titlespacing*{\part}{0pt}{1.5ex plus .2ex}{1.2ex plus .2ex}
+\titlespacing*{\section}{0pt}{1.4ex plus .3ex minus .2ex}{0.6ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus .2ex minus .2ex}{0.4ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{0.8ex plus .2ex minus .2ex}{0.3ex plus .2ex}
+
+%====================================================
+% HEADER & FOOTER (Clean footer matching Word sample)
+%====================================================
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+%====================================================
+% CAPTIONS
+%====================================================
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    justification=centering,
+    skip=6pt
+}
+
+%====================================================
+% TABLE OF CONTENTS FORMATTING
+%====================================================
+\usepackage{tocloft}
+
+\renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
+
+\renewcommand{\cftpartfont}{\normalfont\normalsize\bfseries}
+\renewcommand{\cftpartpagefont}{\normalfont\normalsize\bfseries}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+
+\setlength{\cftbeforepartskip}{6pt}
+\setlength{\cftbeforesecskip}{3pt}
+\setlength{\cftbeforesubsecskip}{2pt}
+
+%====================================================
+% CODE LISTINGS
+%====================================================
+\usepackage{listings}
+\lstset{
+  basicstyle=\footnotesize\ttfamily,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{black!20},
+  breaklines=true,
+  tabsize=2,
+  showstringspaces=false
+}
+
+%====================================================
+% HYPERLINKS
+%====================================================
+\usepackage[hypertexnames=false]{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=fptBlue,
+    pdftitle={Frevia - Report 7: Final Project Report},
+    pdfauthor={Group Frevia - SEP490_04}
+}
+
+%====================================================
+% CUSTOM COLUMN TYPES & MACROS
+%====================================================
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+\newcommand{\hd}[1]{\textbf{#1}}
+\newcommand{\guide}[1]{{\itshape #1\par}}
+\newcommand{\rbadge}[1]{\textcolor{fptred}{\textbf{[#1]}}}
+
+% Report 3 Mock UI & Detailed Function macros
+\newlength{\ringwidth}
+\setlength{\ringwidth}{0.4pt}
+
+\newcommand{\screenshotframe}[2][0.88]{%
+  \setlength{\fboxrule}{0.4pt}\setlength{\fboxsep}{2pt}%
+  \fcolorbox{black!20}{white}{\includegraphics[width=#1\linewidth,height=0.72\textheight,keepaspectratio]{#2}}%
+  \setlength{\fboxrule}{\ringwidth}}
+
+\newcommand{\detailhead}[1]{\textbf{#1}}
+
+\newcommand{\screenfigure}[3][0.88]{%
+  \begin{figure}[H]
+    \centering
+    \screenshotframe[#1]{#2}%
+    \caption{#3}
+  \end{figure}}
+
+\newcommand{\screenfigurepair}[3]{%
+  \begin{figure}[H]
+    \centering
+    \setlength{\fboxrule}{0.4pt}\setlength{\fboxsep}{2pt}%
+    \fcolorbox{black!20}{white}{\includegraphics[width=0.455\linewidth]{#1}}\hfill
+    \fcolorbox{black!20}{white}{\includegraphics[width=0.455\linewidth]{#2}}%
+    \setlength{\fboxrule}{\ringwidth}%
+    \caption{#3}
+  \end{figure}}
+
+\newcommand{\fnhead}[1]{%
+  \par\addvspace{10pt plus 2pt}%
+  \dimen0=\pagegoal \advance\dimen0 by -\pagetotal
+  \ifdim\dimen0<6\baselineskip \newpage\fi
+  \noindent\detailhead{#1}%
+  \par\nopagebreak}
+
+\newcommand{\sublabel}[1]{%
+  \par\addvspace{5pt}\noindent\detailhead{#1}%
+  \par\nopagebreak}
+
+\newcommand{\functionfield}[1]{\fnhead{#1}}
+
+\newcommand{\screenfield}[3][0.88]{%
+  \fnhead{Screen Layout (Mock-up Description)}%
+  \screenfigure[#1]{#2}{#3}}
+
+\newcommand{\screenfieldpair}[3]{%
+  \fnhead{Screen Layout (Mock-up Description)}%
+  \screenfigurepair{#1}{#2}{#3}}
+
+\let\brsaveitem\relax
+\newcommand{\brrulelist}{%
+  \let\brsaveitem\item
+  \def\item{\brsaveitem\brgrabref}}
+\def\brgrabref#1:{\textbf{#1}:}
+
+\newenvironment{specdatatable}[2]{%
+  \par\addvspace{3pt}%
+  \dimen0=\pagegoal \advance\dimen0 by -\pagetotal
+  \ifdim\dimen0<11\baselineskip \newpage\fi
+  \renewcommand{\arraystretch}{1.25}%
+  \Needspace{12\baselineskip}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{0.30\linewidth}|>{\raggedright\arraybackslash}p{0.65\linewidth}|}
+  \hhline{|-|-|}
+  \rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\
+  \hhline{|-|-|}
+  \endfirsthead
+  \hhline{|-|-|}
+  \rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\
+  \hhline{|-|-|}
+  \endhead
+  \hline\endfoot
+  }{%
+  \hline
+  \end{longtable}}
+
+\newenvironment{flowtable}[2]{%
+  \par\addvspace{3pt}%
+  \renewcommand{\arraystretch}{1.25}%
+  \Needspace{12\baselineskip}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{0.30\linewidth}|>{\raggedright\arraybackslash}p{0.65\linewidth}|}
+  \hhline{|-|-|}
+  \rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\
+  \hhline{|-|-|}
+  \endfirsthead
+  \hhline{|-|-|}
+  \rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\
+  \hhline{|-|-|}
+  \endhead
+  \hline\endfoot
+  }{%
+  \hline
+  \end{longtable}}
+
+% Resilient figure macro: checks Report 4 vector PDF, then local PDF, then PNG, then placeholder box
+\newcommand{\kfig}[4]{%
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../Report 4/#2.pdf}{%
+        \includegraphics[width=#1,height=0.85\textheight,keepaspectratio]{../Report 4/#2.pdf}%
+    }{%
+        \IfFileExists{#2.pdf}{%
+            \includegraphics[width=#1,height=0.85\textheight,keepaspectratio]{#2.pdf}%
+        }{%
+            \IfFileExists{../Report 4/#2.png}{%
+                \includegraphics[width=#1,height=0.85\textheight,keepaspectratio]{../Report 4/#2.png}%
+            }{%
+                \IfFileExists{#2.png}{%
+                    \includegraphics[width=#1,height=0.85\textheight,keepaspectratio]{#2.png}%
+                }{%
+                    \setlength{\fboxsep}{10pt}%
+                    \fbox{\parbox{0.8\textwidth}{\centering\textbf{[Figure: #3]}\\\small\texttt{\detokenize{#2}}}}%
+                }%
+            }%
+        }%
+    }%
+    \caption{#3}
+    \label{#4}
+\end{figure}
+}
+
+%====================================================
+% DOCUMENT
+%====================================================
+\begin{document}
+
+% Cover page
+\input{cover}
+
+% Table of contents right after cover (matching Word sample)
+\setcounter{page}{2}
+\input{table_of_contents}
+
+% Front matter sections
+\input{acknowledgement}
+\input{definition_and_acronyms}
+
+% Main sections
+\input{sections/1.Project_Introduction}
+\newpage
+
+\input{sections/2.Project_Management_Plan}
+\newpage
+
+\input{sections/3.Software_Requirement_Specification}
+\newpage
+
+\input{sections/4.Software_Design_Description}
+\newpage
+
+\input{sections/5.Software_Testing_Documentation}
+\newpage
+
+\input{sections/6.Release_Package_and_User_Guides}
+\newpage
+
+\input{sections/7.Appendix}
+
+\end{document}
