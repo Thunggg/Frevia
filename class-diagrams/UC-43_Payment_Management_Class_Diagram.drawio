@@ -428,81 +428,81 @@
 
     
     
-    <mxCell id="pay_e_ctrl_svc" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.45;exitY=0.0;exitDx=0;exitDy=0;entryX=0.45;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="pay_ctrl" target="pay_svc" edge="1">
+    <mxCell id="pay_e_ctrl_svc" value="calls" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.45;exitY=0.0;exitDx=0;exitDy=0;entryX=0.45;entryY=0.0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_ctrl" target="pay_svc" edge="1">
       <mxGeometry relative="1" as="geometry">
         <Array as="points"><mxPoint x="274" y="100" /><mxPoint x="1643" y="100" /></Array></mxGeometry>
     </mxCell>
 
     
-    <mxCell id="pay_e_ctrl_dtoIntent" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.14;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_ctrl" target="pay_dtoIntent" edge="1">
+    <mxCell id="pay_e_ctrl_dtoIntent" value="" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.144;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_ctrl" target="pay_dtoIntent" edge="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <mxCell id="pay_e_ctrl_dtoCheckout" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_ctrl" target="pay_dtoCheckout" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="584" y="407" /><mxPoint x="584" y="422" /></Array></mxGeometry>
+    <mxCell id="pay_e_ctrl_dtoCheckout" value="" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.53;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_ctrl" target="pay_dtoCheckout" edge="1">
+      <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <mxCell id="pay_e_ctrl_dtoCard" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.86;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_ctrl" target="pay_dtoCard" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="736" y="585" /><mxPoint x="736" y="579" /></Array></mxGeometry>
-    </mxCell>
-
-    
-    <mxCell id="pay_e_svc_dtoSettlement" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.14;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_svc" target="pay_dtoSettlement" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="1376" y="226" /><mxPoint x="1376" y="757" /></Array></mxGeometry>
-    </mxCell>
-
-    <mxCell id="pay_e_svc_dtoTx" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.86;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_svc" target="pay_dtoTx" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="1224" y="562" /><mxPoint x="1224" y="1067" /></Array></mxGeometry>
-    </mxCell>
-
-    
-    <mxCell id="pay_e_svc_stripe" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="pay_svc" target="pay_uStripe" edge="1">
+    <mxCell id="pay_e_ctrl_dtoCard" value="" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.848;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_ctrl" target="pay_dtoCard" edge="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
     
-    <mxCell id="pay_e_svc_repo" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.14;entryDx=0;entryDy=0;" parent="1" source="pay_svc" target="pay_repo" edge="1">
+    <mxCell id="pay_e_svc_dtoSettlement" value="" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.14;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_svc" target="pay_dtoSettlement" edge="1">
       <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="1964" y="394" /><mxPoint x="1964" y="209" /></Array></mxGeometry>
+        <Array as="points"><mxPoint x="1250" y="226" /><mxPoint x="1250" y="757" /></Array></mxGeometry>
+    </mxCell>
+
+    <mxCell id="pay_e_svc_dtoTx" value="" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.86;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_svc" target="pay_dtoTx" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points"><mxPoint x="1340" y="562" /><mxPoint x="1340" y="1067" /></Array></mxGeometry>
     </mxCell>
 
     
-    <mxCell id="pay_e_stripe_repo" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.86;entryDx=0;entryDy=0;" parent="1" source="pay_uStripe" target="pay_repo" edge="1">
+    <mxCell id="pay_e_svc_stripe" value="calls" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_svc" target="pay_uStripe" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    
+    <mxCell id="pay_e_svc_repo" value="calls" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.192;exitDx=0;exitDy=0;entryX=0.0;entryY=0.258;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_svc" target="pay_repo" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        </mxGeometry>
+    </mxCell>
+
+    
+    <mxCell id="pay_e_stripe_repo" value="uses" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.86;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_uStripe" target="pay_repo" edge="1">
       <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="2116" y="826" /><mxPoint x="2116" y="460" /></Array></mxGeometry>
     </mxCell>
 
     
-    <mxCell id="pay_e_repo_schemaTx" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.86;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_repo" target="pay_schemaTx" edge="1">
+    <mxCell id="pay_e_repo_schemaTx" value="maps to" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.86;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_repo" target="pay_schemaTx" edge="1">
       <mxGeometry relative="1" as="geometry">
         <Array as="points"><mxPoint x="2704" y="460" /><mxPoint x="2704" y="1109" /></Array></mxGeometry>
     </mxCell>
 
-    <mxCell id="pay_e_repo_schemaContract" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.14;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_repo" target="pay_schemaContract" edge="1">
+    <mxCell id="pay_e_repo_schemaContract" value="maps to" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.14;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_repo" target="pay_schemaContract" edge="1">
       <mxGeometry relative="1" as="geometry">
         <Array as="points"><mxPoint x="2856" y="209" /><mxPoint x="2856" y="497" /></Array></mxGeometry>
     </mxCell>
 
-    <mxCell id="pay_e_repo_schemaMilestone" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_repo" target="pay_schemaMilestone" edge="1">
+    <mxCell id="pay_e_repo_schemaMilestone" value="maps to" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_repo" target="pay_schemaMilestone" edge="1">
       <mxGeometry relative="1" as="geometry">
         <Array as="points"><mxPoint x="2780" y="334" /><mxPoint x="2780" y="761" /></Array></mxGeometry>
     </mxCell>
 
     
     
-    <mxCell id="pay_rel_contract_milestone" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="pay_schemaContract" target="pay_schemaMilestone" edge="1">
+    <mxCell id="pay_rel_contract_milestone" value="1..*" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_schemaContract" target="pay_schemaMilestone" edge="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
     
-    <mxCell id="pay_rel_milestone_tx" value="0..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="pay_schemaMilestone" target="pay_schemaTx" edge="1">
+    <mxCell id="pay_rel_milestone_tx" value="0..*" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_schemaMilestone" target="pay_schemaTx" edge="1">
       <mxGeometry relative="1" as="geometry">
         </mxGeometry>
     </mxCell>
 
     
-    <mxCell id="pay_rel_user_milestone" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_schemaUser" target="pay_schemaMilestone" edge="1">
+    <mxCell id="pay_rel_user_milestone" value="1..*" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="pay_schemaUser" target="pay_schemaMilestone" edge="1">
       <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="3255" y="245" /><mxPoint x="3255" y="761" /></Array></mxGeometry>
     </mxCell>
 
