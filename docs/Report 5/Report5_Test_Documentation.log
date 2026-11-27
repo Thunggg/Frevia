@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.10.29)  26 NOV 2026 23:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.10.29)  27 NOV 2026 12:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -429,7 +429,7 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \@floatcapt=\box58
 )
 Package hyperref Info: Option `colorlinks' set `true' on input line 28.
-LaTeX Font Info:    Trying to load font information for T1+ptm on input line 86
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 87
 .
 
 (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
@@ -442,24 +442,24 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 ) (Report5_Test_Documentation.aux)
 \openout1 = `Report5_Test_Documentation.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
 \big@size=\dimen186
 
 *geometry* driver: auto-detecting
@@ -526,7 +526,7 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring ON on input line 86.
+Package hyperref Info: Link coloring ON on input line 87.
  (Report5_Test_Documentation.out) (Report5_Test_Documentation.out)
 \@outlinefile=\write3
 \openout3 = `Report5_Test_Documentation.out'.
@@ -534,7 +534,7 @@ Package hyperref Info: Link coloring ON on input line 86.
 <fpt_logo.png, id=85, 1284.8pt x 500.87125pt>
 File: fpt_logo.png Graphic file (type png)
 <use fpt_logo.png>
-Package pdftex.def Info: fpt_logo.png  used on input line 93.
+Package pdftex.def Info: fpt_logo.png  used on input line 94.
 (pdftex.def)             Requested size: 204.85846pt x 79.85825pt.
 
 [1
@@ -587,72 +587,72 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.102 \newpage
+l.103 \newpage
                [1] (Report5_Test_Documentation.lot)
 \tf@lot=\write5
 \openout5 = `Report5_Test_Documentation.lot'.
 
  [2] [3] [4] [5]
-Overfull \hbox (6.40157pt too wide) in paragraph at lines 221--222
+Overfull \hbox (6.40157pt too wide) in paragraph at lines 222--223
 \T1/ptm/m/n/12 ment zones, to-gether with bilin-gual lo-cal-iza-tion (\T1/cmtt/
 m/n/12 en\T1/ptm/m/n/12 /\T1/cmtt/m/n/12 vi\T1/ptm/m/n/12 ) and re-spon-sive li
 ght/dark themes. 
  []
 
 
-Overfull \hbox (4.46881pt too wide) in paragraph at lines 245--246
+Overfull \hbox (4.46881pt too wide) in paragraph at lines 246--247
 []\T1/ptm/b/n/12 In-charge: \T1/ptm/m/n/12 All De-vel-op-ers (\T1/cmtt/m/n/12 N
 guyen Tien Thuan\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 Vo Nhut Tin\T1/ptm/m/n/12 , \T
 1/cmtt/m/n/12 Tran Phat Tai\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 Nguyen
  []
 
 [6]
-Underfull \hbox (badness 10000) in paragraph at lines 249--249
+Underfull \hbox (badness 10000) in paragraph at lines 250--250
 \T1/cmtt/m/n/12 ForumPostsService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 IdentityVerif
 icationsAdminService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 AuthService\T1/ptm/m/n/12 
 ,
  []
 
 
-Underfull \hbox (badness 1675) in paragraph at lines 249--249
+Underfull \hbox (badness 1675) in paragraph at lines 250--250
 \T1/cmtt/m/n/12 UsersService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 ExpertProfileServi
 ce\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 BannersAdminService\T1/ptm/m/n/12 , \T1/cmtt
 /m/n/12 SkillsAdmin
  []
 
 
-Overfull \hbox (8.1912pt too wide) in paragraph at lines 257--258
+Overfull \hbox (8.1912pt too wide) in paragraph at lines 258--259
 \T1/ptm/m/n/12 cov-er-age), sup-ported by the live back-end Jest run (\T1/cmtt/
 m/n/12 Report5_Unit_Test_Backend.html\T1/ptm/m/n/12 :
  []
 
 
-Overfull \hbox (1.02023pt too wide) in paragraph at lines 267--268
+Overfull \hbox (1.02023pt too wide) in paragraph at lines 268--269
 []\T1/ptm/b/n/12 Infrastructure: \T1/ptm/m/n/12 Docker Com-pose stack run-ning 
 NestJS 11 API (\T1/cmtt/m/n/12 localhost:3002\T1/ptm/m/n/12 ), Next.js
  []
 
 
-Underfull \hbox (badness 1924) in paragraph at lines 270--270
+Underfull \hbox (badness 1924) in paragraph at lines 271--271
 \T1/ptm/m/n/12 unique con-straints, soft-delete fil-ter-ing (\T1/cmtt/m/n/12 de
 letedAt\T1/ptm/m/n/12 ), and trans-ac-tional roll-back
  []
 
 [7] [8] [9] [10]
-Overfull \hbox (2.64377pt too wide) in paragraph at lines 385--386
+Overfull \hbox (2.64377pt too wide) in paragraph at lines 386--387
 []\T1/ptm/b/n/12 Localization & Cross-Browser Test-ing: \T1/ptm/m/n/12 Run-ning
  au-to-mated i18n checks (\T1/cmtt/m/n/12 check-i18n
  []
 
 
-Overfull \hbox (8.32957pt too wide) in paragraph at lines 389--390
+Overfull \hbox (8.32957pt too wide) in paragraph at lines 390--391
 []\T1/ptm/m/n/12 100% of unau-tho-rized re-quests are blocked with \T1/cmtt/m/n
 /12 401 Unauthorized \T1/ptm/m/n/12 or \T1/cmtt/m/n/12 403 Forbidden\T1/ptm/m/n
 /12 . 
  []
 
 [11] [12] [13] [14] [15] [16] [17]
-Overfull \hbox (1.5469pt too wide) in paragraph at lines 535--536
+Overfull \hbox (1.5469pt too wide) in paragraph at lines 536--537
 []\T1/ptm/m/n/12 Based on the recorded test re-sults across 2,005 unit test cas
 es (1,972 passed, 33 untested),
  []
@@ -669,7 +669,7 @@ ged.
 Here is how much of TeX's memory you used:
  13634 strings out of 467871
  216121 string characters out of 5417891
- 649746 words of memory out of 5000000
+ 649739 words of memory out of 5000000
  42259 multiletter control sequences out of 15000+600000
  705523 words of font info for 150 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -686,7 +686,7 @@ vo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/Len
 ovo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/L
 enovo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/
 Lenovo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Report5_Test_Documentation.pdf (19 pages, 250898 bytes).
+Output written on Report5_Test_Documentation.pdf (19 pages, 250907 bytes).
 PDF statistics:
  416 PDF objects out of 1000 (max. 8388607)
  55 named destinations out of 1000 (max. 500000)

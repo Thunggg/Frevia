@@ -77,9 +77,10 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyfoot[R]{Page \thepage}
+\fancyfoot[C]{\small\thepage}
 \renewcommand{\headrulewidth}{0pt}
-\fancypagestyle{plain}{\fancyhf{}\fancyfoot[R]{Page \thepage}\renewcommand{\headrulewidth}{0pt}}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\thepage}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
 
 \newcommand{\hd}[1]{\textbf{#1}}
 
