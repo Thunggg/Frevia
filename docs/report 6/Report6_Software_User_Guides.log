@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  26 NOV 2026 19:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.10.29)  27 NOV 2026 12:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -6,9 +6,9 @@ entering extended mode
 (Report6_Software_User_Guides.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
 Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
 File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 )
 \c@part=\count275
@@ -23,15 +23,15 @@ File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 \belowcaptionskip=\skip50
 \bibindent=\dimen148
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
 Package: inputenc 2024/02/08 v1.3d Input encoding file
 \inpenc@prehook=\toks17
 \inpenc@posthook=\toks18
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
 Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\mathptmx.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\mathptmx.sty
 Package: mathptmx 2020/03/25 PSNFSS-v9.3 Times w/ Math, improved (SPQR, WaS) 
 LaTeX Font Info:    Redeclaring symbol font `operators' on input line 28.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
@@ -67,24 +67,24 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> OT1/ptm/m/it on input line 35.
 LaTeX Info: Redefining \hbar on input line 50.
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
 Package: amsmath 2025/07/09 v2.17z AMS math features
 \@mathmargin=\skip51
 
 For additional information on amsmath, use the `?' option.
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
 Package: amstext 2024/11/17 v2.01 AMS text
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks19
 \ex@=\dimen149
 ))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen150
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
 \inf@bad=\count283
@@ -135,17 +135,17 @@ LaTeX Info: Redefining \Relbar on input line 970.
 LaTeX Info: Redefining \[ on input line 2950.
 LaTeX Info: Redefining \] on input line 2951.
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
 Package: geometry 2026/03/07 v6.0 Page Geometry
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
 Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
 \KV@toks@=\toks24
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
 ))
 \Gm@cnth=\count295
@@ -161,18 +161,20 @@ Package: iftex 2024/12/12 v1.0g TeX engine tests
 \Gm@layoutvoffset=\dimen165
 \Gm@dimlist=\toks25
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg)
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Driver file: pdftex.def on input line 274.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.de
+f
 File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx
 )
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
 Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
@@ -183,10 +185,11 @@ Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
 Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
 Package: colortbl 2026/05/01 v1.0l Color table columns (DPC)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
 Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
 \col@sep=\dimen166
 \ar@mcellbox=\box55
@@ -200,27 +203,28 @@ Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
 \minrowclearance=\skip56
 \rownum=\count298
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
 Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
 Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.cf
-g
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.
+cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 106.
 )
 \Gin@req@height=\dimen168
 \Gin@req@width=\dimen169
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\hhline.sty
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\hhline.sty
 Package: hhline 2020/01/04 v2.04 Table rule package (DPC)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
 Package: titlesec 2025/01/04 v2.17 Sectioning titles
 \ttl@box=\box57
 \beforetitleunit=\skip57
@@ -231,8 +235,8 @@ Package: titlesec 2025/01/04 v2.17 Sectioning titles
 \titlewidth=\dimen172
 \titlewidthlast=\dimen173
 \titlewidthfirst=\dimen174
-)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.st
+y
 Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 
 \f@nch@headwidth=\skip59
@@ -251,7 +255,7 @@ Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 \f@nch@widthR=\skip72
 \@temptokenb=\toks29
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
 \lst@mode=\count299
 \lst@gtempboxa=\box58
 \lst@token=\toks30
@@ -265,16 +269,15 @@ Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 \lst@lineno=\count304
 \lst@maxwidth=\dimen178
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstpatch.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstpatch.sty
 File: lstpatch.sty 2025/11/14 1.11b (Carsten Heinz)
-)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
 File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
 \c@lstnumber=\count305
 \lst@skipnumbers=\count306
 \lst@framebox=\box59
-)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cf
+g
 File: listings.cfg 2025/11/14 1.11b listings configuration
 ))
 Package: listings 2025/11/14 1.11b (Carsten Heinz)
@@ -285,7 +288,7 @@ Package: listings 2025/11/14 1.11b (Carsten Heinz)
     but found:
         2025/11/14 1.11b (Carsten Heinz)
     so I'm assuming it got fixed.
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
 Package: enumitem 2025/02/06 v3.11 Customized lists
 \labelindent=\skip73
 \enit@outerparindent=\dimen179
@@ -293,8 +296,7 @@ Package: enumitem 2025/02/06 v3.11 Customized lists
 \enit@inbox=\box60
 \enit@count@id=\count307
 \enitdp@description=\count308
-)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty
 Package: longtable 2025-10-13 v4.24 Multi-page Table package (DPC)
 \LTleft=\skip74
 \LTright=\skip75
@@ -313,7 +315,7 @@ Package: longtable 2025-10-13 v4.24 Multi-page Table package (DPC)
 \c@LT@chunks=\count313
 \LT@p@ftn=\toks32
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count314
 \float@exts=\toks33
@@ -321,46 +323,49 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \@float@everytoks=\toks34
 \@floatcapt=\box67
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tcolorbox\tcolorbox.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tcolorbox\tcolorbox.st
+y
 Package: tcolorbox 2025/11/28 version 6.9.0 text color boxes
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.s
-ty
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz
+.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil-
-common.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.s
+ty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfuti
+l-common.tex
 \pgfutil@everybye=\toks35
 \pgfutil@tempdima=\dimen181
 \pgfutil@tempdimb=\dimen182
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil-
-latex.def
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfuti
+l-latex.def
 \pgfutil@abb=\box68
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.c
-ode.tex
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs
+.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex
+)
 Package: pgfrcs 2025-08-29 v3.1.11a (3.1.11a)
 ))
 Package: pgf 2025-08-29 v3.1.11a (3.1.11a)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.s
-ty
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.s
-ty
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsys
-.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore
+.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys
+.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfs
+ys.code.tex
 Package: pgfsys 2025-08-29 v3.1.11a (3.1.11a)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys.
-code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkey
+s.code.tex
 \pgfkeys@pathtoks=\toks36
 \pgfkeys@temptoks=\toks37
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeysl
-ibraryfiltered.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkey
+slibraryfiltered.code.tex
 \pgfkeys@tmptoks=\toks38
 ))
 \pgf@x=\dimen183
@@ -384,40 +389,40 @@ ibraryfiltered.code.tex
 \t@pgf@tokc=\toks41
 \pgf@sys@id@count=\count319
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.cf
-g
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.
+cfg
 File: pgf.cfg 2025-08-29 v3.1.11a (3.1.11a)
 )
 Driver file for pgf: pgfsys-pdftex.def
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsys
--pdftex.def
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfs
+ys-pdftex.def
 File: pgfsys-pdftex.def 2025-08-29 v3.1.11a (3.1.11a)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsys
--common-pdf.def
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfs
+ys-common-pdf.def
 File: pgfsys-common-pdf.def 2025-08-29 v3.1.11a (3.1.11a)
 )))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsys
-softpath.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfs
+yssoftpath.code.tex
 File: pgfsyssoftpath.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgfsyssoftpath@smallbuffer@items=\count320
 \pgfsyssoftpath@bigbuffer@items=\count321
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsys
-protocol.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfs
+ysprotocol.code.tex
 File: pgfsysprotocol.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 ))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+re.code.tex
 Package: pgfcore 2025-08-29 v3.1.11a (3.1.11a)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code.
-tex
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.c
-ode.tex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparser
-.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.cod
+e.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil
+.code.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathpars
+er.code.tex
 \pgfmath@dimen=\dimen193
 \pgfmath@count=\count322
 \pgfmath@box=\box69
@@ -425,34 +430,34 @@ ode.tex)
 \pgfmath@stack@operand=\toks43
 \pgfmath@stack@operation=\toks44
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfuncti
-ons.code.tex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfuncti
-ons.basic.code.tex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfuncti
-ons.trigonometric.code.tex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfuncti
-ons.random.code.tex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfuncti
-ons.comparison.code.tex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfuncti
-ons.base.code.tex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfuncti
-ons.round.code.tex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfuncti
-ons.misc.code.tex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfuncti
-ons.integerarithmetics.code.tex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.c
-ode.tex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat.
-code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunc
+tions.code.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunc
+tions.basic.code.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunc
+tions.trigonometric.code.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunc
+tions.random.code.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunc
+tions.comparison.code.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunc
+tions.base.code.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunc
+tions.round.code.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunc
+tions.misc.code.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunc
+tions.integerarithmetics.code.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc
+.code.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloa
+t.code.tex
 \c@pgfmathroundto@lastzeros=\count323
 ))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.t
-ex)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-points.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code
+.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+repoints.code.tex
 File: pgfcorepoints.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@picminx=\dimen194
 \pgf@picmaxx=\dimen195
@@ -469,129 +474,129 @@ File: pgfcorepoints.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@zx=\dimen262
 \pgf@zy=\dimen263
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-pathconstruct.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+repathconstruct.code.tex
 File: pgfcorepathconstruct.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@path@lastx=\dimen264
 \pgf@path@lasty=\dimen265
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-pathusage.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+repathusage.code.tex
 File: pgfcorepathusage.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@shorten@end@additional=\dimen266
 \pgf@shorten@start@additional=\dimen267
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-scopes.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+rescopes.code.tex
 File: pgfcorescopes.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgfpic=\box70
 \pgf@hbox=\box71
 \pgf@layerbox@main=\box72
 \pgf@picture@serial@count=\count324
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-graphicstate.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+regraphicstate.code.tex
 File: pgfcoregraphicstate.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgflinewidth=\dimen268
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-transformations.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+retransformations.code.tex
 File: pgfcoretransformations.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@pt@x=\dimen269
 \pgf@pt@y=\dimen270
 \pgf@pt@temp=\dimen271
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-quick.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+requick.code.tex
 File: pgfcorequick.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-objects.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+reobjects.code.tex
 File: pgfcoreobjects.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-pathprocessing.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+repathprocessing.code.tex
 File: pgfcorepathprocessing.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-arrows.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+rearrows.code.tex
 File: pgfcorearrows.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgfarrowsep=\dimen272
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-shade.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+reshade.code.tex
 File: pgfcoreshade.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@max=\dimen273
 \pgf@sys@shading@range@num=\count325
 \pgf@shadingcount=\count326
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-image.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+reimage.code.tex
 File: pgfcoreimage.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-external.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+reexternal.code.tex
 File: pgfcoreexternal.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgfexternal@startupbox=\box73
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-layers.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+relayers.code.tex
 File: pgfcorelayers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-transparency.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+retransparency.code.tex
 File: pgfcoretransparency.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-patterns.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+repatterns.code.tex
 File: pgfcorepatterns.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
-rdf.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfco
+rerdf.code.tex
 File: pgfcorerdf.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodules
-hapes.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodul
+eshapes.code.tex
 File: pgfmoduleshapes.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgfnodeparttextbox=\box74
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodulep
-lot.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodul
+eplot.code.tex
 File: pgfmoduleplot.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfcom
-p-version-0-65.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfc
+omp-version-0-65.sty
 Package: pgfcomp-version-0-65 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@nodesepstart=\dimen274
 \pgf@nodesepend=\dimen275
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfcom
-p-version-1-18.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfc
+omp-version-1-18.sty
 Package: pgfcomp-version-1-18 2025-08-29 v3.1.11a (3.1.11a)
 ))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.sty
-
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.st
-y
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys.
-code.tex))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code.
-tex))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.c
-ode.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.s
+ty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.
+sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkey
+s.code.tex))
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.cod
+e.tex))
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor
+.code.tex
 Package: pgffor 2025-08-29 v3.1.11a (3.1.11a)
 \pgffor@iter=\dimen276
 \pgffor@skip=\dimen277
 \pgffor@stack=\toks45
 \pgffor@toks=\toks46
 ))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tikz
-\tikz.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/ti
+kz\tikz.code.tex
 Package: tikz 2025-08-29 v3.1.11a (3.1.11a)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibra
-ryplothandlers.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflib
+raryplothandlers.code.tex
 File: pgflibraryplothandlers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@plot@mark@count=\count327
 \pgfplotmarksize=\dimen278
@@ -613,8 +618,8 @@ File: pgflibraryplothandlers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \tikznumberofcurrentchild=\count330
 \tikz@fig@count=\count331
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodulem
-atrix.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodul
+ematrix.code.tex
 File: pgfmodulematrix.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgfmatrixcurrentrow=\count332
 \pgfmatrixcurrentcolumn=\count333
@@ -622,24 +627,24 @@ File: pgfmodulematrix.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )
 \tikz@expandcount=\count335
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tikz
-/libraries\tikzlibrarytopaths.code.tex
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/ti
+kz/libraries\tikzlibrarytopaths.code.tex
 File: tikzlibrarytopaths.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\verbatim.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\verbatim.sty
 Package: verbatim 2024-01-22 v1.5x LaTeX2e package for verbatim enhancements
 \every@verbatim=\toks47
 \verbatim@line=\toks48
 \verbatim@in@stream=\read3
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/environ\environ.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/environ\environ.sty
 Package: environ 2014/05/04 v0.3 A new way to define environments
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/trimspaces\trimspaces.st
-y
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/trimspaces\trimspaces.
+sty
 Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 ))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
 Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
 \etb@tempcnta=\count336
 )
@@ -657,7 +662,7 @@ Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
 \tcb@temp=\box86
 \tcb@temp=\box87
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \heavyrulewidth=\dimen288
 \lightrulewidth=\dimen289
@@ -677,10 +682,12 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@lastruleclass=\count343
 \@thisrulewidth=\dimen300
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/needspace\needspace.st
+y
+Package: needspace 2026/10/13 v1.3f reserve vertical space
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
 Package: caption 2023/08/05 v3.6o Customizing captions (AR)
-
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
 Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
 \caption@tempdima=\dimen301
 \captionmargin=\dimen302
@@ -698,11 +705,10 @@ Package caption Info: float package is loaded.
 Package caption Info: listings package is loaded.
 Package caption Info: longtable package is loaded.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\ltcaption.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/caption\ltcaption.sty
 Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
-))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty
-Package: tocloft 2026-09-12 v3.0c parameterised ToC, etc., typesetting
+)) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty
+Package: tocloft 2026-08-21 v3.0b parameterised ToC, etc., typesetting
 Package tocloft Info: The document has section divisions on input line 64.
 \cftparskip=\skip78
 \cftbeforetoctitleskip=\skip79
@@ -737,71 +743,76 @@ Package tocloft Info: The document has section divisions on input line 64.
 \cftbeforetabskip=\skip106
 \cfttabindent=\skip107
 \cfttabnumwidth=\skip108
-)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.st
+y
 Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.st
+y
 Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefinek
-eys.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefin
+ekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.st
-y
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.
+sty
 Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
- (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
 Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds.
-sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmd
+s.sty
 Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
 )
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.st
-y
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.
+sty
 Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
-)) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+))
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
 Package: nameref 2025-06-21 v2.57 Cross-referencing by name of section
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettitl
-estring.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\getti
+tlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.st
+y
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
 \c@section@level=\count348
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.st
-y
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.
+sty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
 \@linkdim=\dimen309
 \Hy@linkcounter=\count349
 \Hy@pagecounter=\count350
- (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
 \Hy@SavedSpaceFactor=\count351
-
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
@@ -815,18 +826,18 @@ Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4462.
 \c@Hy@tempcnt=\count352
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4801.
 \XeTeXLinkMargin=\dimen310
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc.
-sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcal
+c.sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
@@ -846,17 +857,17 @@ Package hyperref Info: PDF/A mode OFF on input line 6108.
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
 File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
 \Fld@listcount=\count357
 \c@bookmark@seq@number=\count358
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfile
-check.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfi
+lecheck.sty
 Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniqueco
-unter.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\unique
+counter.sty
 Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
@@ -864,38 +875,38 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip109
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 82.
+Package hyperref Info: Option `colorlinks' set `true' on input line 83.
 LaTeX Font Info:    Trying to load font information for T1+ptm on input line 12
-6.
+3.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdft
-ex.def
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pd
+ftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count359
 ) (Report6_Software_User_Guides.aux)
 \openout1 = `Report6_Software_User_Guides.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -913,8 +924,8 @@ LaTeX Font Info:    ... okay on input line 126.
 * \textheight=731.23584pt
 * \oddsidemargin=13.08827pt
 * \evensidemargin=13.08827pt
-* \topmargin=-52.36449pt
-* \headheight=12.0pt
+* \topmargin=-55.36449pt
+* \headheight=15.0pt
 * \headsep=25.0pt
 * \topskip=12.0pt
 * \footskip=30.0pt
@@ -932,8 +943,8 @@ LaTeX Font Info:    ... okay on input line 126.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
-i
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.m
+kii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count360
 \scratchdimen=\dimen313
@@ -947,64 +958,64 @@ i
 \makeMPintoPDFobject=\count365
 \everyMPtoPDFconversion=\toks50
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-ba
-se.sty
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-
+base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 85.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cf
-g
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.
+cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 \c@lstlisting=\count366
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring ON on input line 126.
+Package hyperref Info: Link coloring ON on input line 123.
  (Report6_Software_User_Guides.out) (Report6_Software_User_Guides.out)
 \@outlinefile=\write4
 \openout4 = `Report6_Software_User_Guides.out'.
 
-<fpt_logo_r6.png, id=70, 1284.8pt x 500.87125pt>
+<fpt_logo_r6.png, id=86, 1284.8pt x 500.87125pt>
 File: fpt_logo_r6.png Graphic file (type png)
 <use fpt_logo_r6.png>
-Package pdftex.def Info: fpt_logo_r6.png  used on input line 135.
+Package pdftex.def Info: fpt_logo_r6.png  used on input line 132.
 (pdftex.def)             Requested size: 184.9429pt x 72.09329pt.
 
 [1
 
-{C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ASUS/
-AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./fpt_logo_r6.png>]
- (Report6_Software_User_Guides.toc
+{C:/Users/Lenovo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Len
+ovo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./fpt_logo_r6.p
+ng>] (Report6_Software_User_Guides.toc
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
  1.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line
  1.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omlztmcm.fd
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line
  1.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omsztmcm.fd
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line
  1.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omxztmcm.fd
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 1
 .
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
@@ -1022,7 +1033,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.151 \newpage
+l.148 \newpage
                [1] (Report6_Software_User_Guides.lof [2])
 \tf@lof=\write6
 \openout6 = `Report6_Software_User_Guides.lof'.
@@ -1033,17 +1044,17 @@ l.151 \newpage
 \openout7 = `Report6_Software_User_Guides.lot'.
 
  [4]
+Overfull \hbox (0.32083pt too wide) in alignment at lines 164--167
+ [] [] [] [] 
+ []
+
+
 Overfull \hbox (0.32083pt too wide) in alignment at lines 167--170
  [] [] [] [] 
  []
 
 
-Overfull \hbox (0.32083pt too wide) in alignment at lines 170--173
- [] [] [] [] 
- []
-
-
-Overfull \hbox (0.32083pt too wide) in alignment at lines 173--185
+Overfull \hbox (0.32083pt too wide) in alignment at lines 170--183
  [] [] [] [] 
  []
 
@@ -1076,13 +1087,13 @@ l.30 \end{longtable}
                     
 ignored error: Infinite glue shrinkage found in box being split [6] [7]
 [8]
-<images/install/a01_git_download.png, id=262, 1445.4pt x 903.375pt>
+<images/install/a01_git_download.png, id=357, 1445.4pt x 903.375pt>
 File: images/install/a01_git_download.png Graphic file (type png)
 <use images/install/a01_git_download.png>
 Package pdftex.def Info: images/install/a01_git_download.png  used on input lin
 e 112.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-<images/install/a02_nodejs_download.png, id=264, 1445.4pt x 903.375pt>
+<images/install/a02_nodejs_download.png, id=359, 1445.4pt x 903.375pt>
 File: images/install/a02_nodejs_download.png Graphic file (type png)
 <use images/install/a02_nodejs_download.png>
 Package pdftex.def Info: images/install/a02_nodejs_download.png  used on input 
@@ -1095,14 +1106,14 @@ wn-load por-tal at [][]$\T1/cmtt/m/n/12 https : / / nodejs . org / en / downloa
 d$[][]\T1/ptm/m/n/12 . 
  []
 
-<images/install/a03_docker_download.png, id=273, 1445.4pt x 903.375pt>
+<images/install/a03_docker_download.png, id=368, 1445.4pt x 903.375pt>
 File: images/install/a03_docker_download.png Graphic file (type png)
 <use images/install/a03_docker_download.png>
 Package pdftex.def Info: images/install/a03_docker_download.png  used on input 
 line 145.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
 [10 <./images/install/a02_nodejs_download.png (PNG copy)>]
-<images/install/a04_env_check_versions.png, id=284, 1445.4pt x 903.375pt>
+<images/install/a04_env_check_versions.png, id=379, 1445.4pt x 903.375pt>
 File: images/install/a04_env_check_versions.png Graphic file (type png)
 <use images/install/a04_env_check_versions.png>
 Package pdftex.def Info: images/install/a04_env_check_versions.png  used on inp
@@ -1123,20 +1134,20 @@ Overfull \hbox (2.9444pt too wide) in paragraph at lines 168--169
 
 ignored error: Infinite glue shrinkage found in box being split [12 <./images/i
 nstall/a04_env_check_versions.png (PNG copy)>]
-<images/install/a05_clone_and_install.png, id=296, 1445.4pt x 903.375pt>
+<images/install/a05_clone_and_install.png, id=391, 1445.4pt x 903.375pt>
 File: images/install/a05_clone_and_install.png Graphic file (type png)
 <use images/install/a05_clone_and_install.png>
 Package pdftex.def Info: images/install/a05_clone_and_install.png  used on inpu
 t line 198.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
  [13 <./images/install/a05_clone_and_install.png (PNG copy)>]
-<images/install/a06_env_configuration.png, id=302, 1445.4pt x 903.375pt>
+<images/install/a06_env_configuration.png, id=397, 1445.4pt x 903.375pt>
 File: images/install/a06_env_configuration.png Graphic file (type png)
 <use images/install/a06_env_configuration.png>
 Package pdftex.def Info: images/install/a06_env_configuration.png  used on inpu
 t line 211.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-<images/install/a07_prisma_migrate_seed.png, id=303, 1445.4pt x 903.375pt>
+<images/install/a07_prisma_migrate_seed.png, id=398, 1445.4pt x 903.375pt>
 File: images/install/a07_prisma_migrate_seed.png Graphic file (type png)
 <use images/install/a07_prisma_migrate_seed.png>
 Package pdftex.def Info: images/install/a07_prisma_migrate_seed.png  used on in
@@ -1164,20 +1175,20 @@ ces (\T1/cmtt/m/n/12 id-verification\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 cv-matchin
 g\T1/ptm/m/n/12 ,
  []
 
-<images/install/a08_docker_compose_up.png, id=332, 1445.4pt x 903.375pt>
+<images/install/a08_docker_compose_up.png, id=427, 1445.4pt x 903.375pt>
 File: images/install/a08_docker_compose_up.png Graphic file (type png)
 <use images/install/a08_docker_compose_up.png>
 Package pdftex.def Info: images/install/a08_docker_compose_up.png  used on inpu
 t line 39.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
 [16] [17 <./images/install/a08_docker_compose_up.png (PNG copy)>]
-<images/install/a09_verify_web_running.png, id=359, 1445.4pt x 903.375pt>
+<images/install/a09_verify_web_running.png, id=454, 1445.4pt x 903.375pt>
 File: images/install/a09_verify_web_running.png Graphic file (type png)
 <use images/install/a09_verify_web_running.png>
 Package pdftex.def Info: images/install/a09_verify_web_running.png  used on inp
 ut line 83.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-<images/install/a10_verify_api_swagger.png, id=361, 1445.4pt x 903.375pt>
+<images/install/a10_verify_api_swagger.png, id=456, 1445.4pt x 903.375pt>
 File: images/install/a10_verify_api_swagger.png Graphic file (type png)
 <use images/install/a10_verify_api_swagger.png>
 Package pdftex.def Info: images/install/a10_verify_api_swagger.png  used on inp
@@ -1207,27 +1218,27 @@ s-sions, and ex-e-cutes self-service
  []
 
 [20]
-<images/auth/m02_01_register.png, id=383, 1324.95pt x 1195.46625pt>
+<images/auth/m02_01_register.png, id=478, 1324.95pt x 1195.46625pt>
 File: images/auth/m02_01_register.png Graphic file (type png)
 <use images/auth/m02_01_register.png>
 Package pdftex.def Info: images/auth/m02_01_register.png  used on input line 37
 .
 (pdftex.def)             Requested size: 327.7763pt x 295.72832pt.
  [21 <./images/auth/m02_01_register.png (PNG copy)>] [22]
-<images/auth/m02_02_login.png, id=404, 1445.4pt x 903.375pt>
+<images/auth/m02_02_login.png, id=499, 1445.4pt x 903.375pt>
 File: images/auth/m02_02_login.png Graphic file (type png)
 <use images/auth/m02_02_login.png>
 Package pdftex.def Info: images/auth/m02_02_login.png  used on input line 81.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
  [23 <./images/auth/m02_02_login.png (PNG copy)>] [24]
-<images/auth/m02_03_google_oauth.png, id=422, 1445.4pt x 903.375pt>
+<images/auth/m02_03_google_oauth.png, id=517, 1445.4pt x 903.375pt>
 File: images/auth/m02_03_google_oauth.png Graphic file (type png)
 <use images/auth/m02_03_google_oauth.png>
 Package pdftex.def Info: images/auth/m02_03_google_oauth.png  used on input lin
 e 120.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
  [25 <./images/auth/m02_03_google_oauth.png (PNG copy)>]
-<images/auth/m02_04_forgot_password.png, id=432, 1445.4pt x 903.375pt>
+<images/auth/m02_04_forgot_password.png, id=527, 1445.4pt x 903.375pt>
 File: images/auth/m02_04_forgot_password.png Graphic file (type png)
 <use images/auth/m02_04_forgot_password.png>
 Package pdftex.def Info: images/auth/m02_04_forgot_password.png  used on input 
@@ -1235,56 +1246,50 @@ line 148.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
  [26 <./images/auth/m02_04_forgot_password.png (PNG copy)>]
 [27]
-Overfull \hbox (36.02129pt too wide) in paragraph at lines 174--175
-[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Ses-sion Man-age-ment
- Con-sole -- \T1/cmtt/m/n/12 /sessions \T1/ptm/m/n/12 (and \T1/cmtt/m/n/12 /adm
-in/sessions
- []
-
-<images/auth/m02_05_sessions_list.png, id=451, 1445.4pt x 903.375pt>
+<images/auth/m02_05_sessions_list.png, id=546, 1445.4pt x 903.375pt>
 File: images/auth/m02_05_sessions_list.png Graphic file (type png)
 <use images/auth/m02_05_sessions_list.png>
 Package pdftex.def Info: images/auth/m02_05_sessions_list.png  used on input li
 ne 181.
 (pdftex.def)             Requested size: 391.51021pt x 244.68643pt.
-<images/auth/m02_05b_session_detail.png, id=452, 1445.4pt x 903.375pt>
+<images/auth/m02_05b_session_detail.png, id=547, 1445.4pt x 903.375pt>
 File: images/auth/m02_05b_session_detail.png Graphic file (type png)
 <use images/auth/m02_05b_session_detail.png>
 Package pdftex.def Info: images/auth/m02_05b_session_detail.png  used on input 
 line 195.
 (pdftex.def)             Requested size: 345.98302pt x 216.23549pt.
-[28 <./images/auth/m02_05_sessions_list.png (PNG copy)>] [29 <./images/auth/m02
-_05b_session_detail.png (PNG copy)>]
-Overfull \hbox (11.23007pt too wide) in paragraph at lines 209--210
-[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Re-mote Ses-sion Re-v
-o-ca-tion Con-fir-ma-tion Di-a-log -- \T1/cmtt/m/n/12 /sessions\T1/ptm/m/n/12 .
- 
+ [28 <./images/auth/m02_05_sessions_list.png (PNG copy)>] [29 <./images/auth/m0
+2_05b_session_detail.png (PNG copy)>]
+Overfull \hbox (15.59793pt too wide) in paragraph at lines 209--210
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Re-mote Ses-sion Ter-
+mi-na-tion Con-fir-ma-tion Di-a-log -- \T1/cmtt/m/n/12 /sessions\T1/ptm/m/n/12 
+. 
  []
 
-<images/auth/m02_06_revoke_session.png, id=468, 1445.4pt x 903.375pt>
+<images/auth/m02_06_revoke_session.png, id=563, 1445.4pt x 903.375pt>
 File: images/auth/m02_06_revoke_session.png Graphic file (type png)
 <use images/auth/m02_06_revoke_session.png>
 Package pdftex.def Info: images/auth/m02_06_revoke_session.png  used on input l
 ine 216.
 (pdftex.def)             Requested size: 391.51021pt x 244.68643pt.
 [30 <./images/auth/m02_06_revoke_session.png (PNG copy)>]
-<images/auth/m02_07_logout.png, id=480, 1445.4pt x 903.375pt>
+<images/auth/m02_07_logout.png, id=575, 1445.4pt x 903.375pt>
 File: images/auth/m02_07_logout.png Graphic file (type png)
 <use images/auth/m02_07_logout.png>
 Package pdftex.def Info: images/auth/m02_07_logout.png  used on input line 244.
 
 (pdftex.def)             Requested size: 400.61703pt x 250.37938pt.
 
-Overfull \hbox (12.3709pt too wide) in paragraph at lines 256--257
-[]\T1/ptm/b/n/12 Success Sce-nario: \T1/ptm/m/n/12 The ap-pli-ca-tion dis-patch
-es an HTTP POST re-quest to \T1/cmtt/m/n/12 /api/auth/logout\T1/ptm/m/n/12 ,
+Overfull \hbox (29.32721pt too wide) in paragraph at lines 256--257
+[]\T1/ptm/b/n/12 What Hap-pens Next: \T1/ptm/m/n/12 The ap-pli-ca-tion dis-patc
+hes an HTTP POST re-quest to \T1/cmtt/m/n/12 /api/auth/logout\T1/ptm/m/n/12 ,
  []
 
 ) (sections/sec3_m14_admin_rbac_users.tex [31 <./images/auth/m02_07_logout.png 
 (PNG copy)>]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/it' in size <12> not available
 (Font)              Font shape `T1/cmtt/m/it' tried instead on input line 12.
-<images/admin/m14_01_admin_dashboard.png, id=490, 1445.4pt x 903.375pt>
+<images/admin/m14_01_admin_dashboard.png, id=585, 1445.4pt x 903.375pt>
 File: images/admin/m14_01_admin_dashboard.png Graphic file (type png)
 <use images/admin/m14_01_admin_dashboard.png>
 Package pdftex.def Info: images/admin/m14_01_admin_dashboard.png  used on input
@@ -1292,14 +1297,14 @@ Package pdftex.def Info: images/admin/m14_01_admin_dashboard.png  used on input
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
  [32 <./images/admin/m14_01_admin_dashboard.png (PNG copy)>]
 [33]
-<images/admin/m14_02_admin_profile.png, id=507, 1445.4pt x 903.375pt>
+<images/admin/m14_02_admin_profile.png, id=602, 1445.4pt x 903.375pt>
 File: images/admin/m14_02_admin_profile.png Graphic file (type png)
 <use images/admin/m14_02_admin_profile.png>
 Package pdftex.def Info: images/admin/m14_02_admin_profile.png  used on input l
 ine 52.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
  [34 <./images/admin/m14_02_admin_profile.png (PNG copy)>]
-<images/admin/m14_03_admin_roles.png, id=520, 1445.4pt x 903.375pt>
+<images/admin/m14_03_admin_roles.png, id=615, 1445.4pt x 903.375pt>
 File: images/admin/m14_03_admin_roles.png Graphic file (type png)
 <use images/admin/m14_03_admin_roles.png>
 Package pdftex.def Info: images/admin/m14_03_admin_roles.png  used on input lin
@@ -1311,7 +1316,7 @@ Overfull \hbox (25.52965pt too wide) in paragraph at lines 93--94
 tion, and per-mis-sions (\T1/cmtt/m/n/12 UC-06.04\T1/ptm/m/n/12 ). 
  []
 
-<images/admin/m14_03b_admin_role_detail.png, id=521, 1445.4pt x 903.375pt>
+<images/admin/m14_03b_admin_role_detail.png, id=616, 1445.4pt x 903.375pt>
 File: images/admin/m14_03b_admin_role_detail.png Graphic file (type png)
 <use images/admin/m14_03b_admin_role_detail.png>
 Package pdftex.def Info: images/admin/m14_03b_admin_role_detail.png  used on in
@@ -1324,7 +1329,7 @@ Overfull \hbox (5.7237pt too wide) in paragraph at lines 115--116
 sign-ment Ma-trix -- \T1/cmtt/m/n/12 /admin/assign-role\T1/ptm/m/n/12 . 
  []
 
-<images/admin/m14_04_role_permissions_matrix.png, id=538, 1445.4pt x 903.375pt>
+<images/admin/m14_04_role_permissions_matrix.png, id=633, 1445.4pt x 903.375pt>
 
 File: images/admin/m14_04_role_permissions_matrix.png Graphic file (type png)
 <use images/admin/m14_04_role_permissions_matrix.png>
@@ -1332,13 +1337,7 @@ Package pdftex.def Info: images/admin/m14_04_role_permissions_matrix.png  used
 on input line 122.
 (pdftex.def)             Requested size: 364.19667pt x 227.62138pt.
 [37 <./images/admin/m14_04_role_permissions_matrix.png (PNG copy)>]
-Overfull \hbox (94.37485pt too wide) in paragraph at lines 146--147
-[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Per-mis-sions Cat-a-l
-og -- \T1/cmtt/m/n/12 /admin/permissions \T1/ptm/m/n/12 and \T1/cmtt/m/n/12 /ad
-min/permissions/[id]\T1/ptm/m/n/12 . 
- []
-
-<images/admin/m14_05_admin_permissions.png, id=552, 1445.4pt x 903.375pt>
+<images/admin/m14_05_admin_permissions.png, id=647, 1445.4pt x 903.375pt>
 File: images/admin/m14_05_admin_permissions.png Graphic file (type png)
 <use images/admin/m14_05_admin_permissions.png>
 Package pdftex.def Info: images/admin/m14_05_admin_permissions.png  used on inp
@@ -1351,7 +1350,7 @@ Overfull \hbox (0.17535pt too wide) in paragraph at lines 162--163
  ID\T1/ptm/m/n/12 , \T1/ptm/m/it/12 Func-tion Name\T1/ptm/m/n/12 ,
  []
 
-<images/admin/m14_05b_admin_permission_detail.png, id=553, 1445.4pt x 903.375pt
+<images/admin/m14_05b_admin_permission_detail.png, id=648, 1445.4pt x 903.375pt
 >
 File: images/admin/m14_05b_admin_permission_detail.png Graphic file (type png)
 <use images/admin/m14_05b_admin_permission_detail.png>
@@ -1360,7 +1359,7 @@ Package pdftex.def Info: images/admin/m14_05b_admin_permission_detail.png  used
 (pdftex.def)             Requested size: 355.08984pt x 221.92844pt.
 [38 <./images/admin/m14_05_admin_permissions.png (PNG copy)>] [39 <./images/adm
 in/m14_05b_admin_permission_detail.png (PNG copy)>]
-<images/admin/m14_06_admin_users_list_create.png, id=570, 1445.4pt x 903.375pt>
+<images/admin/m14_06_admin_users_list_create.png, id=665, 1445.4pt x 903.375pt>
 
 File: images/admin/m14_06_admin_users_list_create.png Graphic file (type png)
 <use images/admin/m14_06_admin_users_list_create.png>
@@ -1368,28 +1367,28 @@ Package pdftex.def Info: images/admin/m14_06_admin_users_list_create.png  used
 on input line 189.
 (pdftex.def)             Requested size: 373.3035pt x 233.31433pt.
  [40 <./images/admin/m14_06_admin_users_list_create.png (PNG copy)>]
-<images/admin/m14_07_admin_user_ban_unban.png, id=583, 1445.4pt x 903.375pt>
+<images/admin/m14_07_admin_user_ban_unban.png, id=678, 1445.4pt x 903.375pt>
 File: images/admin/m14_07_admin_user_ban_unban.png Graphic file (type png)
 <use images/admin/m14_07_admin_user_ban_unban.png>
 Package pdftex.def Info: images/admin/m14_07_admin_user_ban_unban.png  used on 
 input line 219.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
  [41 <./images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>]
-<images/admin/m14_08_admin_user_profile_tabs.png, id=596, 1445.4pt x 903.375pt>
+<images/admin/m14_08_admin_user_profile_tabs.png, id=691, 1445.4pt x 903.375pt>
 
 File: images/admin/m14_08_admin_user_profile_tabs.png Graphic file (type png)
 <use images/admin/m14_08_admin_user_profile_tabs.png>
 Package pdftex.def Info: images/admin/m14_08_admin_user_profile_tabs.png  used 
 on input line 249.
 (pdftex.def)             Requested size: 373.3035pt x 233.31433pt.
-<images/admin/m14_08b_freelancer_tab.png, id=597, 1445.4pt x 903.375pt>
+<images/admin/m14_08b_freelancer_tab.png, id=692, 1445.4pt x 903.375pt>
 File: images/admin/m14_08b_freelancer_tab.png Graphic file (type png)
 <use images/admin/m14_08b_freelancer_tab.png>
 Package pdftex.def Info: images/admin/m14_08b_freelancer_tab.png  used on input
  line 263.
 (pdftex.def)             Requested size: 336.88313pt x 210.54254pt.
  [42 <./images/admin/m14_08_admin_user_profile_tabs.png (PNG copy)>]
-<images/admin/m14_08c_expert_tab.png, id=609, 1445.4pt x 903.375pt>
+<images/admin/m14_08c_expert_tab.png, id=704, 1445.4pt x 903.375pt>
 File: images/admin/m14_08c_expert_tab.png Graphic file (type png)
 <use images/admin/m14_08c_expert_tab.png>
 Package pdftex.def Info: images/admin/m14_08c_expert_tab.png  used on input lin
@@ -1397,7 +1396,7 @@ e 276.
 (pdftex.def)             Requested size: 336.88313pt x 210.54254pt.
 ) (sections/sec3_m15_admin_catalogs.tex [43 <./images/admin/m14_08b_freelancer_
 tab.png (PNG copy)> <./images/admin/m14_08c_expert_tab.png (PNG copy)>]
-<images/admin/m15_01_admin_skills.png, id=619, 1445.4pt x 903.375pt>
+<images/admin/m15_01_admin_skills.png, id=714, 1445.4pt x 903.375pt>
 File: images/admin/m15_01_admin_skills.png Graphic file (type png)
 <use images/admin/m15_01_admin_skills.png>
 Package pdftex.def Info: images/admin/m15_01_admin_skills.png  used on input li
@@ -1409,7 +1408,7 @@ Overfull \hbox (20.705pt too wide) in paragraph at lines 51--52
 e-ment Con-sole -- \T1/cmtt/m/n/12 /admin/job-categories\T1/ptm/m/n/12 . 
  []
 
-<images/admin/m15_02_admin_job_categories.png, id=636, 1445.4pt x 903.375pt>
+<images/admin/m15_02_admin_job_categories.png, id=731, 1445.4pt x 903.375pt>
 File: images/admin/m15_02_admin_job_categories.png Graphic file (type png)
 <use images/admin/m15_02_admin_job_categories.png>
 Package pdftex.def Info: images/admin/m15_02_admin_job_categories.png  used on 
@@ -1421,7 +1420,7 @@ Overfull \hbox (11.16702pt too wide) in paragraph at lines 81--82
 -age-ment Con-sole -- \T1/cmtt/m/n/12 /admin/categories\T1/ptm/m/n/12 . 
  []
 
-<images/admin/m15_03_admin_forum_categories.png, id=649, 1445.4pt x 903.375pt>
+<images/admin/m15_03_admin_forum_categories.png, id=744, 1445.4pt x 903.375pt>
 File: images/admin/m15_03_admin_forum_categories.png Graphic file (type png)
 <use images/admin/m15_03_admin_forum_categories.png>
 Package pdftex.def Info: images/admin/m15_03_admin_forum_categories.png  used o
@@ -1435,51 +1434,370 @@ Overfull \hbox (12.80435pt too wide) in paragraph at lines 98--99
  []
 
 [47 <./images/admin/m15_03_admin_forum_categories.png (PNG copy)>]
-<images/admin/m15_04_admin_banners.png, id=662, 1445.4pt x 903.375pt>
+<images/admin/m15_04_admin_banners.png, id=757, 1445.4pt x 903.375pt>
 File: images/admin/m15_04_admin_banners.png Graphic file (type png)
 <use images/admin/m15_04_admin_banners.png>
 Package pdftex.def Info: images/admin/m15_04_admin_banners.png  used on input l
 ine 118.
 (pdftex.def)             Requested size: 382.40338pt x 238.99348pt.
-<images/admin/m15_04b_admin_banner_dialog.png, id=663, 1445.4pt x 903.375pt>
+<images/admin/m15_04b_admin_banner_dialog.png, id=758, 1445.4pt x 903.375pt>
 File: images/admin/m15_04b_admin_banner_dialog.png Graphic file (type png)
 <use images/admin/m15_04b_admin_banner_dialog.png>
 Package pdftex.def Info: images/admin/m15_04b_admin_banner_dialog.png  used on 
 input line 133.
 (pdftex.def)             Requested size: 364.19667pt x 227.62138pt.
- [48 <./images/admin/m15_04_admin_banners.png (PNG copy)>]) [49 <./images/admin
-/m15_04b_admin_banner_dialog.png (PNG copy)>] (Report6_Software_User_Guides.aux
-)
+ [48 <./images/admin/m15_04_admin_banners.png (PNG copy)>])
+(sections/sec3_m14_forum_management.tex
+<images/forum/f14_01_guide.png, id=771, 1371.1225pt x 903.375pt>
+File: images/forum/f14_01_guide.png Graphic file (type png)
+<use images/forum/f14_01_guide.png>
+Package pdftex.def Info: images/forum/f14_01_guide.png  used on input line 14.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [49 <./images/admin/m15_04b_admin_banner_dialog.png (PNG copy)>] [50 <./images
+/forum/f14_01_guide.png (PNG copy)>]
+<images/forum/f14_02_guide.png, id=789, 1371.1225pt x 903.375pt>
+File: images/forum/f14_02_guide.png Graphic file (type png)
+<use images/forum/f14_02_guide.png>
+Package pdftex.def Info: images/forum/f14_02_guide.png  used on input line 37.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+
+[51 <./images/forum/f14_02_guide.png (PNG copy)>]
+<images/forum/f14_03_guide.png, id=800, 1371.1225pt x 903.375pt>
+File: images/forum/f14_03_guide.png Graphic file (type png)
+<use images/forum/f14_03_guide.png>
+Package pdftex.def Info: images/forum/f14_03_guide.png  used on input line 59.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [52 <./images/forum/f14_03_guide.png (PNG copy)>]
+<images/forum/f14_04_guide.png, id=811, 1371.1225pt x 903.375pt>
+File: images/forum/f14_04_guide.png Graphic file (type png)
+<use images/forum/f14_04_guide.png>
+Package pdftex.def Info: images/forum/f14_04_guide.png  used on input line 81.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [53 <./images/forum/f14_04_guide.png (PNG copy)>]
+<images/forum/f14_05_guide.png, id=823, 1371.1225pt x 903.375pt>
+File: images/forum/f14_05_guide.png Graphic file (type png)
+<use images/forum/f14_05_guide.png>
+Package pdftex.def Info: images/forum/f14_05_guide.png  used on input line 104.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [54 <./images/forum/f14_05_guide.png (PNG copy)>]
+<images/forum/f14_06_guide.png, id=835, 1371.1225pt x 903.375pt>
+File: images/forum/f14_06_guide.png Graphic file (type png)
+<use images/forum/f14_06_guide.png>
+Package pdftex.def Info: images/forum/f14_06_guide.png  used on input line 126.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+
+Overfull \hbox (8.52568pt too wide) in paragraph at lines 143--144
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Delete Post Di-a-log 
+-- \T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
+ []
+
+[55 <./images/forum/f14_06_guide.png (PNG copy)>]
+<images/forum/f14_07_guide.png, id=846, 1371.1225pt x 903.375pt>
+File: images/forum/f14_07_guide.png Graphic file (type png)
+<use images/forum/f14_07_guide.png>
+Package pdftex.def Info: images/forum/f14_07_guide.png  used on input line 148.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+<images/forum/f14_08_guide.png, id=847, 1371.1225pt x 903.375pt>
+File: images/forum/f14_08_guide.png Graphic file (type png)
+<use images/forum/f14_08_guide.png>
+Package pdftex.def Info: images/forum/f14_08_guide.png  used on input line 169.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [56 <./images/forum/f14_07_guide.png (PNG copy)>]
+<images/forum/f14_09_guide.png, id=857, 1371.1225pt x 903.375pt>
+File: images/forum/f14_09_guide.png Graphic file (type png)
+<use images/forum/f14_09_guide.png>
+Package pdftex.def Info: images/forum/f14_09_guide.png  used on input line 190.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [57 <./images/forum/f14_08_guide.png (PNG copy)>]
+Overfull \hbox (2.41792pt too wide) in paragraph at lines 206--207
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Post Likes Modal -- \
+T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
+ []
+
+<images/forum/f14_10_guide.png, id=867, 1371.1225pt x 903.375pt>
+File: images/forum/f14_10_guide.png Graphic file (type png)
+<use images/forum/f14_10_guide.png>
+Package pdftex.def Info: images/forum/f14_10_guide.png  used on input line 211.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+[58 <./images/forum/f14_09_guide.png (PNG copy)>]
+Overfull \hbox (9.59372pt too wide) in paragraph at lines 227--228
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Com-ments Sec-tion --
+ \T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
+ []
+
+<images/forum/f14_11_guide.png, id=877, 1371.1225pt x 903.375pt>
+File: images/forum/f14_11_guide.png Graphic file (type png)
+<use images/forum/f14_11_guide.png>
+Package pdftex.def Info: images/forum/f14_11_guide.png  used on input line 232.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+[59 <./images/forum/f14_10_guide.png (PNG copy)>]
+Overfull \hbox (18.25786pt too wide) in paragraph at lines 248--249
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Com-ment Com-poser --
+ \T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
+ []
+
+<images/forum/f14_12_guide.png, id=887, 1371.1225pt x 903.375pt>
+File: images/forum/f14_12_guide.png Graphic file (type png)
+<use images/forum/f14_12_guide.png>
+Package pdftex.def Info: images/forum/f14_12_guide.png  used on input line 253.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+[60 <./images/forum/f14_11_guide.png (PNG copy)>]
+<images/forum/f14_13_guide.png, id=898, 1371.1225pt x 903.375pt>
+File: images/forum/f14_13_guide.png Graphic file (type png)
+<use images/forum/f14_13_guide.png>
+Package pdftex.def Info: images/forum/f14_13_guide.png  used on input line 274.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [61 <./images/forum/f14_12_guide.png (PNG copy)>]
+Overfull \hbox (0.2458pt too wide) in paragraph at lines 290--291
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Delete Com-ment -- \T
+1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
+ []
+
+<images/forum/f14_14_guide.png, id=908, 1371.1225pt x 903.375pt>
+File: images/forum/f14_14_guide.png Graphic file (type png)
+<use images/forum/f14_14_guide.png>
+Package pdftex.def Info: images/forum/f14_14_guide.png  used on input line 295.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+[62 <./images/forum/f14_13_guide.png (PNG copy)>]
+<images/forum/f14_15_guide.png, id=918, 1371.1225pt x 903.375pt>
+File: images/forum/f14_15_guide.png Graphic file (type png)
+<use images/forum/f14_15_guide.png>
+Package pdftex.def Info: images/forum/f14_15_guide.png  used on input line 316.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [63 <./images/forum/f14_14_guide.png (PNG copy)>]
+<images/forum/f14_16_guide.png, id=928, 1371.1225pt x 903.375pt>
+File: images/forum/f14_16_guide.png Graphic file (type png)
+<use images/forum/f14_16_guide.png>
+Package pdftex.def Info: images/forum/f14_16_guide.png  used on input line 336.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [64 <./images/forum/f14_15_guide.png (PNG copy)>]
+<images/forum/f14_17_guide.png, id=937, 1371.1225pt x 903.375pt>
+File: images/forum/f14_17_guide.png Graphic file (type png)
+<use images/forum/f14_17_guide.png>
+Package pdftex.def Info: images/forum/f14_17_guide.png  used on input line 356.
+
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [65 <./images/forum/f14_16_guide.png (PNG copy)>])
+(sections/sec3_m27_conversation_management.tex
+<images/conversation/c27_01_guide.png, id=946, 1371.1225pt x 903.375pt>
+File: images/conversation/c27_01_guide.png Graphic file (type png)
+<use images/conversation/c27_01_guide.png>
+Package pdftex.def Info: images/conversation/c27_01_guide.png  used on input li
+ne 14.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [66 <./images/forum/f14_17_guide.png (PNG copy)>]
+<images/conversation/c27_02_guide.png, id=957, 1371.1225pt x 903.375pt>
+File: images/conversation/c27_02_guide.png Graphic file (type png)
+<use images/conversation/c27_02_guide.png>
+Package pdftex.def Info: images/conversation/c27_02_guide.png  used on input li
+ne 36.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [67 <./images/conversation/c27_01_guide.png (PNG copy)>]
+<images/conversation/c27_03_guide.png, id=968, 1371.1225pt x 903.375pt>
+File: images/conversation/c27_03_guide.png Graphic file (type png)
+<use images/conversation/c27_03_guide.png>
+Package pdftex.def Info: images/conversation/c27_03_guide.png  used on input li
+ne 58.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+
+[68 <./images/conversation/c27_02_guide.png (PNG copy)>]
+<images/conversation/c27_04_guide.png, id=979, 1371.1225pt x 903.375pt>
+File: images/conversation/c27_04_guide.png Graphic file (type png)
+<use images/conversation/c27_04_guide.png>
+Package pdftex.def Info: images/conversation/c27_04_guide.png  used on input li
+ne 80.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [69 <./images/conversation/c27_03_guide.png (PNG copy)>]
+<images/conversation/c27_05_guide.png, id=990, 1371.1225pt x 903.375pt>
+File: images/conversation/c27_05_guide.png Graphic file (type png)
+<use images/conversation/c27_05_guide.png>
+Package pdftex.def Info: images/conversation/c27_05_guide.png  used on input li
+ne 102.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [70 <./images/conversation/c27_04_guide.png (PNG copy)>]
+<images/conversation/c27_06_guide.png, id=1001, 1371.1225pt x 903.375pt>
+File: images/conversation/c27_06_guide.png Graphic file (type png)
+<use images/conversation/c27_06_guide.png>
+Package pdftex.def Info: images/conversation/c27_06_guide.png  used on input li
+ne 123.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [71 <./images/conversation/c27_05_guide.png (PNG copy)>]
+<images/conversation/c27_07_guide.png, id=1011, 1371.1225pt x 903.375pt>
+File: images/conversation/c27_07_guide.png Graphic file (type png)
+<use images/conversation/c27_07_guide.png>
+Package pdftex.def Info: images/conversation/c27_07_guide.png  used on input li
+ne 144.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [72 <./images/conversation/c27_06_guide.png (PNG copy)>]
+<images/conversation/c27_08_send_file_guide.png, id=1022, 1371.1225pt x 903.375
+pt>
+File: images/conversation/c27_08_send_file_guide.png Graphic file (type png)
+<use images/conversation/c27_08_send_file_guide.png>
+Package pdftex.def Info: images/conversation/c27_08_send_file_guide.png  used o
+n input line 165.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [73 <./images/conversation/c27_07_guide.png (PNG copy)>]) (sections/sec3_m34_m
+oderation_management.tex
+[74 <./images/conversation/c27_08_send_file_guide.png (PNG copy)>]
+<images/admin/moderation/m34_01_moderation_guide.png, id=1043, 1371.1225pt x 90
+3.375pt>
+File: images/admin/moderation/m34_01_moderation_guide.png Graphic file (type pn
+g)
+<use images/admin/moderation/m34_01_moderation_guide.png>
+Package pdftex.def Info: images/admin/moderation/m34_01_moderation_guide.png  u
+sed on input line 14.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [75 <./images/admin/moderation/m34_01_moderation_guide.png (PNG copy)>]
+<images/admin/moderation/m34_02_guide.png, id=1054, 1371.1225pt x 903.375pt>
+File: images/admin/moderation/m34_02_guide.png Graphic file (type png)
+<use images/admin/moderation/m34_02_guide.png>
+Package pdftex.def Info: images/admin/moderation/m34_02_guide.png  used on inpu
+t line 36.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [76 <./images/admin/moderation/m34_02_guide.png (PNG copy)>]
+<images/admin/moderation/m34_03_guide.png, id=1065, 1371.1225pt x 903.375pt>
+File: images/admin/moderation/m34_03_guide.png Graphic file (type png)
+<use images/admin/moderation/m34_03_guide.png>
+Package pdftex.def Info: images/admin/moderation/m34_03_guide.png  used on inpu
+t line 58.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+<images/admin/identity/m35_01_guide.png, id=1066, 1371.1225pt x 903.375pt>
+File: images/admin/identity/m35_01_guide.png Graphic file (type png)
+<use images/admin/identity/m35_01_guide.png>
+Package pdftex.def Info: images/admin/identity/m35_01_guide.png  used on input 
+line 79.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [77 <./images/admin/moderation/m34_03_guide.png (PNG copy)>]
+Overfull \hbox (5.32852pt too wide) in paragraph at lines 96--97
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 ID Ver-i-fi-ca-tion M
+odal -- \T1/cmtt/m/n/12 /admin/identity-verifications\T1/ptm/m/n/12 . 
+ []
+
+<images/admin/identity/m35_02_id_review_guide.png, id=1076, 1371.1225pt x 903.3
+75pt>
+File: images/admin/identity/m35_02_id_review_guide.png Graphic file (type png)
+<use images/admin/identity/m35_02_id_review_guide.png>
+Package pdftex.def Info: images/admin/identity/m35_02_id_review_guide.png  used
+ on input line 101.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+[78 <./images/admin/identity/m35_01_guide.png (PNG copy)>]
+Overfull \hbox (5.32852pt too wide) in paragraph at lines 119--120
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 ID Ver-i-fi-ca-tion M
+odal -- \T1/cmtt/m/n/12 /admin/identity-verifications\T1/ptm/m/n/12 . 
+ []
+
+[79 <./images/admin/identity/m35_02_id_review_guide.png (PNG copy)>]
+<images/admin/identity/m35_03_guide.png, id=1099, 1371.1225pt x 903.375pt>
+File: images/admin/identity/m35_03_guide.png Graphic file (type png)
+<use images/admin/identity/m35_03_guide.png>
+Package pdftex.def Info: images/admin/identity/m35_03_guide.png  used on input 
+line 124.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+
+Overfull \hbox (5.32852pt too wide) in paragraph at lines 141--142
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 ID Ver-i-fi-ca-tion M
+odal -- \T1/cmtt/m/n/12 /admin/identity-verifications\T1/ptm/m/n/12 . 
+ []
+
+[80 <./images/admin/identity/m35_03_guide.png (PNG copy)>]
+<images/admin/identity/m35_04_guide.png, id=1110, 1371.1225pt x 903.375pt>
+File: images/admin/identity/m35_04_guide.png Graphic file (type png)
+<use images/admin/identity/m35_04_guide.png>
+Package pdftex.def Info: images/admin/identity/m35_04_guide.png  used on input 
+line 146.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+
+Overfull \hbox (0.6074pt too wide) in paragraph at lines 153--154
+[][]\T1/ptm/b/n/12 [3][] Ver-ify Toast Feed-back: \T1/ptm/m/n/12 Ob-serve the c
+on-fir-ma-tion toast \T1/ptm/m/it/12 ``Iden-tity ver-i-fi-ca-tion re-jected''\T
+1/ptm/m/n/12 . 
+ []
+
+[81 <./images/admin/identity/m35_04_guide.png (PNG copy)>]
+<images/admin/trash/m36_01_trash_guide.png, id=1121, 1371.1225pt x 903.375pt>
+File: images/admin/trash/m36_01_trash_guide.png Graphic file (type png)
+<use images/admin/trash/m36_01_trash_guide.png>
+Package pdftex.def Info: images/admin/trash/m36_01_trash_guide.png  used on inp
+ut line 168.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+<images/admin/trash/m36_02_guide.png, id=1122, 1371.1225pt x 903.375pt>
+File: images/admin/trash/m36_02_guide.png Graphic file (type png)
+<use images/admin/trash/m36_02_guide.png>
+Package pdftex.def Info: images/admin/trash/m36_02_guide.png  used on input lin
+e 190.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [82 <./images/admin/trash/m36_01_trash_guide.png (PNG copy)>]
+<images/admin/trash/m36_03_guide.png, id=1133, 1371.1225pt x 903.375pt>
+File: images/admin/trash/m36_03_guide.png Graphic file (type png)
+<use images/admin/trash/m36_03_guide.png>
+Package pdftex.def Info: images/admin/trash/m36_03_guide.png  used on input lin
+e 211.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [83 <./images/admin/trash/m36_02_guide.png (PNG copy)>]) (sections/sec3_m44_ai
+_features.tex
+<images/ai/ai_moderate_guide.png, id=1143, 1371.1225pt x 903.375pt>
+File: images/ai/ai_moderate_guide.png Graphic file (type png)
+<use images/ai/ai_moderate_guide.png>
+Package pdftex.def Info: images/ai/ai_moderate_guide.png  used on input line 14
+.
+(pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
+ [84 <./images/admin/trash/m36_03_guide.png (PNG copy)>]
+Overfull \hbox (18.40152pt too wide) in paragraph at lines 32--33
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Pro-file & Trust Set-
+tings (Iden-tity Tab) -- \T1/cmtt/m/n/12 /freelancer/profile\T1/ptm/m/n/12 . 
+ []
+
+[85 <./images/ai/ai_moderate_guide.png (PNG copy)>]
+<images/ai/ai_face_scan_guide.png, id=1165, 1427.3325pt x 1080.035pt>
+File: images/ai/ai_face_scan_guide.png Graphic file (type png)
+<use images/ai/ai_face_scan_guide.png>
+Package pdftex.def Info: images/ai/ai_face_scan_guide.png  used on input line 3
+7.
+(pdftex.def)             Requested size: 409.71692pt x 310.0215pt.
+) [86 <./images/ai/ai_face_scan_guide.png (PNG copy)>] (Report6_Software_User_G
+uides.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `Report6_Software_User_Guides.out' has not ch
 anged.
-(rerunfilecheck)             Checksum: AB2836900285ADB5EC290F323E6A181E;3816.
+(rerunfilecheck)             Checksum: CB1DD584857FD9746DB70F1DB7181D3E;4874.
  ) 
 Here is how much of TeX's memory you used:
- 27862 strings out of 467871
- 530660 string characters out of 5418860
- 1366769 words of memory out of 5000000
- 55969 multiletter control sequences out of 15000+600000
+ 28459 strings out of 467871
+ 547643 string characters out of 5417891
+ 1367341 words of memory out of 5000000
+ 56263 multiletter control sequences out of 15000+600000
  675964 words of font info for 95 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 98i,12n,108p,745b,1242s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecit1
-200.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
-ectt1000.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
-i600\ectt0800.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/
-ec/dpi600\ectt1200.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/
-public/amsfonts/cm/cmmi10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/font
-s/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiK
-TeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKT
-eX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKT
-eX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTe
-X/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Report6_Software_User_Guides.pdf (50 pages, 7042877 bytes).
+ 98i,12n,108p,760b,1242s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\Lenovo\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eci
+t1200.pk> <C:\Users\Lenovo\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi
+600\ectt1000.pk> <C:\Users\Lenovo\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen
+/ec/dpi600\ectt0800.pk> <C:\Users\Lenovo\AppData\Local\MiKTeX\fonts/pk/ljfour/j
+knappen/ec/dpi600\ectt1200.pk><C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fo
+nts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Lenovo/AppData/Local/Programs
+/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Lenovo/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/Lenovo/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/Lenovo/AppData/L
+ocal/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/Lenovo/AppData/
+Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Report6_Software_User_Guides.pdf (87 pages, 11014257 bytes).
 PDF statistics:
- 1000 PDF objects out of 1000 (max. 8388607)
- 326 named destinations out of 1000 (max. 500000)
- 321 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1556 PDF objects out of 1728 (max. 8388607)
+ 613 named destinations out of 1000 (max. 500000)
+ 538 words of extra memory for PDF output out of 10000 (max. 10000000)
 

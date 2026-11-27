@@ -18,7 +18,7 @@
 \usepackage{booktabs}
 \usepackage{needspace}
 \usepackage{caption}
-\usepackage{tocloft}
+\usepackage[titles]{tocloft}
 \usepackage{hyperref}
 
 % Color definitions
@@ -97,18 +97,14 @@
 \titleformat{\subsection}{\fontsize{12}{15}\selectfont\bfseries\color{black}}{\thesubsection}{0.45em}{}
 \titleformat{\subsubsection}{\fontsize{12}{15}\selectfont\bfseries\itshape\color{black}}{\thesubsubsection}{0.45em}{}
 
-% Header and Footer (no running header, right-aligned Page X footer)
+% Header and Footer (Clean page number only, no header text or rules)
 \pagestyle{fancy}
 \fancyhf{}
-\fancyfoot[R]{Page \thepage}
+\setlength{\headheight}{15pt}
+\addtolength{\topmargin}{-3pt}
+\fancyfoot[C]{\small\thepage}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-\fancypagestyle{plain}{
-  \fancyhf{}
-  \fancyfoot[R]{Page \thepage}
-  \renewcommand{\headrulewidth}{0pt}
-  \renewcommand{\footrulewidth}{0pt}
-}
 
 % Custom macros
 \newcommand{\hd}[1]{\textbf{#1}}
@@ -141,7 +137,7 @@
   {\fontsize{21}{26}\selectfont\bfseries\color{fptred} Report 6 -- Software User Guides}
 
   \vfill
-  {\fontsize{14}{17}\selectfont -- Cantho, November 2026 --}\\[0.5cm]
+  {\fontsize{14}{17}\selectfont -- Can Tho, November 2026 --}\\[0.5cm]
 \end{titlepage}
 
 % =============================================================================
@@ -182,9 +178,8 @@
 16/11/2026 & M & TaiTP & Verified installation workflows, environment variable tables, and service startup procedures against the monorepo setup. \\ \hline
 19/11/2026 & M & TinVN & Reviewed authentication, session revocation, and administrator RBAC user instructions and verified expected output cases. \\ \hline
 21/11/2026 & M & HuyNLN & Cross-checked troubleshooting notes, figure numbering, and screenshot annotations across installation and user manual sections. \\ \hline
-24/11/2026 & M & ThuanNT & Updated cover page (November 2026), reformatted Table of Contents, consolidated Record of Changes, and compiled final PDF. \\ \hline
-27/11/2026 & M & VyPK & Added User Manuals for Forum (M14), Conversation (M27), Moderation/eKYC/Trash (M34--M36), and AI Features (M44--M45). \\ \hline
-27/11/2026 & M & ThuanNT & Updated 25 screenshots with English annotations (Sprints 1--5 including Banners M15.04) and standardized Report 6 formatting. \\ \hline
+24/11/2026 & M & ThuanNT & Updated cover page (November 2026), reformatted Table of Contents, and consolidated Record of Changes. \\ \hline
+27/11/2026 & M & VyPK & Finalized Software User Guides, aligned release inventory with Sprint 5 deliverables, and compiled final submission PDF. \\ \hline
 \end{longtable}
 \setcounter{table}{0}
 
@@ -214,10 +209,10 @@
 % Input Part B: Module 15 - Admin Master Data Catalogs (M15.01 - M15.04)
 \input{sections/sec3_m15_admin_catalogs.tex}
 
-% Input Part B: Module 14 - Forum Management (UC-14.01 - UC-14.17)
+% Input Part B: Module 14 - Forum Management (M14.01 - M14.17)
 \input{sections/sec3_m14_forum_management.tex}
 
-% Input Part B: Module 27 - Conversation Management (UC-27.01 - UC-27.08)
+% Input Part B: Module 27 - Conversation Management (M27.01 - M27.08)
 \input{sections/sec3_m27_conversation_management.tex}
 
 % Input Part B: Module 34-36 - Moderation, ID Verification, Forum Trash
