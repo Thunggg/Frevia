@@ -4,7 +4,7 @@
 % ========================================================
 \part{Software Design Description}
 
-\section{System Design}
+\section{Architecture Diagram}
 
 \subsection{System Architecture}
 
@@ -211,7 +211,7 @@ Tables~\ref{tab:pkg:frontend}, \ref{tab:pkg:backend}, \ref{tab:pkg:shared}, and 
 }
 
 
-\section{Database Design}
+\section{Entity Relationship Diagram (ERD)}
 
 Frevia persists every domain object in a single PostgreSQL database whose schema is
 declared with Prisma 7 in \texttt{apps/api/prisma/schema.prisma}. The schema contains
@@ -484,618 +484,145 @@ primary key and its foreign keys.
 \end{longtable}
 }
 
-% ========================================================
-% 2.2 Module entity-relationship diagrams
-% One figure per functional module of Report 3 (ERD1 .. ERD22).
-% Source: database_design/ERD-ERD<n>.drawio
-%         -> images/database/erd-<nn>.svg -> erd-<nn>.pdf (tools/svg2pdf.js)
-% ========================================================
-\subsection{Module Entity--Relationship Diagrams}
-\label{sec:db:module-erds}
 
-\subsubsection{ERD1 --- Authentication \& Sessions}
-
-This ERD describes the Authentication \& Sessions module. It stores account identities, one-time verification codes, device sessions, OAuth links, two-factor authentication settings, and user preferences. User is the root account table and links to Role and Profile. VerificationCode supports registration, email verification, and password reset. Session stores refresh tokens and device information for each login. OauthAccount links Google login to a User. TwoFactorAuth stores the TOTP secret and enabled flag. UserSetting stores theme, language, and notification preferences. These tables support registration, login, logout, password reset, session revocation, Google OAuth, and 2FA.
-
-\kfig{0.95\textwidth}{images/database/erd-01}{ERD1 --- Authentication \& Sessions}{fig:db:erd1}
-
-\subsubsection{ERD2 --- Role-Based Access Control}
-
-This ERD describes the Role-Based Access Control module. It stores roles, permissions, role-permission assignments, and user-role assignments. Role defines a named role; Permission defines a route-level permission; RolePermission links permissions to roles; UserRole links users to roles. These tables support RBAC guards, permission checks, and role switching without redeployment.
-
-\kfig{0.95\textwidth}{images/database/erd-02}{ERD2 --- Role-Based Access Control}{fig:db:erd2}
-
-\subsubsection{ERD3 --- Profile Core}
-
-This ERD describes the Profile Core module. It stores base profiles and role-specific profile extensions. Profile contains common display information; FreelancerProfile stores professional data; ClientProfile stores company data; Expert publishes expert directory entries; FreelancerSkill links freelancers to skills with proficiency. These tables support profile viewing/editing, freelancer/client/expert profiles, skills, and profile completion.
-
-\kfig{0.95\textwidth}{images/database/erd-03}{ERD3 --- Profile Core}{fig:db:erd3}
-
-\subsubsection{ERD4 --- Profile History \& Social Links}
-
-This ERD describes the Profile History \& Social Links module. It stores profile revisions, portfolio items, CV analysis, experience, education, document processing jobs, embedding records, recommendations, embedding outbox events, social links, identity documents, and profile visit logs. The CV-analysis and embedding tables were added to support AI CV processing, vector indexing and job--CV recommendation; they are linked to \texttt{FreelancerProfile} or \texttt{User} and do not change the existing profile-revision and social-link relationships. These tables support profile revision review, portfolio, CV processing, recommendations, social links, identity verification, and profile visit tracking.
-
-\kfig{0.95\textwidth}{images/database/erd-04}{ERD4 --- Profile History \& Social Links}{fig:db:erd4}
-
-\subsubsection{ERD5 --- Identity Verification \& Profile Visits}
-
-This ERD describes the Identity Verification \& Profile Visits module. It stores identity verification documents and profile visit logs. These tables support eKYC document upload/review and tracking profile views.
-
-\kfig{0.95\textwidth}{images/database/erd-05}{ERD5 --- Identity Verification \& Profile Visits}{fig:db:erd5}
-
-\subsubsection{ERD6 --- Portfolio \& Skills}
-
-This ERD describes the Portfolio \& Skills module. It stores portfolio items, freelancer skills, skill catalog, and portfolio likes. These tables support portfolio management, skill catalog, skill proficiency, and liking portfolios.
-
-\kfig{0.95\textwidth}{images/database/erd-06}{ERD6 --- Portfolio \& Skills}{fig:db:erd6}
-
-\subsubsection{ERD7 --- Favorites \& Follows}
-
-This ERD describes the Favorites \& Follows module. It stores favorite freelancer and follow relationships. These tables support bookmarking favorite freelancers and managing follow relationships.
-
-\kfig{0.95\textwidth}{images/database/erd-07}{ERD7 --- Favorites \& Follows}{fig:db:erd7}
-
-\subsubsection{ERD8 --- Job Posting}
-
-This ERD describes the Job Posting module. It stores job categories, jobs, job-category links, and job-skill links. These tables support creating, editing, publishing, closing, and categorizing jobs.
-
-\kfig{0.95\textwidth}{images/database/erd-08}{ERD8 --- Job Posting}{fig:db:erd8}
-
-\subsubsection{ERD9 --- Job Discovery \& Alerts}
-
-This ERD describes the Job Discovery \& Alerts module. It stores job bookmarks, recently viewed jobs, saved searches, and job alerts. These tables support browsing, bookmarking, saved filters, and alert notifications.
-
-\kfig{0.95\textwidth}{images/database/erd-09}{ERD9 --- Job Discovery \& Alerts}{fig:db:erd9}
-
-\subsubsection{ERD10 --- Proposal}
-
-This ERD describes the Proposal module. It stores proposals and proposal attachments. These tables support submitting, updating, withdrawing, accepting, and rejecting proposals.
-
-\kfig{0.95\textwidth}{images/database/erd-10}{ERD10 --- Proposal}{fig:db:erd10}
-
-\subsubsection{ERD11 --- Contract}
-
-This ERD describes the Contract module. It stores contracts and contract term templates. These tables support contract creation, signing, cancellation, terms, and status management.
-
-\kfig{0.95\textwidth}{images/database/erd-11}{ERD11 --- Contract}{fig:db:erd11}
-
-\subsubsection{ERD12 --- Milestone \& Project Progress}
-
-This ERD describes the Milestone \& Project Progress module. It stores milestones and project progress updates. These tables support milestone creation, updates, progress tracking, and client/freelancer collaboration.
-
-\kfig{0.95\textwidth}{images/database/erd-12}{ERD12 --- Milestone \& Project Progress}{fig:db:erd12}
-
-\subsubsection{ERD13 --- Milestone Submission}
-
-This ERD describes the Milestone Submission module. It stores milestone files, submissions, and submission files. These tables support uploading deliverables, submitting milestones, and reviewing submissions.
-
-\kfig{0.95\textwidth}{images/database/erd-13}{ERD13 --- Milestone Submission}{fig:db:erd13}
-
-\subsubsection{ERD14 --- Escrow, Payments \& Certificates}
-
-This ERD describes the Escrow, Payments \& Certificates module. It stores invoices, certificates, and transactions. These tables support funding, releasing, refunding, platform fees, payout tracking, and completion certificates.
-
-\kfig{0.95\textwidth}{images/database/erd-14}{ERD14 --- Escrow, Payments \& Certificates}{fig:db:erd14}
-
-\subsubsection{ERD15 --- Dispute Core}
-
-This ERD describes the Dispute Core module. It stores disputes and dispute fees. These tables support opening disputes and charging dispute fees.
-
-\kfig{0.95\textwidth}{images/database/erd-15}{ERD15 --- Dispute Core}{fig:db:erd15}
-
-\subsubsection{ERD16 --- Dispute Resolution}
-
-This ERD describes the Dispute Resolution module. It stores dispute evidence and decision reviews. These tables support evidence submission and review of dispute decisions.
-
-\kfig{0.95\textwidth}{images/database/erd-16}{ERD16 --- Dispute Resolution}{fig:db:erd16}
-
-\subsubsection{ERD17 --- Reviews \& Reputation}
-
-This ERD describes the Reviews \& Reputation module. It stores reviews and review responses. These tables support rating contracts and responding to reviews.
-
-\kfig{0.95\textwidth}{images/database/erd-17}{ERD17 --- Reviews \& Reputation}{fig:db:erd17}
-
-\subsubsection{ERD18 --- Forum Posts \& Comments}
-
-This ERD describes the Forum Posts \& Comments module. It stores forum categories, posts, and comments. These tables support forum discussions and moderation.
-
-\kfig{0.95\textwidth}{images/database/erd-18}{ERD18 --- Forum Posts \& Comments}{fig:db:erd18}
-
-\subsubsection{ERD19 --- Forum Likes}
-
-This ERD describes the Forum Likes module. It stores likes on posts and comments. These tables support reactions.
-
-\kfig{0.95\textwidth}{images/database/erd-19}{ERD19 --- Forum Likes}{fig:db:erd19}
-
-\subsubsection{ERD20 --- Forum Reports \& Moderation}
-
-This ERD describes the Forum Reports \& Moderation module. It stores forum reports, moderation queue, and banned keywords. These tables support reporting content and admin moderation.
-
-\kfig{0.95\textwidth}{images/database/erd-20}{ERD20 --- Forum Reports \& Moderation}{fig:db:erd20}
-
-\subsubsection{ERD21 --- Messaging \& Notifications}
-
-This ERD describes the Messaging \& Notifications module. It stores notifications, conversations, and direct messages. These tables support real-time chat and in-app notifications.
-
-\kfig{0.95\textwidth}{images/database/erd-21}{ERD21 --- Messaging \& Notifications}{fig:db:erd21}
-
-\subsubsection{ERD22 --- Administration \& System}
-
-This ERD describes the Administration \& System module. It stores announcement banners, system settings, and advertisement banners. These tables support admin configuration and banners.
-
-\kfig{0.95\textwidth}{images/database/erd-22}{ERD22 --- Administration \& System}{fig:db:erd22}
+\section{Module Overview}
+
+The \textbf{Frevia} backend (\texttt{apps/api/src/routes/}) and frontend (\texttt{apps/web/app/}) are modularized into cohesive domain packages following Clean N-Layer separation and unified Zod contracts (\texttt{@shared/types}). Table~\ref{tab:sdd_module_overview} summarizes the primary software modules, owning services, and sprint delivery cadence.
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.28}
+\begin{longtable}{|C{0.9cm}|L{3.8cm}|L{4.2cm}|L{5.5cm}|}
+\caption{Software Module Overview}\label{tab:sdd_module_overview} \\
+\hline
+\rowcolor{fptHeader}
+\textbf{No} & \textbf{Module Name} & \textbf{API Packages} & \textbf{Key Responsibilities} \\ \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}
+\textbf{No} & \textbf{Module Name} & \textbf{API Packages} & \textbf{Key Responsibilities} \\ \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+01 & Authentication \& RBAC & \texttt{auth}, \texttt{roles}, \texttt{permissions}, \texttt{sessions}, \texttt{users} & OTP registration, email/Google OAuth sign-in, JWT session tracking, dynamic RBAC guard validation. \\ \hline
+02 & Profiles, CV \& eKYC & \texttt{profiles}, \texttt{account-profile}, \texttt{portfolios}, \texttt{identity-verifications}, \texttt{expert-profile} & Multi-role profiles, portfolio showcases, PDF CV AI extraction, eKYC ID upload and audit. \\ \hline
+03 & Jobs \& Proposals & \texttt{browse-job}, \texttt{manage-job}, \texttt{job-categories}, \texttt{saved-search}, \texttt{job-alert}, \texttt{proposals}, \texttt{recommendations} & Fixed-price job CRUD, search, bookmarks, job alerts, bidding workflows, AI match ranking. \\ \hline
+04 & Contracts \& Workspace & \texttt{contract}, \texttt{shared-file} & Contract issuance from accepted bids, bilateral digital signatures, PDF export, shared workspace files. \\ \hline
+05 & Milestones \& Deliverables & \texttt{milestone}, \texttt{milestone-file}, \texttt{milestone-submission} & Progressive deliverable schedules, progress updates, work submission, change requests, client approval. \\ \hline
+06 & Payments \& Escrow & \texttt{payments} & Stripe Connect Express onboarding, hold deposits, milestone Checkout/saved-card funding, payouts, webhooks. \\ \hline
+07 & Disputes & \texttt{disputes} & 5-stage milestone dispute filing, evidence attachments, fee settlement, expert arbitration rulings. \\ \hline
+08 & Communication \& Forum & \texttt{conversations}, \texttt{notifications}, \texttt{forums}, \texttt{forums-admin}, \texttt{reviews} & Socket.IO real-time messaging, notification center, moderated forum discussions, post-contract reviews. \\ \hline
+09 & AI Microservices & \texttt{id-verification}, \texttt{cv-matching}, \texttt{ai-moderation} & FastAPI OCR/liveness detection, BGE-M3 + ChromaDB + Ollama CV semantic matching, content scoring. \\ \hline
+\end{longtable}
+\endgroup
 
 \section{Detailed Design}
 
-\input{../Report 4/sections/nhuy/2/sprint1}
-\input{../Report 4/sections/nhuy/2/sprint2}
-\input{../Report 4/sections/nhuy/2/sprint3}
-\input{../Report 4/sections/nhuy/2/sprint4}
-\input{../Report 4/sections/nhuy/2/sprint5}
-\subsection{Job Management}
+This section documents the object-oriented class structures and core runtime sequence interactions for each primary subsystem of \textbf{Frevia}. Representative workflows covering all five engineering ownership areas are presented below; exhaustive operation diagrams across all 200+ endpoints are retained in Report 4 (Software Design Description).
 
-Job Management enables clients to manage their posted jobs throughout their lifecycle, including creating new jobs, editing job parameters, publishing drafts, closing completed or cancelled jobs, and soft-deleting job postings.
+\subsection{Authentication \& RBAC Management}
+Manages guest account onboarding, JWT/Google OAuth authentication, device session revocation, and runtime permission binding across roles.
 
-\subsubsection{UC-11.01 -- View My Jobs}
+\wfstep{4.1.1. Class diagram -- Authentication Management}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/AuthClasses}{Class diagram of Authentication Management}{fig:sdd:cls_auth}
 
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.01 View My Jobs}{fig:ptai-cls-uc-11-01}
+\wfstep{4.1.2. Sequence diagram -- Register \& Login}
+\kfig{0.85\textwidth}{images/sprint1/tthuan/sequences/Register}{Sequence diagram of UC-04 Register}{fig:sdd:seq_register}
+\kfig{0.85\textwidth}{images/sprint1/tthuan/sequences/Login}{Sequence diagram of UC-02 Login}{fig:sdd:seq_login}
 
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.01_-_View_My_Jobs}{Sequence diagram of UC-11.01 View My Jobs}{fig:ptai-seq-uc-11-01}
+\wfstep{4.1.3. Class diagram -- RBAC Permission Management}
+\kfig{0.92\textwidth}{images/sprint2/tthuan/classDiagram/PermissionManagement}{Class diagram of RBAC Permission Management}{fig:sdd:cls_perm}
 
-\subsubsection{UC-11.02 -- Create Job}
+\wfstep{4.1.4. Sequence diagram -- Update Role Permissions}
+\kfig{0.85\textwidth}{images/sprint1/tthuan/sequences/UpdateRolePermissions}{Sequence diagram of Update Role Permissions}{fig:sdd:seq_role_perm}
 
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.02 Create Job}{fig:ptai-cls-uc-11-02}
+\subsection{Profile, CV \& eKYC Verification Management}
+Administers multi-role user profiles, PDF curriculum vitae uploads linked with AI skill extraction, and citizen identity verification submissions.
 
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.02_-_Create_Job}{Sequence diagram of UC-11.02 Create Job}{fig:ptai-seq-uc-11-02}
+\wfstep{4.2.1. Class diagram -- Profile \& CV Management}
+\kfig{0.92\textwidth}{images/sprint1/nhuy/classDiagram/ProfileManagement}{Class diagram of Profile Management}{fig:sdd:cls_profile}
+\kfig{0.92\textwidth}{images/sprint5/nhuy/classDiagram/CVManagement}{Class diagram of CV Management}{fig:sdd:cls_cv}
 
-\subsubsection{UC-11.03 -- Publish Job}
+\wfstep{4.2.2. Sequence diagram -- Upload CV}
+\kfig{0.85\textwidth}{images/sprint5/nhuy/sequences/UC-07.03-upload-cv}{Sequence diagram of UC-07.03 Upload CV}{fig:sdd:seq_upload_cv}
 
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.03 Publish Job}{fig:ptai-cls-uc-11-03}
+\wfstep{4.2.3. Class diagram -- Identity Verification (eKYC)}
+\kfig{0.92\textwidth}{images/sprint2/nhuy/classDiagram/IdentityVerification}{Class diagram of Identity Verification}{fig:sdd:cls_ekyc}
 
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.03_-_Publish_Job}{Sequence diagram of UC-11.03 Publish Job}{fig:ptai-seq-uc-11-03}
+\wfstep{4.2.4. Sequence diagram -- Upload Identity Documents}
+\kfig{0.85\textwidth}{images/sprint2/nhuy/sequences/UC-18.01-upload-identity-documents}{Sequence diagram of UC-18.01 Upload Identity Documents}{fig:sdd:seq_ekyc_upload}
 
-\subsubsection{UC-11.04 -- Update Job}
+\subsection{Job Posting \& Proposal Management}
+Controls client job creation, multi-criteria discovery, and freelancer proposal submission through hiring conversion.
 
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.04 Update Job}{fig:ptai-cls-uc-11-04}
+\wfstep{4.3.1. Class diagram -- Job Management}
+\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of Job Management}{fig:sdd:cls_job}
 
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.04_-_Update_Job}{Sequence diagram of UC-11.04 Update Job}{fig:ptai-seq-uc-11-04}
+\wfstep{4.3.2. Sequence diagram -- Create Job}
+\kfig{0.85\textwidth}{images/sprint1/ptai/UC-11.02_-_Create_Job}{Sequence diagram of UC-11.02 Create Job}{fig:sdd:seq_create_job}
 
-\subsubsection{UC-11.05 -- Delete Job}
+\wfstep{4.3.3. Class diagram -- Proposal Management}
+\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_Diagram}{Class diagram of Proposal Management}{fig:sdd:cls_proposal}
 
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.05 Delete Job}{fig:ptai-cls-uc-11-05}
+\wfstep{4.3.4. Sequence diagram -- Submit \& Accept Proposal}
+\kfig{0.85\textwidth}{images/sprint3/ptai/UC-32.03_-_Submit_Proposal}{Sequence diagram of UC-32.03 Submit Proposal}{fig:sdd:seq_submit_prop}
+\kfig{0.85\textwidth}{images/sprint3/ptai/UC-32.06_-_Accept_Proposal}{Sequence diagram of UC-32.06 Accept Proposal}{fig:sdd:seq_accept_prop}
 
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.05_-_Delete_Job}{Sequence diagram of UC-11.05 Delete Job}{fig:ptai-seq-uc-11-05}
+\subsection{Contract \& Shared Workspace Management}
+Enforces binding agreement creation, bilateral signing state transitions, contract terms editing, and shared workspace file storage.
 
-\subsubsection{UC-11.06 -- Close Job}
+\wfstep{4.4.1. Class diagram -- Contract \& Shared File Management}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of Contract Management}{fig:sdd:cls_contract}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/SharedFileManagement}{Class diagram of Shared File Management}{fig:sdd:cls_shared_file}
 
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.06 Close Job}{fig:ptai-cls-uc-11-06}
+\wfstep{4.4.2. Sequence diagram -- Create, Sign \& Upload Contract Files}
+\kfig{0.85\textwidth}{images/sprint1/ntin/sequences/UC-13.01-create-contract}{Sequence diagram of UC-13.01 Create Contract}{fig:sdd:seq_create_contract}
+\kfig{0.85\textwidth}{images/sprint1/ntin/sequences/UC-13.06-sign-contract}{Sequence diagram of UC-13.06 Sign Contract}{fig:sdd:seq_sign_contract}
+\kfig{0.85\textwidth}{images/sprint1/ntin/sequences/UC-13.10-upload-contract-file}{Sequence diagram of UC-13.10 Upload Contract File}{fig:sdd:seq_upload_contract_file}
 
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.06_-_Close_Job}{Sequence diagram of UC-11.06 Close Job}{fig:ptai-seq-uc-11-06}
+\subsection{Milestone \& Deliverable Submission Management}
+Coordinates staged deliverable planning, progress updates, freelancer submissions, client revision requests, and final milestone acceptance.
 
-\subsubsection{UC-11.07 -- Reopen Job}
+\wfstep{4.5.1. Class diagram -- Milestone \& Submission Management}
+\kfig{0.92\textwidth}{images/sprint2/ntin/classDiagram/MilestoneManagement}{Class diagram of Milestone Management}{fig:sdd:cls_milestone}
+\kfig{0.92\textwidth}{images/sprint2/ntin/classDiagram/ManagementMilestoneSub}{Class diagram of Milestone Submission Management}{fig:sdd:cls_milestone_sub}
 
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.07 Reopen Job}{fig:ptai-cls-uc-11-07}
+\wfstep{4.5.2. Sequence diagram -- Create, Submit \& Approve Milestone}
+\kfig{0.85\textwidth}{images/sprint2/ntin/sequences/UC-24.03-create-milestone}{Sequence diagram of UC-24.03 Create Milestone}{fig:sdd:seq_create_ms}
+\kfig{0.85\textwidth}{images/sprint2/ntin/sequences/UC-26.01-submit-milestone}{Sequence diagram of UC-26.01 Submit Milestone}{fig:sdd:seq_submit_ms}
+\kfig{0.85\textwidth}{images/sprint2/ntin/sequences/UC-26.05-approve-milestone}{Sequence diagram of UC-26.05 Approve Milestone}{fig:sdd:seq_approve_ms}
 
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.07_-_Reopen_Job}{Sequence diagram of UC-11.07 Reopen Job}{fig:ptai-seq-uc-11-07}
+\subsection{Dispute Arbitration Management}
+Implements milestone freeze controls, bilateral evidence uploads, formal escalation, and binding arbitrator split rulings.
 
-\subsection{Proposal Management}
+\wfstep{4.6.1. Class diagram -- Dispute Management}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of Dispute Management}{fig:sdd:cls_dispute}
 
-Proposal Management covers the full proposal workflow between freelancers and clients. Freelancers can submit proposals with cover letters, bid amounts, and delivery estimates, view their submitted proposals, modify pending proposals, or withdraw them. Clients can view all proposals submitted for their jobs, inspect detailed freelancer bids, and accept or reject proposals to initiate contracting.
+\wfstep{4.6.2. Sequence diagram -- Open Dispute \& Expert Arbitrator Ruling}
+\kfig{0.85\textwidth}{images/sprint3/ntin/sequences/UC-33.01-open-dispute}{Sequence diagram of UC-33.01 Open Dispute}{fig:sdd:seq_open_dispute}
+\kfig{0.85\textwidth}{images/sprint3/ntin/sequences/UC-33.10-expert-make-dispute-decision}{Sequence diagram of UC-33.10 Expert Make Dispute Decision}{fig:sdd:seq_expert_decision}
 
-\subsubsection{UC-32.01 -- View My Proposals List}
+\subsection{Payment \& Stripe Escrow Management}
+Handles Stripe Connect Express onboarding, hold deposit capture, hosted Checkout / saved-card escrow funding, webhook reconciliation, and payouts.
 
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_Diagram}{Class diagram of UC-32.01 View My Proposals List}{fig:ptai-cls-uc-32-01}
+\wfstep{4.7.1. Class diagram -- Payment Management}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of Payment Management}{fig:sdd:cls_payment}
 
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List}{Sequence diagram of UC-32.01 View My Proposals List}{fig:ptai-seq-uc-32-01}
+\wfstep{4.7.2. Sequence diagram -- Fund \& Release Milestone Escrow}
+\kfig{0.85\textwidth}{images/sprint4/ntin/sequences/UC-43.07-fund-milestone-via-stripe-checkout}{Sequence diagram of UC-43.07 Fund Milestone via Stripe Checkout}{fig:sdd:seq_fund_ms}
+\kfig{0.85\textwidth}{images/sprint4/ntin/sequences/UC-43.09-release-milestone-escrow-payment}{Sequence diagram of UC-43.09 Release Milestone Escrow Payment}{fig:sdd:seq_release_ms}
 
-\subsubsection{UC-32.02 -- View My Proposal Details}
+\subsection{Community Forum, Messaging \& AI Moderation}
+Supports moderated community discussions, WebSocket direct messaging, and containerized AI verification pipelines.
 
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_Diagram}{Class diagram of UC-32.02 View My Proposal Details}{fig:ptai-cls-uc-32-02}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail}{Sequence diagram of UC-32.02 View My Proposal Details}{fig:ptai-seq-uc-32-02}
-
-\subsubsection{UC-32.03 -- Submit Proposal}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_Diagram}{Class diagram of UC-32.03 Submit Proposal}{fig:ptai-cls-uc-32-03}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.03_-_Submit_Proposal}{Sequence diagram of UC-32.03 Submit Proposal}{fig:ptai-seq-uc-32-03}
-
-\subsubsection{UC-32.04 -- Update Proposal}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_Diagram}{Class diagram of UC-32.04 Update Proposal}{fig:ptai-cls-uc-32-04}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.04_-_Update_Proposal}{Sequence diagram of UC-32.04 Update Proposal}{fig:ptai-seq-uc-32-04}
-
-\subsubsection{UC-32.05 -- Withdraw Proposal}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_Diagram}{Class diagram of UC-32.05 Withdraw Proposal}{fig:ptai-cls-uc-32-05}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal}{Sequence diagram of UC-32.05 Withdraw Proposal}{fig:ptai-seq-uc-32-05}
-
-\subsubsection{UC-32.06 -- Accept Proposal}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Class_Diagram}{Class diagram of UC-32.06 Accept Proposal}{fig:ptai-cls-uc-32-06}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.06_-_Accept_Proposal}{Sequence diagram of UC-32.06 Accept Proposal}{fig:ptai-seq-uc-32-06}
-
-\subsubsection{UC-32.07 -- Reject Proposal}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Class_Diagram}{Class diagram of UC-32.07 Reject Proposal}{fig:ptai-cls-uc-32-07}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.07_-_Reject_Proposal}{Sequence diagram of UC-32.07 Reject Proposal}{fig:ptai-seq-uc-32-07}
-
-\subsubsection{UC-32.08 -- View Job Proposals List}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Class_Diagram}{Class diagram of UC-32.08 View Job Proposals List}{fig:ptai-cls-uc-32-08}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.08_-_View_Job_Proposal_List}{Sequence diagram of UC-32.08 View Job Proposals List}{fig:ptai-seq-uc-32-08}
-
-\subsubsection{UC-32.09 -- View Proposal Details}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Class_Diagram}{Class diagram of UC-32.09 View Proposal Details}{fig:ptai-cls-uc-32-09}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail}{Sequence diagram of UC-32.09 View Proposal Details}{fig:ptai-seq-uc-32-09}
-
-\subsection{Contract Management}
-
-The Contract Management module governs the legal and operational agreement between clients and freelancers. It encompasses the complete lifecycle of fixed-price and milestone-based contracts, from initial offer generation, scope negotiation, and bilateral digital signature, through PDF contract export, file attachment sharing, and contract lifecycle termination (completion, cancellation, or rejection).
-
-\subsubsection{UC-13.01 -- Create Contract}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.01 Create Contract}{fig:ntin-cls-uc-13-01}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.01-create-contract}{Sequence diagram of UC-13.01 Create Contract}{fig:ntin-seq-uc-13-01}
-
-\subsubsection{UC-13.02 -- Update Contract}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.02 Update Contract}{fig:ntin-cls-uc-13-02}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.02-update-contract}{Sequence diagram of UC-13.02 Update Contract}{fig:ntin-seq-uc-13-02}
-
-\subsubsection{UC-13.03 -- Complete Contract}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.03 Complete Contract}{fig:ntin-cls-uc-13-03}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.03-complete-contract}{Sequence diagram of UC-13.03 Complete Contract}{fig:ntin-seq-uc-13-03}
-
-\subsubsection{UC-13.04 -- View Contracts List}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.04 View Contracts List}{fig:ntin-cls-uc-13-04}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.04-view-contract-list}{Sequence diagram of UC-13.04 View Contracts List}{fig:ntin-seq-uc-13-04}
-
-\subsubsection{UC-13.05 -- View Contract Details}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.05 View Contract Details}{fig:ntin-cls-uc-13-05}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.05-view-contract-detail}{Sequence diagram of UC-13.05 View Contract Details}{fig:ntin-seq-uc-13-05}
-
-\subsubsection{UC-13.06 -- Sign Contract}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.06 Sign Contract}{fig:ntin-cls-uc-13-06}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.06-sign-contract}{Sequence diagram of UC-13.06 Sign Contract}{fig:ntin-seq-uc-13-06}
-
-\subsubsection{UC-13.07 -- Export Contract PDF}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.07 Export Contract PDF}{fig:ntin-cls-uc-13-07}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.07-export-contract-pdf}{Sequence diagram of UC-13.07 Export Contract PDF}{fig:ntin-seq-uc-13-07}
-
-\subsubsection{UC-13.08 -- Cancel Contract}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.08 Cancel Contract}{fig:ntin-cls-uc-13-08}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.08-cancel-contract}{Sequence diagram of UC-13.08 Cancel Contract}{fig:ntin-seq-uc-13-08}
-
-\subsubsection{UC-13.09 -- View Contract Files}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.09 View Contract Files}{fig:ntin-cls-uc-13-09}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.09-view-contract-files}{Sequence diagram of UC-13.09 View Contract Files}{fig:ntin-seq-uc-13-09}
-
-\subsubsection{UC-13.10 -- Upload Contract File}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.10 Upload Contract File}{fig:ntin-cls-uc-13-10}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.10-upload-contract-file}{Sequence diagram of UC-13.10 Upload Contract File}{fig:ntin-seq-uc-13-10}
-
-\subsubsection{UC-13.11 -- Delete Contract File}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.11 Delete Contract File}{fig:ntin-cls-uc-13-11}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.11-delete-contract-file}{Sequence diagram of UC-13.11 Delete Contract File}{fig:ntin-seq-uc-13-11}
-
-\subsubsection{UC-13.12 -- Reject Contract Offer}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.12 Reject Contract Offer}{fig:ntin-cls-uc-13-12}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.12-reject-contract-offer}{Sequence diagram of UC-13.12 Reject Contract Offer}{fig:ntin-seq-uc-13-12}
-
-\subsection{Payment Management}
-
-The Payment Management module integrates Stripe to support escrow protection, customer payment tokenization, pre-authorized contract hold deposits, and automated freelancer disbursements. It enables freelancers to link verified bank accounts via Stripe Connect Express, clients to manage payment methods, milestone escrow funding via hosted Checkout or saved cards, and automated escrow payout release upon deliverable acceptance. Real-time reconciliation routines and cryptographic webhook listeners ensure distributed ledger consistency.
-
-\subsubsection{UC-43.01 -- Connect Stripe Account}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.01 Connect Stripe Account}{fig:ntin-cls-uc-43-01}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.01-connect-stripe-account}{Sequence diagram of UC-43.01 Connect Stripe Account}{fig:ntin-seq-uc-43-01}
-
-\subsubsection{UC-43.02 -- Check Stripe Connect Status}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.02 Check Stripe Connect Status}{fig:ntin-cls-uc-43-02}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.02-check-stripe-connect-status}{Sequence diagram of UC-43.02 Check Stripe Connect Status}{fig:ntin-seq-uc-43-02}
-
-\subsubsection{UC-43.03 -- View Saved Payment Methods}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.03 View Saved Payment Methods}{fig:ntin-cls-uc-43-03}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.03-view-saved-payment-methods}{Sequence diagram of UC-43.03 View Saved Payment Methods}{fig:ntin-seq-uc-43-03}
-
-\subsubsection{UC-43.04 -- Set Default Payment Method}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.04 Set Default Payment Method}{fig:ntin-cls-uc-43-04}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.04-set-default-payment-method}{Sequence diagram of UC-43.04 Set Default Payment Method}{fig:ntin-seq-uc-43-04}
-
-\subsubsection{UC-43.05 -- Remove Saved Payment Method}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.05 Remove Saved Payment Method}{fig:ntin-cls-uc-43-05}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.05-remove-saved-payment-method}{Sequence diagram of UC-43.05 Remove Saved Payment Method}{fig:ntin-seq-uc-43-05}
-
-\subsubsection{UC-43.06 -- Create Contract Hold Deposit Intent}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.06 Create Contract Hold Deposit Intent}{fig:ntin-cls-uc-43-06}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.06-create-contract-hold-deposit-intent}{Sequence diagram of UC-43.06 Create Contract Hold Deposit Intent}{fig:ntin-seq-uc-43-06}
-
-\subsubsection{UC-43.07 -- Fund Milestone via Stripe Checkout}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.07 Fund Milestone via Stripe Checkout}{fig:ntin-cls-uc-43-07}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.07-fund-milestone-via-stripe-checkout}{Sequence diagram of UC-43.07 Fund Milestone via Stripe Checkout}{fig:ntin-seq-uc-43-07}
-
-\subsubsection{UC-43.08 -- Fund Milestone with Saved Card}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.08 Fund Milestone with Saved Card}{fig:ntin-cls-uc-43-08}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.08-fund-milestone-with-saved-card}{Sequence diagram of UC-43.08 Fund Milestone with Saved Card}{fig:ntin-seq-uc-43-08}
-
-\subsubsection{UC-43.09 -- Release Milestone Escrow Payment}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.09 Release Milestone Escrow Payment}{fig:ntin-cls-uc-43-09}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.09-release-milestone-escrow-payment}{Sequence diagram of UC-43.09 Release Milestone Escrow Payment}{fig:ntin-seq-uc-43-09}
-
-\subsubsection{UC-43.10 -- View Payment Transactions History}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.10 View Payment Transactions History}{fig:ntin-cls-uc-43-10}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.10-view-payment-transactions-history}{Sequence diagram of UC-43.10 View Payment Transactions History}{fig:ntin-seq-uc-43-10}
-
-\subsubsection{UC-43.11 -- Sync Payment Intent Status}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.11 Sync Payment Intent Status}{fig:ntin-cls-uc-43-11}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.11-sync-payment-intent-status}{Sequence diagram of UC-43.11 Sync Payment Intent Status}{fig:ntin-seq-uc-43-11}
-
-\subsubsection{UC-43.12 -- Sync Checkout Session Status}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.12 Sync Checkout Session Status}{fig:ntin-cls-uc-43-12}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.12-sync-checkout-session-status}{Sequence diagram of UC-43.12 Sync Checkout Session Status}{fig:ntin-seq-uc-43-12}
-
-\subsubsection{UC-43.13 -- Handle Stripe Webhook Events}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.13 Handle Stripe Webhook Events}{fig:ntin-cls-uc-43-13}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.13-handle-stripe-webhook-events}{Sequence diagram of UC-43.13 Handle Stripe Webhook Events}{fig:ntin-seq-uc-43-13}
-
-\subsection{Manage ID Verification}
-
-Manage ID Verification covers the UC-35 identity review workflow: listing the
-submitted identity documents, opening a request with its uploaded file, and
-approving or rejecting the request. A decision updates the verification status
-and the reviewer of the identity document.
-
-\subsubsection{UC-35.01 -- View ID Verification Requests List}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageIDVerification}{Class diagram of UC-35.01 View ID Verification Requests List}{fig:kvy-cls-uc-35-01}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-list}{Sequence diagram of UC-35.01 View ID Verification Requests List}{fig:kvy-seq-uc-35-01}
-
-\subsubsection{UC-35.02 -- View ID Verification Request Details}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageIDVerification}{Class diagram of UC-35.02 View ID Verification Request Details}{fig:kvy-cls-uc-35-02}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-detail}{Sequence diagram of UC-35.02 View ID Verification Request Details}{fig:kvy-seq-uc-35-02}
-
-\subsubsection{UC-35.03 -- Approve ID Verification}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageIDVerification}{Class diagram of UC-35.03 Approve ID Verification}{fig:kvy-cls-uc-35-03}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.03-approve-id-verification}{Sequence diagram of UC-35.03 Approve ID Verification}{fig:kvy-seq-uc-35-03}
-
-\subsubsection{UC-35.04 -- Reject ID Verification}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageIDVerification}{Class diagram of UC-35.04 Reject ID Verification}{fig:kvy-cls-uc-35-04}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.04-reject-id-verification}{Sequence diagram of UC-35.04 Reject ID Verification}{fig:kvy-seq-uc-35-04}
-
-\subsection{Dispute Management}
-
-The Dispute Management module provides a formal conflict resolution framework for contracts experiencing scope deadlock, substandard deliverables, or unresponsiveness. Filing a claim immediately freezes milestone escrow funds from release or refund. Counterparties can submit formal rebuttals and resolution proposals, or escalate unresolved disputes to platform domain expert arbitrators who formulate binding settlement rulings.
-
-\subsubsection{UC-33.01 -- Open Dispute}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.01 Open Dispute}{fig:ntin-cls-uc-33-01}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.01-open-dispute}{Sequence diagram of UC-33.01 Open Dispute}{fig:ntin-seq-uc-33-01}
-
-\subsubsection{UC-33.02 -- View Disputes List}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.02 View Disputes List}{fig:ntin-cls-uc-33-02}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.02-view-dispute-list}{Sequence diagram of UC-33.02 View Disputes List}{fig:ntin-seq-uc-33-02}
-
-\subsubsection{UC-33.03 -- View Dispute Details}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.03 View Dispute Details}{fig:ntin-cls-uc-33-03}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.03-view-dispute-detail}{Sequence diagram of UC-33.03 View Dispute Details}{fig:ntin-seq-uc-33-03}
-
-\subsubsection{UC-33.04 -- View Dispute by Milestone}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.04 View Dispute by Milestone}{fig:ntin-cls-uc-33-04}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.04-view-dispute-by-milestone}{Sequence diagram of UC-33.04 View Dispute by Milestone}{fig:ntin-seq-uc-33-04}
-
-\subsubsection{UC-33.05 -- Respond to Dispute}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.05 Respond to Dispute}{fig:ntin-cls-uc-33-05}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.05-respond-to-dispute}{Sequence diagram of UC-33.05 Respond to Dispute}{fig:ntin-seq-uc-33-05}
-
-\subsubsection{UC-33.06 -- Withdraw Dispute}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.06 Withdraw Dispute}{fig:ntin-cls-uc-33-06}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.06-withdraw-dispute}{Sequence diagram of UC-33.06 Withdraw Dispute}{fig:ntin-seq-uc-33-06}
-
-\subsubsection{UC-33.07 -- Escalate Dispute to Expert}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.07 Escalate Dispute to Expert}{fig:ntin-cls-uc-33-07}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.07-escalate-dispute-to-expert}{Sequence diagram of UC-33.07 Escalate Dispute to Expert}{fig:ntin-seq-uc-33-07}
-
-\subsubsection{UC-33.08 -- View Expert Disputes List}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.08 View Expert Disputes List}{fig:ntin-cls-uc-33-08}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.08-view-expert-dispute-list}{Sequence diagram of UC-33.08 View Expert Disputes List}{fig:ntin-seq-uc-33-08}
-
-\subsubsection{UC-33.09 -- View Expert Dispute Details}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.09 View Expert Dispute Details}{fig:ntin-cls-uc-33-09}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.09-view-expert-dispute-detail}{Sequence diagram of UC-33.09 View Expert Dispute Details}{fig:ntin-seq-uc-33-09}
-
-\subsubsection{UC-33.10 -- Expert Make Dispute Decision}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.10 Expert Make Dispute Decision}{fig:ntin-cls-uc-33-10}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.10-expert-make-dispute-decision}{Sequence diagram of UC-33.10 Expert Make Dispute Decision}{fig:ntin-seq-uc-33-10}
-
+\wfstep{4.8.1. Class diagram -- Forum, Conversation \& AI Pipelines}
+\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/ForumManagement}{Class diagram of Forum Management}{fig:sdd:cls_forum}
+\kfig{0.92\textwidth}{images/sprint2/kvy/classDiagram/ManageConversation}{Class diagram of Conversation Management}{fig:sdd:cls_conv}
+\kfig{0.92\textwidth}{images/sprint4/kvy/classDiagram/AI_eKYC_IDVerification}{Class diagram of AI eKYC \& Content Verification}{fig:sdd:cls_ai_ekyc}
+
+\wfstep{4.8.2. Sequence diagram -- Forum Post, Messaging \& AI Pipelines}
+\kfig{0.85\textwidth}{images/sprint1/kvy/sequences/UC-14.05-create-post}{Sequence diagram of UC-14.05 Create Forum Post}{fig:sdd:seq_post}
+\kfig{0.85\textwidth}{images/sprint2/kvy/sequences/UC-27.04-send-message}{Sequence diagram of UC-27.04 Send Direct Message}{fig:sdd:seq_msg}
+\kfig{0.85\textwidth}{images/sprint4/kvy/sequences/AI_Content_Moderation_Pipeline}{Sequence diagram of AI Content Moderation Pipeline}{fig:sdd:seq_ai_mod}
+\kfig{0.85\textwidth}{images/sprint4/kvy/sequences/AI_eKYC_Verification_Pipeline}{Sequence diagram of AI eKYC Verification Pipeline}{fig:sdd:seq_ai_ekyc}
