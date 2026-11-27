@@ -30,6 +30,11 @@ export class JobCategoriesController {
     @Param('slug') slug: string,
     @Query() query: JobCategoryDetailQueryDto,
   ) {
-    return this.service.viewJobCategoryDetail(slug, query.page, query.limit);
+    return this.service.viewJobCategoryDetail(
+      slug,
+      query.page,
+      query.limit,
+      query.search,
+    );
   }
 }

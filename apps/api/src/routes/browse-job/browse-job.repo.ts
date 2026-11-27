@@ -41,36 +41,12 @@ export class BrowseJobRepository {
         deletedAt: null,
       },
 
-      // Tìm theo tiêu đề, mô tả hoặc tên kỹ năng của job.
+      // Chỉ tìm theo tiêu đề của job.
       ...(search && {
-        OR: [
-          {
-            title: {
-              contains: search,
-              mode: Prisma.QueryMode.insensitive,
-            },
-          },
-          {
-            description: {
-              contains: search,
-              mode: Prisma.QueryMode.insensitive,
-            },
-          },
-          {
-            skills: {
-              some: {
-                skill: {
-                  is: {
-                    name: {
-                      contains: search,
-                      mode: Prisma.QueryMode.insensitive,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        ],
+        title: {
+          contains: search,
+          mode: Prisma.QueryMode.insensitive,
+        },
       }),
 
       ...(budgetType && { budgetType }),

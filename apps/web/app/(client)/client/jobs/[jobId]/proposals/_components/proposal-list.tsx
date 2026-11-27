@@ -3,10 +3,8 @@
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { motion } from "motion/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Check,
   ChevronLeft,
   ChevronRight,
   FileText,
@@ -131,7 +129,7 @@ function ProposalListSkeleton() {
       {Array.from({ length: 3 }).map((_, index) => (
         <div
           key={index}
-          className="rounded-[28px] border border-border bg-card p-5 space-y-3"
+          className="rounded-xl border border-border bg-card p-5 space-y-3"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -141,7 +139,7 @@ function ProposalListSkeleton() {
                 <Skeleton className="h-3 w-24" />
               </div>
             </div>
-            <Skeleton className="h-6 w-20 rounded-full" />
+            <Skeleton className="h-5 w-20 rounded-md" />
           </div>
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-2/3" />
@@ -155,8 +153,8 @@ function ProposalEmptyState({ filtered }: { filtered: boolean }) {
   const t = useTranslations("clientProposals");
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-[28px] border border-border bg-card/40 px-6 py-16 text-center font-sans">
-      <div className="flex size-10 items-center justify-center rounded-full bg-[#F1F0F5] dark:bg-zinc-800 text-muted-foreground">
+    <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card px-6 py-16 text-center font-sans">
+      <div className="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
         <FileText className="size-5" />
       </div>
       <h2 className="mt-3 text-sm font-semibold text-foreground">
@@ -186,6 +184,7 @@ export function ProposalList({
 }) {
   const queryClient = useQueryClient();
   const t = useTranslations("clientProposals");
+  const tDetail = useTranslations("jobDetailClient");
   const tStatus = useTranslations("proposalStatus");
   const tCommon = useTranslations("common");
   const format = useFormatter();
@@ -359,71 +358,65 @@ export function ProposalList({
   };
 
   return (
-    <div className="flex min-h-full flex-col bg-background font-sans">
+    <div className="flex min-h-full flex-col bg-background font-sans pb-[calc(5rem+env(safe-area-inset-bottom))]">
       <main className="flex-1 font-sans">
-        {/* Page header */}
-        <section className="border-b border-border bg-background">
-          <div className="px-6 py-6 lg:px-8">
-            <nav className="flex items-center gap-2 font-sans text-xs text-muted-foreground">
-              <Link
-                href="/client/jobs"
-                className="transition-colors hover:text-foreground font-medium"
-              >
-                {t("breadcrumbJobs")}
-              </Link>
-              <span className="text-muted-foreground/30">/</span>
-              <Link
-                href={`/client/jobs/${jobId}`}
-                className="max-w-[200px] truncate transition-colors hover:text-foreground font-medium"
-              >
-                {jobTitle}
-              </Link>
-              <span className="text-muted-foreground/30">/</span>
-              <span className="text-foreground font-medium">
-                {t("breadcrumbProposals")}
-              </span>
-            </nav>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6">
+          {/* Breadcrumb & Header */}
+          <nav className="flex items-center gap-2 font-sans text-xs text-muted-foreground">
+            <Link
+              href="/client/jobs"
+              className="hover:text-foreground font-medium"
+            >
+              {t("breadcrumbJobs")}
+            </Link>
+            <span className="text-muted-foreground/40">/</span>
+            <Link
+              href={`/client/jobs/${jobId}`}
+              className="max-w-[240px] truncate hover:text-foreground font-medium"
+            >
+              {jobTitle}
+            </Link>
+            <span className="text-muted-foreground/40">/</span>
+            <span className="text-foreground font-medium">
+              {t("breadcrumbProposals")}
+            </span>
+          </nav>
 
-            <div className="mt-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
-                  {jobTitle}
-                </h1>
-                <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                  {hiringType === "SINGLE" ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-foreground">
-                      {t("hiringTypeSingleBadge")}
-                    </span>
-                  ) : hiringType === "MULTIPLE" ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-foreground">
-                      {t("hiringTypeMultipleBadge", { filled, required })}
-                    </span>
-                  ) : null}
-                  {isFilled ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 px-3 py-1 text-xs font-medium text-[#0069D3] dark:text-blue-300">
-                      <Check className="size-3" />
-                      {t("jobFilledBadge", { filled, required })}
-                    </span>
-                  ) : jobStatus && jobStatus !== "OPEN" ? (
-                    <span className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 px-3 py-1 text-xs font-medium text-muted-foreground">
-                      {t("jobClosedBadge")}
-                    </span>
-                  ) : null}
-                </div>
-              </div>
+          <div className="mt-4 pb-5 border-b border-border">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-sans">
+              {jobTitle}
+            </h1>
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              {hiringType === "SINGLE" ? (
+                <span>{t("hiringTypeSingleBadge")}</span>
+              ) : hiringType === "MULTIPLE" ? (
+                <span>
+                  {t("hiringTypeMultipleBadge", { filled, required })}
+                </span>
+              ) : null}
+              {isFilled ? (
+                <>
+                  <span className="text-muted-foreground/40">•</span>
+                  <span className="font-medium text-[#0069D3] dark:text-blue-400">
+                    {t("jobFilledBadge", { filled, required })}
+                  </span>
+                </>
+              ) : jobStatus && jobStatus !== "OPEN" ? (
+                <>
+                  <span className="text-muted-foreground/40">•</span>
+                  <span>{t("jobClosedBadge")}</span>
+                </>
+              ) : null}
             </div>
           </div>
-        </section>
 
-        {/* Content area */}
-        <div className="px-6 py-8 lg:px-8 font-sans">
-          {/* Filter Tabs - Capsule style & Filter/Sort on the right */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* Filter Tabs & Search / Sort Bar */}
+          <div className="mt-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between rounded-xl border border-border bg-card p-1.5">
             <Tabs value={status} onValueChange={changeFilter}>
-              <TabsList className="h-auto gap-1 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 p-1 border border-black/5 dark:border-white/10 font-sans">
+              <TabsList className="h-auto gap-1 bg-transparent p-0 font-sans">
                 <TabsTrigger
                   value="ALL"
-                  className="rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:font-semibold data-[state=active]:shadow-xs dark:data-[state=active]:bg-zinc-900 transition-all cursor-pointer"
+                  className="rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:font-semibold data-[state=active]:shadow-none cursor-pointer"
                 >
                   {t("allTab", { count: totalItems })}
                 </TabsTrigger>
@@ -439,7 +432,7 @@ export function ProposalList({
                   <TabsTrigger
                     key={item}
                     value={item}
-                    className="rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:font-semibold data-[state=active]:shadow-xs dark:data-[state=active]:bg-zinc-900 transition-all cursor-pointer"
+                    className="rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:font-semibold data-[state=active]:shadow-none cursor-pointer"
                   >
                     {tStatus(item)}
                   </TabsTrigger>
@@ -447,25 +440,24 @@ export function ProposalList({
               </TabsList>
             </Tabs>
 
-            {/* Filter / Sort on the right */}
-            <div className="flex items-center gap-2 self-start sm:self-auto">
+            <div className="flex items-center gap-2 self-start md:self-auto">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground pointer-events-none" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground pointer-events-none" />
                 <Input
                   type="text"
                   placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-9 w-40 sm:w-48 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 pl-8 pr-3 text-xs border border-black/5 dark:border-white/10 shadow-xs focus-visible:ring-[#0069D3]"
+                  className="h-8 w-44 sm:w-52 rounded-lg bg-background pl-8 pr-3 text-xs border-border shadow-none focus-visible:ring-1 focus-visible:ring-[#0069D3]"
                 />
               </div>
 
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="h-9 rounded-full border border-black/5 dark:border-white/10 bg-[#F3F3F7] dark:bg-zinc-800/90 text-xs font-medium gap-1.5 px-3.5 shadow-xs cursor-pointer">
+                <SelectTrigger className="h-8 rounded-lg border-border bg-background text-xs font-medium gap-1.5 px-3 shadow-none cursor-pointer">
                   <SlidersHorizontal className="size-3 text-muted-foreground shrink-0" />
                   <SelectValue placeholder={t("sortPlaceholder")} />
                 </SelectTrigger>
-                <SelectContent className="rounded-2xl text-xs font-sans">
+                <SelectContent className="rounded-xl text-xs font-sans">
                   <SelectItem value="newest">{t("sortNewest")}</SelectItem>
                   <SelectItem value="oldest">{t("sortOldest")}</SelectItem>
                   <SelectItem value="bid_asc">{t("sortBidAsc")}</SelectItem>
@@ -481,16 +473,16 @@ export function ProposalList({
           {/* Proposals List */}
           <div className="mt-5 space-y-3">
             {!canViewSubmitted ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
-                <FileText className="size-10 text-muted-foreground mb-3" />
-                <p className="text-base font-semibold text-foreground">
+              <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card px-6 py-14 text-center font-sans">
+                <FileText className="size-8 text-muted-foreground mb-3" />
+                <p className="text-sm font-semibold text-foreground">
                   {t("accessDenied")}
                 </p>
               </div>
             ) : proposalsQuery.isLoading ? (
               <ProposalListSkeleton />
             ) : proposalsQuery.isError ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card/40 px-6 py-16 text-center">
+              <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card px-6 py-16 text-center">
                 <h2 className="text-sm font-semibold text-foreground">
                   {t("loadFailedTitle")}
                 </h2>
@@ -498,7 +490,7 @@ export function ProposalList({
                   {t("loadFailedHint")}
                 </p>
                 <Button
-                  className="mt-4 rounded-xl text-xs"
+                  className="mt-4 rounded-lg text-xs"
                   variant="outline"
                   size="sm"
                   onClick={() => void proposalsQuery.refetch()}
@@ -509,155 +501,151 @@ export function ProposalList({
             ) : proposals.length === 0 ? (
               <ProposalEmptyState filtered={status !== "ALL"} />
             ) : (
-              proposals.map((proposal, index) => (
-                <motion.div
-                  key={proposal.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.35,
-                    delay: index * 0.03,
-                  }}
-                  className="group relative flex flex-col justify-between rounded-[24px] border border-border bg-card p-5 sm:p-6 transition-all hover:bg-accent/10 shadow-xs font-sans"
-                >
-                  {/* Top Freelancer Row */}
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div
-                      onClick={() =>
-                        handleOpenFreelancerProfile(
-                          proposal.freelancer.profileId,
-                          {
-                            displayName: proposal.freelancer.displayName,
-                            avatarUrl: proposal.freelancer.avatarUrl,
-                            title: proposal.freelancer.title,
-                            freelancerId: proposal.freelancer.id,
-                          },
-                        )
-                      }
-                      className="flex items-center gap-3 cursor-pointer group"
-                    >
-                      <Avatar size="default" className="size-10 rounded-full ring-2 ring-transparent group-hover:ring-[#0069D3]/30 transition-all">
-                        <AvatarImage
-                          src={proposal.freelancer.avatarUrl ?? undefined}
-                          alt={proposal.freelancer.displayName}
-                        />
-                        <AvatarFallback className="font-semibold text-foreground text-xs bg-[#F1F0F5] dark:bg-zinc-800">
-                          {proposal.freelancer.displayName
-                            .slice(0, 1)
-                            .toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h2 className="text-sm font-bold text-foreground font-sans group-hover:text-[#0069D3] transition-colors">
-                            {proposal.freelancer.displayName}
-                          </h2>
-                          {proposal.freelancer.verified ? (
-                            <VerifiedBadge size="xs" />
-                          ) : null}
+              proposals.map((proposal) => {
+                const isActionable = ACTIONABLE_STATUSES.includes(
+                  proposal.status,
+                );
+                return (
+                  <div
+                    key={proposal.id}
+                    className="flex flex-col justify-between rounded-xl border border-border bg-card p-5 font-sans"
+                  >
+                    {/* Top Freelancer Row + Right Bid */}
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                      <div
+                        onClick={() =>
+                          handleOpenFreelancerProfile(
+                            proposal.freelancer.profileId,
+                            {
+                              displayName: proposal.freelancer.displayName,
+                              avatarUrl: proposal.freelancer.avatarUrl,
+                              title: proposal.freelancer.title,
+                              freelancerId: proposal.freelancer.id,
+                            },
+                          )
+                        }
+                        className="flex items-start gap-3 cursor-pointer min-w-0"
+                      >
+                        <Avatar
+                          size="default"
+                          className="size-10 rounded-full shrink-0"
+                        >
+                          <AvatarImage
+                            src={proposal.freelancer.avatarUrl ?? undefined}
+                            alt={proposal.freelancer.displayName}
+                          />
+                          <AvatarFallback className="font-semibold text-foreground text-xs bg-muted">
+                            {proposal.freelancer.displayName
+                              .slice(0, 1)
+                              .toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h2 className="text-sm sm:text-base font-semibold text-foreground hover:text-[#0069D3]">
+                              {proposal.freelancer.displayName}
+                            </h2>
+                            {proposal.freelancer.verified ? (
+                              <VerifiedBadge size="xs" />
+                            ) : null}
+                            <ProposalStatusBadge status={proposal.status} />
+                          </div>
+                          <p className="mt-0.5 text-xs text-muted-foreground">
+                            {proposal.freelancer.title ??
+                              t("freelancerFallback")}
+                          </p>
                         </div>
-                        <p className="text-xs font-normal text-muted-foreground">
-                          {proposal.freelancer.title ?? t("freelancerFallback")}
-                        </p>
+                      </div>
+
+                      {/* Right Bid Amount & Delivery Days */}
+                      <div className="flex sm:flex-col items-baseline sm:items-end justify-between sm:justify-start gap-1 shrink-0">
+                        <span className="text-lg font-bold tabular-nums text-foreground">
+                          {money(proposal.bidAmount)}
+                        </span>
+                        {proposal.deliveryDays > 0 && (
+                          <span className="text-xs text-muted-foreground">
+                            {tDetail("deliveryDaysPill", {
+                              days: proposal.deliveryDays,
+                            })}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    <div>
-                      <ProposalStatusBadge status={proposal.status} />
-                    </div>
-                  </div>
+                    {/* Cover Letter preview */}
+                    <p className="mt-3 line-clamp-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                      {proposal.coverLetter}
+                    </p>
 
-                  {/* Cover Letter preview */}
-                  <p className="mt-3 line-clamp-2 text-xs font-normal leading-relaxed text-muted-foreground font-sans">
-                    {proposal.coverLetter}
-                  </p>
-
-                  {/* Bottom Row: Metadata & Action Buttons */}
-                  <div className="mt-4 pt-3.5 border-t border-border/60 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    {/* Metadata Row */}
-                    <div className="flex flex-wrap items-center gap-3 text-xs font-normal text-muted-foreground font-sans">
-                      <span>
-                        {t.rich("bidLabel", {
-                          amount: money(proposal.bidAmount),
-                          strong: (chunks) => (
-                            <span className="font-semibold text-foreground">
-                              {chunks}
-                            </span>
-                          ),
-                        })}
-                      </span>
-                      <span>•</span>
-                      <span>
-                        {t.rich("deliveryLabel", {
-                          days: proposal.deliveryDays,
-                          strong: (chunks) => (
-                            <span className="font-semibold text-foreground">
-                              {chunks}
-                            </span>
-                          ),
-                        })}
-                      </span>
-                      <span>•</span>
-                      <span>
+                    {/* Bottom Row: Submitted date & Action Buttons */}
+                    <div className="mt-4 pt-3 border-t border-border flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <span className="text-xs text-muted-foreground">
                         {t("submittedAt", {
                           date: submittedDate(proposal.submittedAt),
                         })}
                       </span>
-                    </div>
 
-                    {/* Action buttons */}
-                    <div className="flex shrink-0 flex-wrap items-center gap-2">
-                      {canViewDetail ? (
-                        <Button
-                          type="button"
-                          size="sm"
-                          className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors"
-                          onClick={() => handleOpenProposalDetail(proposal)}
-                        >
-                          {t("viewProposal")}
-                        </Button>
-                      ) : null}
+                      {/* Action buttons */}
+                      <div className="flex shrink-0 flex-wrap items-center gap-2">
+                        {canViewDetail ? (
+                          <Button
+                            type="button"
+                            variant={isActionable ? "outline" : "default"}
+                            size="sm"
+                            className={
+                              isActionable
+                                ? "rounded-lg px-3.5 h-8 text-xs font-medium cursor-pointer"
+                                : "rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 h-8 text-xs font-medium cursor-pointer"
+                            }
+                            onClick={() => handleOpenProposalDetail(proposal)}
+                          >
+                            {t("viewProposal")}
+                          </Button>
+                        ) : null}
 
-                      {ACTIONABLE_STATUSES.includes(proposal.status) ? (
-                        <>
-                          {canAccept && canCreateContract ? (
-                            <Button
-                              type="button"
-                              size="sm"
-                              className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                              onClick={() => setContractingProposal(proposal)}
-                              disabled={cannotHireMore}
-                              title={cannotHireMore ? t("jobFilledDisabled") : undefined}
-                            >
-                              <Check className="mr-1 size-3" />
-                              {t("hire")}
-                            </Button>
-                          ) : null}
+                        {isActionable ? (
+                          <>
+                            {canAccept && canCreateContract ? (
+                              <Button
+                                type="button"
+                                size="sm"
+                                className="rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white px-3.5 h-8 text-xs font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={() => setContractingProposal(proposal)}
+                                disabled={cannotHireMore}
+                                title={
+                                  cannotHireMore
+                                    ? t("jobFilledDisabled")
+                                    : undefined
+                                }
+                              >
+                                {t("hire")}
+                              </Button>
+                            ) : null}
 
-                          {canReject ? (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              className="rounded-full border-gray-700 dark:border-red-900/40 text-gray-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 h-8 text-xs font-medium cursor-pointer transition-colors"
-                              onClick={() => setRejecting(proposal)}
-                            >
-                              <X className="mr-1 size-3" />
-                              {t("reject")}
-                            </Button>
-                          ) : null}
-                        </>
-                      ) : null}
+                            {canReject ? (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="rounded-lg text-destructive hover:text-destructive px-3 h-8 text-xs font-medium cursor-pointer"
+                                onClick={() => setRejecting(proposal)}
+                              >
+                                {t("reject")}
+                              </Button>
+                            ) : null}
+                          </>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              ))
+                );
+              })
             )}
           </div>
 
           {/* Pagination */}
           {totalItems > 0 && totalPages > 1 ? (
-            <div className="mt-8 flex items-center justify-between border-t border-border pt-4 font-sans">
+            <div className="mt-6 flex items-center justify-between border-t border-border pt-4 font-sans">
               <p className="font-sans text-xs text-muted-foreground">
                 {tCommon("pageOf", { page, totalPages })}
               </p>
@@ -665,7 +653,7 @@ export function ProposalList({
                 <Button
                   variant="outline"
                   size="icon"
-                  className="size-8 rounded-full"
+                  className="size-8 rounded-lg"
                   disabled={page === 1}
                   onClick={() => setPage((current) => current - 1)}
                 >
@@ -674,7 +662,7 @@ export function ProposalList({
                 <Button
                   variant="outline"
                   size="icon"
-                  className="size-8 rounded-full"
+                  className="size-8 rounded-lg"
                   disabled={page >= totalPages}
                   onClick={() => setPage((current) => current + 1)}
                 >

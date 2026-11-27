@@ -83,7 +83,7 @@ export function PostJobPageContent({
 
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <main className="flex-1">
+      <main className="flex-1 pb-[calc(5rem+env(safe-area-inset-bottom))]">
         <section className="border-b border-border">
           <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 lg:py-5">
             <nav className="flex items-center gap-2 text-xs text-muted-foreground font-medium font-sans">

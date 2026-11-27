@@ -175,4 +175,29 @@ describe('JobCategoriesRepository', () => {
       { id: 1, name: 'Web Development', slug: 'web-development' },
     ]);
   });
+
+  it('UC-46.07: filters category jobs by search keyword on job title only', async () => {
+    const findFirstCategory = jest.fn().mockResolvedValue(webCategoryRow);
+    const findManyJobs = jest.fn().mockResolvedValue([]);
+    const countJobs = jest.fn().mockResolvedValue(0);
+    const prisma = createPrismaMock({
+      findFirstCategory,
+      findManyJobs,
+      countJobs,
+    });
+    const repository = new JobCategoriesRepository(
+      prisma as unknown as PrismaService,
+    );
+
+    await repository.getJobCategoryDetail('web-development', 1, 10, 'react');
+
+    expect(findManyJobs).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          jobCategories: { some: { categoryId: 1 } },
+          title: { contains: 'react', mode: 'insensitive' },
+        }),
+      }),
+    );
+  });
 });
