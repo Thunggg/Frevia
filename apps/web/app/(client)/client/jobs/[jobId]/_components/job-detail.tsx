@@ -7,7 +7,7 @@ export async function JobDetail({ job }: { job: ViewJobDetailResType }) {
   const user = await authServerRequest.getMe();
 
   return (
-    <div className="pb-12">
+    <div className="pb-[calc(5rem+env(safe-area-inset-bottom))]">
       <JobDetailContent
         job={job}
         role="CLIENT"

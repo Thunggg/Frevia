@@ -9,8 +9,6 @@ import {
   BookmarkCheck,
   Briefcase,
   CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
   Edit2,
   Ellipsis,
   Eye,
@@ -46,6 +44,7 @@ import {
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { VerificationStatus, type JobType } from "@shared/types";
 
+import { JobPagination } from "@/app/(freelancer)/_components/job-pagination";
 import { PostJobForm } from "./post-job-form";
 
 type JobListProps = {
@@ -84,7 +83,6 @@ export function JobList({
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("jobsList");
-  const tCommon = useTranslations("common");
   const format = useFormatter();
 
   const formatRelativeDays = (dateInput: Date | string | null): string => {
@@ -122,6 +120,8 @@ export function JobList({
   const isFirstMount = useRef(true);
   const searchParamsRef = useRef(searchParams);
   searchParamsRef.current = searchParams;
+  const limitRef = useRef(pagination.limit);
+  limitRef.current = paginationState.limit;
 
   // Giữ jobs và pagination đồng bộ khi initialJobs/pagination từ server thay đổi
   useEffect(() => {
@@ -174,7 +174,7 @@ export function JobList({
           search: trimmed || undefined,
           status: activeTab !== "ALL" ? activeTab : undefined,
           page: 1,
-          limit: 10,
+          limit: limitRef.current,
         });
         if (!isCancelled && res.data) {
           setJobs(res.data.data);
@@ -221,7 +221,7 @@ export function JobList({
         search: debouncedSearch.trim() || undefined,
         status: activeTab !== "ALL" ? activeTab : undefined,
         page: newPage,
-        limit: 10,
+        limit: paginationState.limit,
       });
       if (res.data) {
         setJobs(res.data.data);
@@ -231,6 +231,33 @@ export function JobList({
       }
     } catch (err) {
       console.error("Lỗi chuyển trang:", err);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handlePageSizeChange = async (newLimit: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("limit", String(newLimit));
+    params.set("page", "1");
+    router.replace(`?${params.toString()}`, { scroll: false });
+
+    setIsSearching(true);
+    try {
+      const res = await jobApiRequest.getClientJobs({
+        search: debouncedSearch.trim() || undefined,
+        status: activeTab !== "ALL" ? activeTab : undefined,
+        page: 1,
+        limit: newLimit,
+      });
+      if (res.data) {
+        setJobs(res.data.data);
+        if (res.data.pagination) {
+          setPaginationState(res.data.pagination);
+        }
+      }
+    } catch (err) {
+      console.error("Lỗi đổi số lượng hiển thị:", err);
     } finally {
       setIsSearching(false);
     }
@@ -290,7 +317,7 @@ export function JobList({
         .getClientJobs({
           status: activeTab !== "ALL" ? activeTab : undefined,
           page: 1,
-          limit: 10,
+          limit: paginationState.limit,
         })
         .then((res) => {
           if (res.data) {
@@ -444,8 +471,8 @@ export function JobList({
   }
 
   return (
-    <div className="min-h-full bg-background font-sans pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+    <div className="min-h-full bg-background font-sans">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-[calc(6rem+env(safe-area-inset-bottom))]">
         {/* ── Top Header Bar ── */}
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
@@ -895,36 +922,15 @@ export function JobList({
         </div>
 
         {/* Pagination */}
-        {paginationState.totalPages > 1 && (
-          <div className="mt-8 flex items-center justify-between border-t border-border pt-4">
-            <p className="font-mono text-xs text-muted-foreground">
-              {tCommon("pageOf", {
-                page: paginationState.page,
-                totalPages: paginationState.totalPages,
-              })}
-            </p>
-            <div className="flex gap-1.5">
-              <Button
-                variant="outline"
-                size="icon"
-                className="size-8 rounded-xl cursor-pointer"
-                disabled={paginationState.page <= 1}
-                onClick={() => void handlePageChange(paginationState.page - 1)}
-              >
-                <ChevronLeft className="size-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="size-8 rounded-xl cursor-pointer"
-                disabled={paginationState.page >= paginationState.totalPages}
-                onClick={() => void handlePageChange(paginationState.page + 1)}
-              >
-                <ChevronRight className="size-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+        <JobPagination
+          currentPage={paginationState.page}
+          totalPages={paginationState.totalPages}
+          totalResults={paginationState.total}
+          pageSize={paginationState.limit}
+          onPageChange={(newPage) => void handlePageChange(newPage)}
+          onPageSizeChange={(newLimit) => void handlePageSizeChange(newLimit)}
+          isLoading={isBusy}
+        />
       </div>
 
       {/* Edit Post Job Dialog */}

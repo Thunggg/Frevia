@@ -20,6 +20,7 @@ import {
 
 import { PrismaService } from '../../shared/services/prisma.service';
 import {
+  DuplicateJobException,
   JobCannotBeClosedException,
   JobCannotBeEditedException,
   JobCannotBePublishedException,
@@ -305,6 +306,7 @@ export class ManageJobRepository {
     const job = await this.prisma.$transaction(
       async (tx) => {
         await this.assertJobCategoriesUsable(tx, data.jobCategories);
+        await this.assertNotDuplicateJob(tx, clientId, data);
 
         const createdJob = await tx.job.create({
           data: {
@@ -352,6 +354,7 @@ export class ManageJobRepository {
     const updatedJob = await this.prisma.$transaction(
       async (tx) => {
         await this.assertJobCategoriesUsable(tx, data.jobCategories);
+        await this.assertNotDuplicateJob(tx, clientId, data);
 
         // Không cho giảm số vị trí cần tuyển xuống dưới số vị trí đã tuyển.
         const current = await tx.job.findUniqueOrThrow({
@@ -847,6 +850,76 @@ export class ManageJobRepository {
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
+  }
+
+  async findApplicantIdsForJob(jobId: number): Promise<number[]> {
+    const proposals = await this.prisma.proposal.findMany({
+      where: {
+        jobId,
+        deletedAt: null,
+        status: {
+          in: [ProposalStatus.SUBMITTED, ProposalStatus.HIRED],
+        },
+      },
+      distinct: ['freelancerId'],
+      select: { freelancerId: true },
+    });
+
+    return proposals.map((p) => p.freelancerId);
+  }
+
+  private hasSameIdSet(existingIds: number[], incomingIds: number[]): boolean {
+    const incomingSet = new Set(incomingIds);
+    if (existingIds.length !== incomingSet.size) return false;
+    return existingIds.every((id) => incomingSet.has(id));
+  }
+
+  // Cho phép trùng tiêu đề, nhưng chặn tạo job trùng hoàn toàn nội dung (tiêu đề, mô tả, ngân sách, hình thức tuyển, danh mục, kỹ năng).
+  private async assertNotDuplicateJob(
+    tx: Prisma.TransactionClient,
+    clientId: number,
+    data: CreateJobBodyType,
+  ): Promise<void> {
+    const candidates = await tx.job.findMany({
+      where: {
+        clientId,
+        deletedAt: null,
+        title: {
+          equals: data.title.trim(),
+          mode: Prisma.QueryMode.insensitive,
+        },
+        budgetType: data.budgetType,
+        hiringType: data.hiringType,
+        positionsRequired: data.positionsRequired,
+      },
+      select: {
+        description: true,
+        budgetMin: true,
+        budgetMax: true,
+        jobCategories: { select: { categoryId: true } },
+        skills: { select: { skillId: true } },
+      },
+    });
+
+    const normalizedDesc = data.description.trim();
+    const isExactDuplicate = candidates.some(
+      (job) =>
+        (job.description?.trim() ?? '') === normalizedDesc &&
+        Number(job.budgetMin) === Number(data.budgetMin) &&
+        Number(job.budgetMax) === Number(data.budgetMax) &&
+        this.hasSameIdSet(
+          job.jobCategories.map((c) => c.categoryId),
+          data.jobCategories,
+        ) &&
+        this.hasSameIdSet(
+          job.skills.map((s) => s.skillId),
+          data.skills,
+        ),
+    );
+
+    if (isExactDuplicate) {
+      throw DuplicateJobException();
+    }
   }
 
   private createJobSlug(title: string): string {

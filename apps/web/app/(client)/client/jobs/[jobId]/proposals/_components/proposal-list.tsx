@@ -11,7 +11,6 @@ import {
   Loader2,
   Search,
   SlidersHorizontal,
-  Sparkles,
   X,
 } from "@/components/icons";
 import { Input } from "@repo/ui/components/shadcn/input";
@@ -49,14 +48,13 @@ import type {
   SubmittedProposalStatusType,
 } from "@shared/types";
 import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-profile-sheet";
-import { RecommendedFreelancersSection } from "@/app/(client)/_components/recommended-freelancers-section";
 import { ProposalDetailSheet } from "./proposal-detail-sheet";
 import { CreateContractDialog } from "../../../../contracts/_components/create-contract-dialog";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { useActionPermission } from "@/hooks/use-action-permission";
 
 type ProposalStatus = SubmittedProposalStatusType;
-type StatusFilter = "ALL" | ProposalStatus | "AI_RECOMMENDED";
+type StatusFilter = "ALL" | ProposalStatus;
 
 // Các trạng thái khách hàng có thể từ chối / tuyển.
 const ACTIONABLE_STATUSES: ProposalStatus[] = ["SUBMITTED"];
@@ -186,7 +184,6 @@ export function ProposalList({
 }) {
   const queryClient = useQueryClient();
   const t = useTranslations("clientProposals");
-  const tRec = useTranslations("recommendation");
   const tDetail = useTranslations("jobDetailClient");
   const tStatus = useTranslations("proposalStatus");
   const tCommon = useTranslations("common");
@@ -243,10 +240,6 @@ export function ProposalList({
   const canAccept = can("PATCH", "/api/proposals/:id/accept");
   const canReject = can("PATCH", "/api/proposals/:id/reject");
   const canCreateContract = can("POST", "/api/contracts");
-  const canViewRecommendedFreelancers = can(
-    "GET",
-    "/api/recommendations/freelancers",
-  );
 
   const handleOpenFreelancerProfile = (
     profileId: number,
@@ -274,16 +267,13 @@ export function ProposalList({
 
   const proposalsQuery = useQuery({
     queryKey: ["client-job-proposals", jobId, page, status],
-    enabled: canViewSubmitted && status !== "AI_RECOMMENDED",
+    enabled: canViewSubmitted,
     queryFn: () =>
       proposalApiRequest
         .getClientJobProposals(jobId, {
           page,
           limit: PAGE_SIZE,
-          status:
-            status === "ALL" || status === "AI_RECOMMENDED"
-              ? undefined
-              : status,
+          status: status === "ALL" ? undefined : status,
         })
         .then(extractProposalData),
   });
@@ -368,7 +358,7 @@ export function ProposalList({
   };
 
   return (
-    <div className="flex min-h-full flex-col bg-background font-sans pb-20">
+    <div className="flex min-h-full flex-col bg-background font-sans pb-[calc(5rem+env(safe-area-inset-bottom))]">
       <main className="flex-1 font-sans">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6">
           {/* Breadcrumb & Header */}
@@ -447,19 +437,9 @@ export function ProposalList({
                     {tStatus(item)}
                   </TabsTrigger>
                 ))}
-                {canViewRecommendedFreelancers && (
-                  <TabsTrigger
-                    value="AI_RECOMMENDED"
-                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-[#0069D3] dark:text-blue-400 data-[state=active]:bg-[#D0E1F8]/50 dark:data-[state=active]:bg-[#0069D3]/20 data-[state=active]:text-[#0069D3] dark:data-[state=active]:text-blue-300 data-[state=active]:font-semibold data-[state=active]:shadow-none cursor-pointer"
-                  >
-                    <Sparkles className="size-3.5" />
-                    <span>{tRec("aiSuggestedTab")}</span>
-                  </TabsTrigger>
-                )}
               </TabsList>
             </Tabs>
 
-            {status !== "AI_RECOMMENDED" && (
             <div className="flex items-center gap-2 self-start md:self-auto">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground pointer-events-none" />
@@ -488,18 +468,11 @@ export function ProposalList({
                 </SelectContent>
               </Select>
             </div>
-            )}
           </div>
 
-          {/* Proposals List or AI Recommended Candidates */}
+          {/* Proposals List */}
           <div className="mt-5 space-y-3">
-            {status === "AI_RECOMMENDED" ? (
-              <RecommendedFreelancersSection
-                jobId={jobId}
-                jobTitle={jobTitle}
-                jobStatus={jobStatus}
-              />
-            ) : !canViewSubmitted ? (
+            {!canViewSubmitted ? (
               <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card px-6 py-14 text-center font-sans">
                 <FileText className="size-8 text-muted-foreground mb-3" />
                 <p className="text-sm font-semibold text-foreground">
@@ -671,7 +644,7 @@ export function ProposalList({
           </div>
 
           {/* Pagination */}
-          {status !== "AI_RECOMMENDED" && totalItems > 0 && totalPages > 1 ? (
+          {totalItems > 0 && totalPages > 1 ? (
             <div className="mt-6 flex items-center justify-between border-t border-border pt-4 font-sans">
               <p className="font-sans text-xs text-muted-foreground">
                 {tCommon("pageOf", { page, totalPages })}

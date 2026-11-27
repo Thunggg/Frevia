@@ -47,6 +47,7 @@ describe('ManageJobService', () => {
     removeBookmark: jest.Mock;
     getClientJobDetail: jest.Mock;
     hasDuplicateTitle: jest.Mock;
+    findApplicantIdsForJob: jest.Mock;
   };
   let embeddingOutbox: {
     enqueueAndProcess: jest.Mock;
@@ -74,6 +75,7 @@ describe('ManageJobService', () => {
       }),
       getBookmarkedJobLists: jest.fn(),
       hasDuplicateTitle: jest.fn().mockResolvedValue(false),
+      findApplicantIdsForJob: jest.fn().mockResolvedValue([]),
       findJobBySlug: jest.fn(),
       findBookmark: jest.fn(),
       bookmarkJob: jest.fn(),
@@ -160,6 +162,25 @@ describe('ManageJobService', () => {
         documentType: 'JOB',
         documentId: 5,
       });
+    });
+    it('notifies active applicants when a job is updated', async () => {
+      const sendMany = jest.fn().mockResolvedValue([]);
+      const serviceWithNotif = new ManageJobService(
+        repository as unknown as ManageJobRepository,
+        embeddingOutbox as unknown as EmbeddingOutboxService,
+        fastTextService as unknown as FastTextService,
+        undefined,
+        { sendMany } as never,
+      );
+      repository.findApplicantIdsForJob.mockResolvedValueOnce([11, 22]);
+
+      await serviceWithNotif.updateJob(1, RoleName.CLIENT, 5, {} as never);
+
+      expect(repository.findApplicantIdsForJob).toHaveBeenCalledWith(5);
+      expect(sendMany).toHaveBeenCalledWith([
+        expect.objectContaining({ userId: 11, title: 'Job updated' }),
+        expect.objectContaining({ userId: 22, title: 'Job updated' }),
+      ]);
     });
     it('throws JobCannotBeEditedException when job status is not editable', async () => {
       repository.updateJob.mockRejectedValueOnce(JobCannotBeEditedException());

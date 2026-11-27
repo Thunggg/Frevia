@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Optional } from '@nestjs/common';
-import { JobStatus } from '@prisma/client';
+import { JobStatus, NotificationType } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 import {
@@ -37,6 +37,7 @@ import { ManageJobRepository } from './manage-job.repo';
 import { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
 import { FastTextService } from '../../shared/services/fasttext.service';
 import { CacheService } from '../../shared/services/cache.service';
+import { AppNotificationService } from '../../shared/services/app-notification.service';
 
 @Injectable()
 export class ManageJobService {
@@ -45,10 +46,33 @@ export class ManageJobService {
     private readonly embeddingOutbox: EmbeddingOutboxService,
     private readonly fastTextService: FastTextService,
     @Optional() private readonly cacheService?: CacheService,
+    @Optional() private readonly notificationService?: AppNotificationService,
   ) {}
 
   private invalidateJobCategoryCache(): void {
     this.cacheService?.delByPrefix('job_categor');
+  }
+
+  private async notifyApplicantsOnJobUpdate(job: JobType): Promise<void> {
+    if (!this.notificationService) return;
+    const applicantIds = await this.manageJobRepository.findApplicantIdsForJob(
+      job.id,
+    );
+    if (applicantIds.length === 0) return;
+
+    await this.notificationService.sendMany(
+      applicantIds.map((freelancerId) => ({
+        userId: freelancerId,
+        type: NotificationType.SYSTEM_ANNOUNCEMENT,
+        title: 'Job updated',
+        message: `The job "${job.title}" you applied to has been updated by the client.`,
+        data: {
+          jobId: job.id,
+          jobSlug: job.slug,
+          href: `/freelancer/jobs/${job.slug}`,
+        },
+      })),
+    );
   }
 
   private async validateJobLanguage(
@@ -341,6 +365,7 @@ export class ManageJobService {
         documentType: 'JOB',
         documentId: job.id,
       });
+      await this.notifyApplicantsOnJobUpdate(job);
       return job;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {

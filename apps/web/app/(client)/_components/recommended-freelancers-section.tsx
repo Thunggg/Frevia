@@ -9,7 +9,6 @@ import {
   Loader2,
   MessageSquare,
   RefreshCw,
-  Sparkles,
   UserRound,
 } from "@/components/icons";
 import {
@@ -169,15 +168,14 @@ export function RecommendedFreelancersSection({
   return (
     <section className="rounded-xl border border-border bg-card p-5 font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-border">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Sparkles className="size-4 text-[#0069D3] dark:text-blue-400 shrink-0" />
             <h2 className="text-sm sm:text-base font-semibold text-foreground">
               {t("recommendedFreelancersTitle")}
             </h2>
             {!recommendedQuery.isLoading && candidates.length > 0 && (
-              <span className="inline-flex items-center rounded-full bg-[#D0E1F8]/50 dark:bg-[#0069D3]/20 px-2 py-0.5 text-[11px] font-semibold text-[#0069D3] dark:text-blue-300 tabular-nums">
+              <span className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground tabular-nums">
                 {candidates.length}
               </span>
             )}
@@ -195,11 +193,7 @@ export function RecommendedFreelancersSection({
           onClick={() => void recommendedQuery.refetch()}
           className="h-8 rounded-lg px-3 text-xs font-medium self-start sm:self-auto cursor-pointer gap-1.5"
         >
-          <RefreshCw
-            className={`size-3.5 ${
-              recommendedQuery.isFetching ? "animate-spin" : ""
-            }`}
-          />
+          <RefreshCw className="size-3.5" />
           <span>{t("refreshRecommendations")}</span>
         </Button>
       </div>
@@ -261,26 +255,26 @@ export function RecommendedFreelancersSection({
             return (
               <div
                 key={candidate.profileId}
-                className="flex flex-col justify-between rounded-xl border border-border bg-background/60 p-4 transition-all hover:border-black/20 dark:hover:border-white/20 hover:shadow-xs space-y-3"
+                className="flex flex-col justify-between rounded-xl border border-border bg-card p-4 space-y-3"
               >
                 <div className="space-y-3">
                   {/* Top Row: Avatar + Name + Match Badge */}
                   <div className="flex items-start justify-between gap-2.5">
                     <div
                       onClick={() => handleOpenProfile(candidate)}
-                      className="flex items-center gap-3 min-w-0 cursor-pointer group"
+                      className="flex items-center gap-3 min-w-0 cursor-pointer"
                     >
                       <Avatar className="size-10 rounded-full shrink-0 border border-border">
                         <AvatarImage
                           src={candidate.avatarUrl ?? undefined}
                           alt={name}
                         />
-                        <AvatarFallback className="bg-muted text-foreground text-xs font-bold">
+                        <AvatarFallback className="bg-muted text-foreground text-xs font-semibold">
                           {name.slice(0, 1).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0">
-                        <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-[#0069D3] transition-colors">
+                        <h3 className="text-sm font-semibold text-foreground truncate">
                           {name}
                         </h3>
                         <p className="text-xs text-muted-foreground truncate">
@@ -298,17 +292,17 @@ export function RecommendedFreelancersSection({
                           handleOpenExplanation(candidate);
                         }
                       }}
-                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold shrink-0 transition-colors ${
+                      className={`inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-2 py-0.5 text-xs font-medium text-foreground shrink-0 ${
                         canClickExplanation
-                          ? "border-[#0069D3]/30 bg-[#D0E1F8]/40 text-[#0069D3] hover:bg-[#D0E1F8]/70 dark:bg-[#0069D3]/20 dark:text-blue-300 dark:border-[#0069D3]/30 cursor-pointer"
-                          : "border-border bg-muted/40 text-foreground"
+                          ? "hover:bg-muted cursor-pointer"
+                          : ""
                       }`}
                     >
                       <span className="tabular-nums">
                         {t("matchScore", { score: scorePercent })}
                       </span>
                       {canClickExplanation && (
-                        <span className="text-[10px] font-normal underline opacity-80">
+                        <span className="text-[11px] text-muted-foreground underline">
                           {t("details")}
                         </span>
                       )}
@@ -338,13 +332,13 @@ export function RecommendedFreelancersSection({
                       {visibleSkills.map((skill) => (
                         <span
                           key={skill.name}
-                          className="rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground/85"
+                          className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground"
                         >
                           {skill.name}
                         </span>
                       ))}
                       {extraSkillsCount > 0 && (
-                        <span className="rounded-md bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                        <span className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                           {t("moreSkills", { count: extraSkillsCount })}
                         </span>
                       )}
@@ -353,7 +347,7 @@ export function RecommendedFreelancersSection({
                 </div>
 
                 {/* Actions Footer */}
-                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/60">
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
                   <Button
                     type="button"
                     variant="outline"
@@ -388,7 +382,7 @@ export function RecommendedFreelancersSection({
                       variant="ghost"
                       size="sm"
                       onClick={() => handleOpenExplanation(candidate)}
-                      className="h-8 rounded-lg px-2.5 text-xs font-medium text-[#0069D3] hover:text-[#005bb8] hover:bg-[#D0E1F8]/30 ml-auto cursor-pointer"
+                      className="h-8 rounded-lg px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground ml-auto cursor-pointer"
                     >
                       {t("details")}
                     </Button>

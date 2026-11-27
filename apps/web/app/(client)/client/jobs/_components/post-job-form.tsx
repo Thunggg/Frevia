@@ -352,7 +352,10 @@ export function PostJobForm({
     else onCancel?.();
   };
 
-  const validateTitleLanguage = async (value: string) => {
+  const validateTitleLanguage = async (
+    value: string,
+    showDuplicateToast = true,
+  ) => {
     const trimmed = value.trim();
     if (trimmed.length < 3) {
       setIsDuplicateTitle(false);
@@ -376,7 +379,9 @@ export function PostJobForm({
 
       if (res.data?.title?.isDuplicate || res.data?.isDuplicate) {
         setIsDuplicateTitle(true);
-        toastWarning({ message: t("duplicateTitleToast") });
+        if (showDuplicateToast) {
+          toastWarning({ message: t("duplicateTitleToast") });
+        }
       } else {
         setIsDuplicateTitle(false);
       }
@@ -489,8 +494,10 @@ export function PostJobForm({
           hasDuplicateTitle,
       );
       if (duplicate) {
+        if (!hasDuplicateTitle) {
+          toastWarning({ message: t("duplicateTitleToast") });
+        }
         setIsDuplicateTitle(true);
-        toastWarning({ message: t("duplicateTitleToast") });
       }
 
       // Khi Client nhấn Save Changes, nếu Job đã có Proposal, hiển thị xác nhận
@@ -549,17 +556,17 @@ export function PostJobForm({
               className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
               onBlur={(e) => {
                 field.onBlur();
-                validateTitleLanguage(e.target.value);
                 const trimmed = e.target.value.trim().toLowerCase();
-                if (
-                  trimmed &&
+                const matchedLocally =
+                  Boolean(trimmed) &&
                   allExistingJobs.some(
                     (item) => item.id !== job?.id && item.title === trimmed,
-                  )
-                ) {
+                  );
+                if (matchedLocally) {
                   setIsDuplicateTitle(true);
                   toastWarning({ message: t("duplicateTitleToast") });
                 }
+                void validateTitleLanguage(e.target.value, !matchedLocally);
               }}
             />
             {hasDuplicateTitle && (
@@ -1224,6 +1231,16 @@ export function PostJobForm({
     <>
       <form
         onSubmit={form.handleSubmit(submit, onInvalid)}
+        onKeyDown={(e) => {
+          if (
+            e.key === "Enter" &&
+            e.target instanceof HTMLInputElement &&
+            e.target.type !== "submit"
+          ) {
+            e.preventDefault();
+            e.target.blur();
+          }
+        }}
         className="space-y-5 font-sans"
       >
         {fields}

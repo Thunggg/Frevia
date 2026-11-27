@@ -6,11 +6,18 @@ import { JobList } from "./_components/job-list";
 export default async function ClientJobsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; search?: string; status?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    limit?: string;
+    search?: string;
+    status?: string;
+  }>;
 }) {
-  const { page: pageParam, search, status } = await searchParams;
+  const { page: pageParam, limit: limitParam, search, status } = await searchParams;
   const parsedPage = Number(pageParam);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const parsedLimit = Number(limitParam);
+  const limit = [10, 20].includes(parsedLimit) ? parsedLimit : 10;
 
   const validStatuses: JobStatusType[] = [
     "DRAFT",
@@ -34,7 +41,7 @@ export default async function ClientJobsPage({
   ] = await Promise.all([
     jobServerRequest.getClientJobs({
       page,
-      limit: 10,
+      limit,
       search: search?.trim() || undefined,
       status: parsedStatus,
     }),
@@ -52,7 +59,7 @@ export default async function ClientJobsPage({
     <JobList
       initialJobs={result?.data ?? []}
       pagination={
-        result?.pagination ?? { page: 1, limit: 10, total: 0, totalPages: 0 }
+        result?.pagination ?? { page: 1, limit, total: 0, totalPages: 0 }
       }
       overviewCounts={{
         open: openResult?.pagination?.total ?? 0,
