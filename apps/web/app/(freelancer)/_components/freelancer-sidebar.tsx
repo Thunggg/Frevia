@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
+import { BellRing } from "lucide-react";
 import {
   Bell,
   ChevronDown,
@@ -141,6 +142,7 @@ export function FreelancerSidebar() {
   const canViewProposals = can("GET", "/api/proposals/my");
   const canViewContracts = can("GET", "/api/contracts");
   const canViewNotifications = can("GET", "/api/notifications");
+  const canViewJobAlerts = can("GET", "/api/job-alerts");
   const { data: notifications = [] } = useNotifications(canViewNotifications);
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -210,6 +212,12 @@ export function FreelancerSidebar() {
       matchPrefix: true,
     },
     {
+      href: "/freelancer/job-alerts",
+      labelKey: "navJobAlerts",
+      icon: BellRing,
+      matchPrefix: true,
+    },
+    {
       href: "/freelancer/proposals",
       labelKey: "navMyProposals",
       icon: FileText,
@@ -260,6 +268,7 @@ export function FreelancerSidebar() {
   ];
 
   const visibleNav = freelancerNav.filter((item) => {
+    if (item.href === "/freelancer/job-alerts" && !canViewJobAlerts) return false;
     if (item.href === "/freelancer/proposals" && !canViewProposals) return false;
     if (item.href === "/freelancer/contracts" && !canViewContracts) return false;
     if (item.href === "/freelancer/notifications" && !canViewNotifications) return false;
