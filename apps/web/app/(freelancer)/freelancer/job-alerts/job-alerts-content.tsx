@@ -1,10 +1,10 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   Bell,
+  Eye,
   Pencil,
   Plus,
   Search,
@@ -36,6 +36,8 @@ import type {
   NotificationChannelType,
 } from "@shared/types";
 
+import { JobAlertDetailDialog } from "./job-alert-detail-dialog";
+
 type JobAlertsContentProps = {
   initialJobAlerts: JobAlertType[];
 };
@@ -48,6 +50,7 @@ export function JobAlertsContent({
 
   const { can } = useActionPermission();
   const canViewJobAlerts = can("GET", "/api/job-alerts");
+  const canViewJobAlertDetail = can("GET", "/api/job-alerts/:id");
   const canViewMatchingJobs = can("GET", "/api/job-alerts/:id/matching-jobs");
   const canCreateJobAlert = can("POST", "/api/job-alerts");
   const canUpdateJobAlert = can("PATCH", "/api/job-alerts/:id");
@@ -69,8 +72,9 @@ export function JobAlertsContent({
   const [channels, setChannels] = useState<NotificationChannelType[]>(["IN_APP"]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Delete Dialog State
+  // Delete & Detail Dialog State
   const [deletingAlert, setDeletingAlert] = useState<JobAlertType | null>(null);
+  const [viewingAlert, setViewingAlert] = useState<JobAlertType | null>(null);
 
   const isLimitReached = alerts.length >= 10;
 
@@ -238,14 +242,6 @@ export function JobAlertsContent({
     if (alert.keywords?.trim()) return alert.keywords;
     if (alert.skills?.length) return alert.skills.join(" • ");
     return t("title");
-  };
-
-  const toFindWorkHref = (alert: JobAlertType) => {
-    const params = new URLSearchParams();
-    if (alert.keywords?.trim()) params.set("keyword", alert.keywords.trim());
-    if (alert.skills?.length) params.set("skills", alert.skills.join(","));
-    const query = params.toString();
-    return query ? `/freelancer?${query}` : "/freelancer";
   };
 
   return (
@@ -451,16 +447,15 @@ export function JobAlertsContent({
 
                 {/* Action Buttons */}
                 <div className="mt-4 pt-2 flex items-center justify-between gap-2">
-                  {canViewMatchingJobs && (
+                  {(canViewMatchingJobs || canViewJobAlertDetail) && (
                     <Button
-                      asChild
+                      type="button"
                       variant="outline"
-                      className="flex-1 rounded-lg text-xs font-semibold h-8"
+                      onClick={() => setViewingAlert(alert)}
+                      className="flex-1 rounded-lg text-xs font-semibold h-8 cursor-pointer"
                     >
-                      <Link href={toFindWorkHref(alert)}>
-                        <Search className="size-3.5 mr-1.5" />
-                        {t("viewMatchingJobs")}
-                      </Link>
+                      <Eye className="size-3.5 mr-1.5" />
+                      {canViewMatchingJobs ? t("viewMatchingJobs") : t("viewDetails")}
                     </Button>
                   )}
                   {canUpdateJobAlert && (
@@ -666,6 +661,14 @@ export function JobAlertsContent({
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Detail & Matching Jobs Dialog */}
+      <JobAlertDetailDialog
+        alert={viewingAlert}
+        open={Boolean(viewingAlert)}
+        onOpenChange={(nextOpen) => !nextOpen && setViewingAlert(null)}
+        canViewMatchingJobs={canViewMatchingJobs}
+      />
 
       {/* Delete Confirmation Dialog */}
       {deletingAlert && (

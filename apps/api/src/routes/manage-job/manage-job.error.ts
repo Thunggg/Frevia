@@ -98,6 +98,9 @@ export const JobDescriptionMustBeEnglishException = () =>
 export const FailedToCreateJobException = () =>
   new InternalServerErrorException(ManageJobMessage.FAILED_TO_CREATE_JOB);
 
+export const DuplicateJobException = () =>
+  new BadRequestException(ManageJobMessage.JOB_DUPLICATE_CONTENT);
+
 export const FailedToUpdateJobException = () =>
   new InternalServerErrorException(ManageJobMessage.FAILED_TO_UPDATE_JOB);
 

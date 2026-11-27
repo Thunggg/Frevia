@@ -48,6 +48,25 @@ export class SavedSearchRepository {
     });
   }
 
+  async existsByNameAndUserId(
+    userId: number,
+    name: string,
+    excludeId?: number,
+  ): Promise<boolean> {
+    const existing = await this.prisma.savedSearch.findFirst({
+      where: {
+        userId,
+        name: {
+          equals: name.trim(),
+          mode: 'insensitive',
+        },
+        ...(excludeId !== undefined ? { id: { not: excludeId } } : {}),
+      },
+      select: { id: true },
+    });
+    return Boolean(existing);
+  }
+
   async findByIdAndUserId(
     id: number,
     userId: number,

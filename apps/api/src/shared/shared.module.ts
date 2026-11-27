@@ -8,6 +8,7 @@ import { PermissionGuard } from './guards/permission.guard';
 import { AiRecommendationService } from './services/ai-recommendation.service';
 import { SharedPermissionRepository } from './repositories/shared-permission.repo';
 import { SharedRoleRepository } from './repositories/shared-role.repo';
+import { SharedSessionRepository } from './repositories/shared-session.repo';
 import { CloudinaryService } from './services/cloudinary.service';
 import { EmailService } from './services/email.service';
 import { HashingService } from './services/hashing.service';
@@ -52,6 +53,7 @@ import { FastTextService } from './services/fasttext.service';
     CloudinaryService,
     SharedRoleRepository,
     SharedPermissionRepository,
+    SharedSessionRepository,
     ContractPdfService,
     AuthGateway,
     CacheService,
@@ -71,6 +73,7 @@ import { FastTextService } from './services/fasttext.service';
     CloudinaryService,
     SharedRoleRepository,
     SharedPermissionRepository,
+    SharedSessionRepository,
     TokenService,
     ContractPdfService,
     AuthGateway,

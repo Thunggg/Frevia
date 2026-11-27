@@ -4,9 +4,13 @@ import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm, type FieldErrors } from "react-hook-form";
 import { useTranslatedResolver } from "@/lib/form-resolver";
+import { CheckCircle2, Minus, Plus } from "lucide-react";
 import { AlertTriangle, ChevronRight, X } from "@/components/icons";
 import {
   CreateJobBodySchema,
+  MAX_JOB_POSITIONS_REQUIRED,
+  MIN_JOB_POSITIONS_REQUIRED,
+  MIN_MULTIPLE_JOB_POSITIONS_REQUIRED,
   type CreateJobBodyType,
   type JobType,
 } from "@shared/types";
@@ -68,7 +72,7 @@ type JobFormValues = {
   skills: number[];
   jobCategories: number[];
   hiringType: "SINGLE" | "MULTIPLE";
-  positionsRequired: number;
+  positionsRequired: number | null;
 };
 
 const emptyJobForm: JobFormValues = {
@@ -82,7 +86,7 @@ const emptyJobForm: JobFormValues = {
   skills: [],
   jobCategories: [],
   hiringType: "SINGLE",
-  positionsRequired: 1,
+  positionsRequired: MIN_JOB_POSITIONS_REQUIRED,
 };
 
 function getJobFormValues(job?: JobType): JobFormValues {
@@ -348,7 +352,10 @@ export function PostJobForm({
     else onCancel?.();
   };
 
-  const validateTitleLanguage = async (value: string) => {
+  const validateTitleLanguage = async (
+    value: string,
+    showDuplicateToast = true,
+  ) => {
     const trimmed = value.trim();
     if (trimmed.length < 3) {
       setIsDuplicateTitle(false);
@@ -372,7 +379,9 @@ export function PostJobForm({
 
       if (res.data?.title?.isDuplicate || res.data?.isDuplicate) {
         setIsDuplicateTitle(true);
-        toastWarning({ message: t("duplicateTitleToast") });
+        if (showDuplicateToast) {
+          toastWarning({ message: t("duplicateTitleToast") });
+        }
       } else {
         setIsDuplicateTitle(false);
       }
@@ -485,8 +494,10 @@ export function PostJobForm({
           hasDuplicateTitle,
       );
       if (duplicate) {
+        if (!hasDuplicateTitle) {
+          toastWarning({ message: t("duplicateTitleToast") });
+        }
         setIsDuplicateTitle(true);
-        toastWarning({ message: t("duplicateTitleToast") });
       }
 
       // Khi Client nhấn Save Changes, nếu Job đã có Proposal, hiển thị xác nhận
@@ -545,17 +556,17 @@ export function PostJobForm({
               className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
               onBlur={(e) => {
                 field.onBlur();
-                validateTitleLanguage(e.target.value);
                 const trimmed = e.target.value.trim().toLowerCase();
-                if (
-                  trimmed &&
+                const matchedLocally =
+                  Boolean(trimmed) &&
                   allExistingJobs.some(
                     (item) => item.id !== job?.id && item.title === trimmed,
-                  )
-                ) {
+                  );
+                if (matchedLocally) {
                   setIsDuplicateTitle(true);
                   toastWarning({ message: t("duplicateTitleToast") });
                 }
+                void validateTitleLanguage(e.target.value, !matchedLocally);
               }}
             />
             {hasDuplicateTitle && (
@@ -672,124 +683,210 @@ export function PostJobForm({
         <Controller
           name="hiringType"
           control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs font-semibold text-foreground font-sans">
-                {t("hiringTypeLabel")}
-              </FieldLabel>
-              <div className="flex flex-wrap gap-2">
-                {(["SINGLE", "MULTIPLE"] as const).map((option) => {
-                  const isSelected = field.value === option;
-                  const isOptionDisabled =
-                    option === "SINGLE" &&
-                    Boolean(job?.positionsFilled && job.positionsFilled > 1);
-
-                  return (
-                    <button
-                      key={option}
-                      type="button"
-                      disabled={isOptionDisabled}
-                      title={
-                        isOptionDisabled
-                          ? t("cannotSwitchToSingleHint", {
-                              filled: job?.positionsFilled ?? 0,
-                            })
-                          : undefined
-                      }
-                      aria-pressed={isSelected}
-                      onClick={() => {
-                        if (isOptionDisabled) return;
-                        field.onChange(option);
-                        if (option === "SINGLE") {
-                          form.setValue("positionsRequired", 1);
-                        } else if (
-                          option === "MULTIPLE" &&
-                          (form.getValues("positionsRequired") ?? 1) <= 1
-                        ) {
-                          form.setValue(
-                            "positionsRequired",
-                            Math.max(2, job?.positionsFilled ?? 2),
-                          );
-                        }
-                      }}
-                      className={`rounded-full px-3 py-1 text-xs font-medium font-sans transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
-                        isSelected
-                          ? "bg-[#0069D3] text-white hover:bg-[#0058b3]"
-                          : "bg-[#F1F0F5] text-foreground hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700"
-                      }`}
-                    >
-                      {option === "SINGLE"
-                        ? t("hiringTypeSingleTitle")
-                        : t("hiringTypeMultipleTitle")}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="text-xs text-muted-foreground font-sans">
-                {field.value === "SINGLE"
-                  ? t("hiringTypeSingleDesc")
-                  : t("hiringTypeMultipleDesc")}
-              </p>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-        <Controller
-          name="positionsRequired"
-          control={form.control}
           render={({ field, fieldState }) => {
-            const hiringType = form.watch("hiringType");
-            const isSingle = hiringType === "SINGLE";
-            const minPositions = isSingle
-              ? 1
-              : Math.max(2, job?.positionsFilled ?? 2);
-
+            const isSingleSelected = field.value === "SINGLE";
             return (
-              <Field data-invalid={fieldState.invalid}>
-                <div className="flex items-center justify-between">
-                  <FieldLabel className="text-xs font-semibold text-foreground font-sans">
-                    {t("positionsLabel")}
-                  </FieldLabel>
-                  {job?.positionsFilled && job.positionsFilled > 0 ? (
-                    <span className="text-[11px] font-medium text-[#0069D3] dark:text-blue-300 font-sans">
-                      {t("positionsFilledNote", {
-                        filled: job.positionsFilled,
-                      })}
-                    </span>
-                  ) : null}
-                </div>
-                <Input
-                  type="text"
-                  inputMode="numeric"
-                  disabled={isSingle}
-                  value={isSingle ? 1 : (field.value ?? minPositions)}
-                  onFocus={(e) => e.target.select()}
-                  onChange={(event) => {
-                    let val = event.target.value.replace(/[^\d]/g, "");
-                    if (/^0\d/.test(val)) {
-                      val = val.replace(/^0+/, "");
-                      if (val === "") val = "0";
-                    }
-                    field.onChange(
-                      val === ""
-                        ? minPositions
-                        : Number(val),
+              <Field
+                data-invalid={fieldState.invalid}
+                className={isSingleSelected ? "sm:col-span-2" : undefined}
+              >
+                <FieldLabel className="text-xs font-semibold text-foreground font-sans">
+                  {t("hiringTypeLabel")}
+                </FieldLabel>
+                <div className="flex flex-wrap gap-2">
+                  {(["SINGLE", "MULTIPLE"] as const).map((option) => {
+                    const isSelected = field.value === option;
+                    const isOptionDisabled =
+                      option === "SINGLE" &&
+                      Boolean(job?.positionsFilled && job.positionsFilled > 1);
+
+                    return (
+                      <button
+                        key={option}
+                        type="button"
+                        disabled={isOptionDisabled}
+                        title={
+                          isOptionDisabled
+                            ? t("cannotSwitchToSingleHint", {
+                                filled: job?.positionsFilled ?? 0,
+                              })
+                            : undefined
+                        }
+                        aria-pressed={isSelected}
+                        onClick={() => {
+                          if (isOptionDisabled) return;
+                          field.onChange(option);
+                          if (option === "SINGLE") {
+                            form.setValue(
+                              "positionsRequired",
+                              MIN_JOB_POSITIONS_REQUIRED,
+                            );
+                            form.clearErrors("positionsRequired");
+                          } else {
+                            const currentVal =
+                              form.getValues("positionsRequired");
+                            const minVal = Math.max(
+                              MIN_MULTIPLE_JOB_POSITIONS_REQUIRED,
+                              job?.positionsFilled ?? 0,
+                            );
+                            if (
+                              currentVal == null ||
+                              currentVal < minVal
+                            ) {
+                              form.setValue("positionsRequired", minVal);
+                            }
+                          }
+                        }}
+                        className={`rounded-full px-3 py-1 text-xs font-medium font-sans transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+                          isSelected
+                            ? "bg-[#0069D3] text-white hover:bg-[#0058b3]"
+                            : "bg-[#F1F0F5] text-foreground hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700"
+                        }`}
+                      >
+                        {option === "SINGLE"
+                          ? t("hiringTypeSingleTitle")
+                          : t("hiringTypeMultipleTitle")}
+                      </button>
                     );
-                  }}
-                  aria-invalid={fieldState.invalid}
-                  placeholder={t("positionsPlaceholder")}
-                  className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none disabled:opacity-60"
-                />
+                  })}
+                </div>
                 <p className="text-xs text-muted-foreground font-sans">
-                  {isSingle
-                    ? t("positionsSingleHint")
-                    : t("positionsMultipleHint")}
+                  {field.value === "SINGLE"
+                    ? t("hiringTypeSingleDesc")
+                    : t("hiringTypeMultipleDesc")}
                 </p>
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             );
           }}
         />
+        {form.watch("hiringType") === "MULTIPLE" ? (
+          <Controller
+            name="positionsRequired"
+            control={form.control}
+            render={({ field, fieldState }) => {
+              const minPositions = Math.max(
+                MIN_MULTIPLE_JOB_POSITIONS_REQUIRED,
+                job?.positionsFilled ?? 0,
+              );
+              const maxPositions = MAX_JOB_POSITIONS_REQUIRED;
+              const numericValue =
+                typeof field.value === "number" && Number.isFinite(field.value)
+                  ? field.value
+                  : null;
+              const canDecrease =
+                numericValue !== null && numericValue > minPositions;
+              const canIncrease =
+                numericValue === null || numericValue < maxPositions;
+
+              return (
+                <Field data-invalid={fieldState.invalid}>
+                  <div className="flex items-center justify-between">
+                    <FieldLabel className="text-xs font-semibold text-foreground font-sans">
+                      {t("positionsLabel")}
+                    </FieldLabel>
+                    {job?.positionsFilled && job.positionsFilled > 0 ? (
+                      <span className="text-[11px] font-medium text-[#0069D3] dark:text-blue-300 font-sans">
+                        {t("positionsFilledNote", {
+                          filled: job.positionsFilled,
+                        })}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      aria-label={t("positionsDecrease")}
+                      disabled={!canDecrease}
+                      onClick={() => {
+                        const next = Math.max(
+                          minPositions,
+                          (numericValue ?? minPositions) - 1,
+                        );
+                        field.onChange(next);
+                      }}
+                      className="size-10 shrink-0 rounded-full border-0 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/90 dark:hover:bg-zinc-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <Minus className="size-4" />
+                    </Button>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      value={field.value ?? ""}
+                      onFocus={(e) => e.target.select()}
+                      onBlur={() => {
+                        if (numericValue !== null) {
+                          const clamped = Math.min(
+                            maxPositions,
+                            Math.max(minPositions, numericValue),
+                          );
+                          if (clamped !== numericValue) {
+                            field.onChange(clamped);
+                          }
+                        }
+                        field.onBlur();
+                      }}
+                      onChange={(event) => {
+                        if (event.target.value === "") {
+                          field.onChange(null);
+                          return;
+                        }
+                        // Chỉ cho phép nhập số nguyên >= 1, chặn số < 1 (0, số âm) và ký tự không phải số.
+                        const val = event.target.value.replace(/[^\d]/g, "").replace(/^0+/, "");
+                        if (!val) {
+                          return;
+                        }
+                        const parsed = Number(val);
+                        if (parsed < MIN_JOB_POSITIONS_REQUIRED) {
+                          return;
+                        }
+                        field.onChange(parsed);
+                      }}
+                      aria-invalid={fieldState.invalid}
+                      placeholder={t("positionsPlaceholder")}
+                      className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-center text-xs font-semibold font-sans dark:bg-zinc-800/90 outline-none"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      aria-label={t("positionsIncrease")}
+                      disabled={!canIncrease}
+                      onClick={() => {
+                        const base =
+                          numericValue === null
+                            ? minPositions - 1
+                            : numericValue;
+                        const next = Math.min(maxPositions, base + 1);
+                        field.onChange(next);
+                      }}
+                      className="size-10 shrink-0 rounded-full border-0 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/90 dark:hover:bg-zinc-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <Plus className="size-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground font-sans">
+                    {t("positionsMultipleHint", {
+                      min: minPositions,
+                      max: maxPositions,
+                    })}
+                  </p>
+                  {numericValue !== null && numericValue > 1 ? (
+                    <div className="flex items-start gap-2 rounded-2xl border border-[#D0E1F8] bg-[#EBF3FE] p-3 text-xs text-[#0055AC] dark:border-[#0069D3]/30 dark:bg-[#0069D3]/15 dark:text-blue-200 font-sans">
+                      <CheckCircle2 className="size-4 shrink-0 mt-0.5 text-[#0069D3] dark:text-blue-300" />
+                      <p className="leading-relaxed">
+                        {t("positionsConfirmInfo", { count: numericValue })}
+                      </p>
+                    </div>
+                  ) : null}
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              );
+            }}
+          />
+        ) : null}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Controller
@@ -1134,6 +1231,16 @@ export function PostJobForm({
     <>
       <form
         onSubmit={form.handleSubmit(submit, onInvalid)}
+        onKeyDown={(e) => {
+          if (
+            e.key === "Enter" &&
+            e.target instanceof HTMLInputElement &&
+            e.target.type !== "submit"
+          ) {
+            e.preventDefault();
+            e.target.blur();
+          }
+        }}
         className="space-y-5 font-sans"
       >
         {fields}

@@ -1,10 +1,10 @@
-\pdfminorversion=7
+\ifdefined\pdfminorversion\pdfminorversion=7\fi
 \documentclass[12pt,a4paper]{article}
 
 %====================================================
 % ENCODING & LANGUAGE
 %====================================================
-\usepackage[T1]{fontenc}
+\usepackage[T5,T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[vietnamese,english]{babel}
 
@@ -46,7 +46,6 @@
 \usepackage{enumitem}
 \usepackage{hhline}
 \usepackage{needspace}
-\usepackage{tcolorbox}
 \usepackage{pdflscape}
 
 %====================================================
@@ -197,7 +196,7 @@
 %====================================================
 % HYPERLINKS
 %====================================================
-\usepackage{hyperref}
+\usepackage[hypertexnames=false]{hyperref}
 
 \hypersetup{
     colorlinks=true,

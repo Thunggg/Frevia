@@ -15,11 +15,10 @@ import {
 import { motion } from "motion/react";
 import {
   Bookmark,
-  InfoIcon,
+  Loader2,
   RefreshCw,
   Search,
   SearchX,
-  SlidersHorizontal,
   Trash2,
 } from "@/components/icons";
 
@@ -48,7 +47,7 @@ import { RecommendationExplanationDialog } from "../../_components/recommendatio
 import { HomeProfileSidebar } from "../../_components/home-profile-sidebar";
 import { ProjectHeroBanner } from "../../_components/project-hero-banner";
 import { JobPagination } from "../../_components/job-pagination";
-import { HomeFiltersModal } from "../../_components/home-filters-modal";
+import { SavedSearchDetailDialog } from "../saved-searches/saved-search-detail-dialog";
 import { ClientDirectory } from "./client-directory";
 
 export type HomeTab =
@@ -56,7 +55,6 @@ export type HomeTab =
   | "most-recent"
   | "saved-searches"
   | "saved-jobs"
-  | "invites"
   | "find-clients";
 
 type FindWorkContentProps = {
@@ -90,7 +88,6 @@ type FindWorkContentProps = {
 const EMPTY_SLUGS: string[] = [];
 const EMPTY_JOBS: ViewJobDetailResType[] = [];
 const EMPTY_SEARCHES: SavedSearchType[] = [];
-const EMPTY_ALERTS: JobAlertType[] = [];
 const EMPTY_CATEGORIES: JobCategoryBrowseItemType[] = [];
 const EMPTY_RECOMMENDATIONS: RecommendedJobType[] = [];
 
@@ -141,7 +138,6 @@ export function FindWorkContent({
   initialBookmarkedSlugs = EMPTY_SLUGS,
   initialBookmarkedJobs = EMPTY_JOBS,
   initialSavedSearches = EMPTY_SEARCHES,
-  initialJobAlerts = EMPTY_ALERTS,
   initialCategories = EMPTY_CATEGORIES,
   initialRecommendedJobs = EMPTY_RECOMMENDATIONS,
   embedded = false,
@@ -154,10 +150,12 @@ export function FindWorkContent({
   const t = useTranslations("findWork");
   const tRec = useTranslations("recommendation");
   const tBookmark = useTranslations("bookmark");
+  const tSaved = useTranslations("savedSearches");
   const [isPending, startTransition] = useTransition();
 
   const [searchInput, setSearchInput] = useState(initialKeyword);
-  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+  const [viewingSavedSearch, setViewingSavedSearch] =
+    useState<SavedSearchType | null>(null);
 
   const [bookmarkedSlugs, setBookmarkedSlugs] = useState(
     () => new Set(initialBookmarkedSlugs),
@@ -171,16 +169,15 @@ export function FindWorkContent({
   const [savedSearches, setSavedSearches] = useState<SavedSearchType[]>(
     () => initialSavedSearches ?? [],
   );
-  const [jobAlerts, setJobAlerts] = useState<JobAlertType[]>(
-    () => initialJobAlerts ?? [],
-  );
+  const [isLoadingSavedSearches, setIsLoadingSavedSearches] = useState(false);
 
   const { can } = useActionPermission();
   const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
   const canAddBookmark = can("POST", "/api/manage-jobs/jobs/:slug/bookmark");
   const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
-  const canViewJobAlerts = can("GET", "/api/job-alerts");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
+  const canViewSavedSearchDetail = can("GET", "/api/saved-searches/:id");
+  const canDeleteSavedSearch = can("DELETE", "/api/saved-searches/:id");
   const canViewRecommendedJobs = can("GET", "/api/recommendations/jobs");
   const canViewRecommendationExplanation = can(
     "GET",
@@ -198,7 +195,6 @@ export function FindWorkContent({
     if (currentPath.includes("/most-recent")) return "most-recent";
     if (currentPath.includes("/saved-jobs")) return "saved-jobs";
     if (currentPath.includes("/saved-searches")) return "saved-searches";
-    if (currentPath.includes("/invites")) return "invites";
     if (currentPath.includes("/find-clients")) return "find-clients";
     if (currentPath.includes("/best-matches")) return "best-matches";
     if (initialTab) return initialTab;
@@ -210,7 +206,6 @@ export function FindWorkContent({
         "most-recent",
         "saved-searches",
         "saved-jobs",
-        "invites",
         "find-clients",
       ].includes(requestedTab)
     ) {
@@ -243,6 +238,37 @@ export function FindWorkContent({
       window.removeEventListener("popstate", handlePopState);
     };
   }, [getTabFromContext]);
+
+  useEffect(() => {
+    setSavedSearches(initialSavedSearches ?? []);
+  }, [initialSavedSearches]);
+
+  useEffect(() => {
+    if (activeTab !== "saved-searches" || !canViewSavedSearches) return;
+
+    let isCancelled = false;
+    setIsLoadingSavedSearches(true);
+
+    void savedSearchApiRequest
+      .getSavedSearches()
+      .then((res) => {
+        if (!isCancelled && res.data) {
+          setSavedSearches(res.data);
+        }
+      })
+      .catch(() => {
+        // Giữ dữ liệu hiện có nếu fetch lại thất bại
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setIsLoadingSavedSearches(false);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [activeTab, canViewSavedSearches]);
 
   // State management for AI recommendations
   const [recommendedJobs, setRecommendedJobs] = useState<RecommendedJobType[]>(
@@ -376,10 +402,6 @@ export function FindWorkContent({
   }, [initialSavedSearches]);
 
   useEffect(() => {
-    setJobAlerts(initialJobAlerts ?? []);
-  }, [initialJobAlerts]);
-
-  useEffect(() => {
     setSearchInput(initialKeyword);
   }, [initialKeyword]);
 
@@ -510,7 +532,6 @@ export function FindWorkContent({
 
   const handleTabSelect = (tab: HomeTab) => {
     setActiveTab(tab);
-    setIsFiltersModalOpen(false);
     const isFilterTab = tab === "best-matches" || tab === "most-recent";
     const params = new URLSearchParams(searchParams.toString());
     params.delete("tab");
@@ -661,11 +682,11 @@ export function FindWorkContent({
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder={t("searchPlaceholder")}
-                  className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-24 text-sm font-medium text-foreground placeholder:text-muted-foreground shadow-xs outline-none focus:border-[#0069D3] focus:ring-2 focus:ring-[#0069D3]/20 transition-all"
+                  className="h-10 w-full rounded-xl border border-border bg-card pl-10 pr-24 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-foreground/40"
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 py-1.5 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 py-1.5 text-xs font-medium cursor-pointer"
                 >
                   {t("searchPage.search")}
                 </button>
@@ -679,15 +700,15 @@ export function FindWorkContent({
                     <button
                       type="button"
                       onClick={() => handleTabSelect("best-matches")}
-                      className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                      className={`pb-3 text-sm font-medium border-b-2 cursor-pointer whitespace-nowrap ${
                         activeTab === "best-matches"
-                          ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
+                          ? "border-foreground text-foreground font-semibold"
                           : "border-transparent text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       <span>{t("bestMatches")}</span>
                       {filteredRecommendedJobs.length > 0 && (
-                        <span className="ml-1.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 px-2 py-0.5 text-xs font-semibold">
+                        <span className="ml-1.5 rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-xs font-normal tabular-nums">
                           {filteredRecommendedJobs.length}
                         </span>
                       )}
@@ -698,14 +719,14 @@ export function FindWorkContent({
                   <button
                     type="button"
                     onClick={() => handleTabSelect("most-recent")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                    className={`pb-3 text-sm font-medium border-b-2 cursor-pointer whitespace-nowrap ${
                       activeTab === "most-recent"
-                        ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
+                        ? "border-foreground text-foreground font-semibold"
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     <span>{t("mostRecent")}</span>
-                    <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
+                    <span className="ml-1.5 rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-xs font-normal tabular-nums">
                       {pagination.total}
                     </span>
                   </button>
@@ -715,15 +736,15 @@ export function FindWorkContent({
                     <button
                       type="button"
                       onClick={() => handleTabSelect("saved-searches")}
-                      className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                      className={`pb-3 text-sm font-medium border-b-2 cursor-pointer whitespace-nowrap ${
                         activeTab === "saved-searches"
-                          ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
+                          ? "border-foreground text-foreground font-semibold"
                           : "border-transparent text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       <span>{t("savedSearches")}</span>
                       {savedSearches.length > 0 && (
-                        <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
+                        <span className="ml-1.5 rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-xs font-normal tabular-nums">
                           {savedSearches.length}
                         </span>
                       )}
@@ -734,61 +755,28 @@ export function FindWorkContent({
                   <button
                     type="button"
                     onClick={() => handleTabSelect("saved-jobs")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                    className={`pb-3 text-sm font-medium border-b-2 cursor-pointer whitespace-nowrap ${
                       activeTab === "saved-jobs"
-                        ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
+                        ? "border-foreground text-foreground font-semibold"
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     <span>{t("savedJobs")}</span>
                     {bookmarkedSlugs.size > 0 && (
-                      <span className="ml-1.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 px-2 py-0.5 text-xs font-semibold">
+                      <span className="ml-1.5 rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-xs font-normal tabular-nums">
                         {bookmarkedSlugs.size}
                       </span>
                     )}
                   </button>
 
-                  {/* Invites */}
-                  <button
-                    type="button"
-                    onClick={() => handleTabSelect("invites")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                      activeTab === "invites"
-                        ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <span>{t("invites")}</span>
-                    {canViewJobAlerts && jobAlerts.length > 0 && (
-                      <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
-                        {jobAlerts.length}
-                      </span>
-                    )}
-                  </button>
                   <button
                     type="button"
                     onClick={() => handleTabSelect("find-clients")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${activeTab === "find-clients" ? "border-emerald-600 text-emerald-600 dark:text-emerald-400" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                    className={`pb-3 text-sm font-medium border-b-2 cursor-pointer whitespace-nowrap ${activeTab === "find-clients" ? "border-foreground text-foreground font-semibold" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                   >
                     {t("findClients")}
                   </button>
                 </div>
-
-                {/* Right Filter Icon Button: Mở Filters Modal áp dụng cho Best matches và Most recent */}
-                {(activeTab === "best-matches" || activeTab === "most-recent") && (
-                  <button
-                    type="button"
-                    onClick={() => setIsFiltersModalOpen(true)}
-                    className={`flex size-9 shrink-0 items-center justify-center rounded-full border transition-all cursor-pointer ${
-                      activeFiltersCount > 0
-                        ? "border-[#0069D3] bg-blue-50 text-[#0069D3] dark:bg-blue-950/40 dark:border-blue-500 dark:text-blue-300 ring-2 ring-blue-500/20"
-                        : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }`}
-                    title={t("modal.filterTooltip")}
-                  >
-                    <SlidersHorizontal className="size-4" />
-                  </button>
-                )}
               </div>
 
               {/* 5. Two-Column Home Content */}
@@ -808,13 +796,9 @@ export function FindWorkContent({
                           type="button"
                           disabled={isLoadingRecs}
                           onClick={refreshRecommendations}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer disabled:opacity-50"
                         >
-                          <RefreshCw
-                            className={`size-3 ${
-                              isLoadingRecs ? "animate-spin" : ""
-                            }`}
-                          />
+                          <RefreshCw className="size-3" />
                           <span>{t("refresh")}</span>
                         </button>
                       </div>
@@ -822,11 +806,7 @@ export function FindWorkContent({
                       {!hasFetchedRecs || isLoadingRecs ? (
                         <JobListSkeleton />
                       ) : filteredRecommendedJobs.length === 0 ? (
-                        <motion.div
-                          initial={{ opacity: 0, y: 12 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans"
-                        >
+                        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card px-6 py-14 text-center font-sans">
                           <p className="text-base font-semibold text-foreground">
                             {recommendedJobs.length === 0
                               ? tRec("emptyRecommendationsTitle")
@@ -842,14 +822,14 @@ export function FindWorkContent({
                               <>
                                 <Link
                                   href="/freelancer/profile"
-                                  className="inline-flex items-center rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] px-4 py-2 text-xs font-semibold shadow-xs transition-colors"
+                                  className="inline-flex items-center rounded-lg bg-[#0069D3] text-white hover:bg-[#005bb8] px-4 py-2 text-xs font-medium"
                                 >
                                   Update profile
                                 </Link>
                                 <button
                                   type="button"
                                   onClick={() => handleTabSelect("most-recent")}
-                                  className="inline-flex items-center rounded-full border border-border bg-card hover:bg-accent/40 px-4 py-2 text-xs font-medium text-foreground transition-colors cursor-pointer"
+                                  className="inline-flex items-center rounded-lg border border-border bg-card hover:bg-muted/50 px-4 py-2 text-xs font-medium text-foreground cursor-pointer"
                                 >
                                   Browse recent jobs
                                 </button>
@@ -874,7 +854,7 @@ export function FindWorkContent({
                               </Button>
                             )}
                           </div>
-                        </motion.div>
+                        </div>
                       ) : (
                         <div className="space-y-3">
                           {filteredRecommendedJobs.map((rec, index) => (
@@ -987,7 +967,11 @@ export function FindWorkContent({
                   {/* TAB 3: SAVED SEARCHES */}
                   {activeTab === "saved-searches" && canViewSavedSearches && (
                     <div className="space-y-3">
-                      {savedSearches.length === 0 ? (
+                      {isLoadingSavedSearches && savedSearches.length === 0 ? (
+                        <div className="flex items-center justify-center rounded-2xl border border-border bg-card/40 py-14">
+                          <Loader2 className="size-6 animate-spin text-muted-foreground" />
+                        </div>
+                      ) : savedSearches.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
                           <Bookmark className="size-10 text-muted-foreground mb-3" />
                           <p className="text-base font-semibold text-foreground">
@@ -1039,24 +1023,37 @@ export function FindWorkContent({
                                 </div>
                               </div>
                               <div className="flex items-center gap-2 shrink-0">
+                                {canViewSavedSearchDetail && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setViewingSavedSearch(item)}
+                                    className="rounded-full text-xs font-semibold h-8 px-3.5 cursor-pointer"
+                                  >
+                                    {tSaved("viewDetails")}
+                                  </Button>
+                                )}
                                 <Button
                                   size="sm"
                                   onClick={() => applySavedSearch(item)}
-                                  className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-4"
+                                  className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-4 cursor-pointer"
                                 >
                                   {t("searchPage.search")}
                                 </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() =>
-                                    handleDeleteSavedSearch(item.id)
-                                  }
-                                  className="size-8 rounded-full text-muted-foreground hover:text-destructive cursor-pointer"
-                                  title="Delete saved search"
-                                >
-                                  <Trash2 className="size-3.5" />
-                                </Button>
+                                {canDeleteSavedSearch && (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() =>
+                                      handleDeleteSavedSearch(item.id)
+                                    }
+                                    className="size-8 rounded-full text-muted-foreground hover:text-destructive cursor-pointer"
+                                    title="Delete saved search"
+                                  >
+                                    <Trash2 className="size-3.5" />
+                                  </Button>
+                                )}
                               </div>
                             </div>
                           );
@@ -1102,50 +1099,6 @@ export function FindWorkContent({
                       )}
                     </div>
                   )}
-
-                  {/* TAB 5: INVITES & JOB ALERTS */}
-                  {activeTab === "invites" && (
-                    <div className="space-y-3">
-                      {!canViewJobAlerts || jobAlerts.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
-                          <InfoIcon className="size-10 text-muted-foreground mb-3" />
-                          <p className="text-base font-semibold text-foreground">
-                            {t("noInvites")}
-                          </p>
-                          <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
-                            {t("noInvitesDesc")}
-                          </p>
-                        </div>
-                      ) : (
-                        jobAlerts.map((alert) => (
-                          <div
-                            key={alert.id}
-                            className="flex items-center justify-between rounded-2xl border border-border bg-card p-5 hover:border-black/20 dark:hover:border-white/20 transition-all font-sans"
-                          >
-                            <div className="space-y-1 min-w-0 flex-1 pr-4">
-                              <div className="flex items-center gap-2">
-                                <h3 className="text-sm font-bold text-foreground truncate">
-                                  {alert.name}
-                                </h3>
-                                <span className="rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-[11px] font-semibold px-2 py-0.5">
-                                  {alert.frequency}
-                                </span>
-                              </div>
-                              <p className="text-xs text-muted-foreground truncate">
-                                Keywords: {alert.keywords || "Any"}
-                              </p>
-                            </div>
-                            <Link
-                              href="/freelancer/proposals"
-                              className="rounded-full border border-border hover:bg-muted px-4 py-1.5 text-xs font-semibold text-foreground transition-colors shrink-0"
-                            >
-                              View details
-                            </Link>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  )}
                 </div>
 
                 {/* Right Column: Profile & KYC Sidebar */}
@@ -1169,37 +1122,14 @@ export function FindWorkContent({
         matchScore={explanationModal.matchScore}
       />
 
-      {/* Home Quick Filters Modal (Best matches & Most recent) */}
-      {(activeTab === "best-matches" || activeTab === "most-recent") && (
-        <HomeFiltersModal
-          open={isFiltersModalOpen}
-          onOpenChange={setIsFiltersModalOpen}
-          categories={initialCategories}
-          currentFilters={{
-            category: searchParams.get("category"),
-            budget: searchParams.get("budget"),
-            proposals: searchParams.get("proposals")
-              ? searchParams.get("proposals")!.split(",")
-              : null,
-            hiringType:
-              searchParams.get("hiringType") === "SINGLE" ||
-              searchParams.get("hiringType") === "MULTIPLE"
-                ? (searchParams.get("hiringType") as "SINGLE" | "MULTIPLE")
-                : null,
-            time: searchParams.get("time"),
-          }}
-          onApply={(newFilters) => {
-            updateParams({
-              category: newFilters.category ?? null,
-              budget: newFilters.budget ?? null,
-              proposals: newFilters.proposals?.join(",") ?? null,
-              hiringType: newFilters.hiringType ?? null,
-              time: newFilters.time ?? null,
-              page: "1",
-            });
-          }}
-        />
-      )}
+      {/* Saved Search Detail Popup */}
+      <SavedSearchDetailDialog
+        savedSearch={viewingSavedSearch}
+        open={Boolean(viewingSavedSearch)}
+        onOpenChange={(nextOpen) => !nextOpen && setViewingSavedSearch(null)}
+        categories={initialCategories}
+        onApply={applySavedSearch}
+      />
     </div>
   );
 }

@@ -1,0 +1,678 @@
+<mxfile host="Electron" agent="Mozilla/5.0">
+  <diagram name="UC-45.09 Release Milestone Escrow Payment" id="uc4509">
+    <mxGraphModel dx="1892" dy="1504" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1740" pageHeight="4013" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" value="Client" vertex="1">
+          <mxGeometry height="60" width="30" x="85" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="dash_actor" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="100" y="280" as="sourcePoint" />
+            <mxPoint x="100" y="3953" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="view" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=52;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" value="&amp;lt;&amp;lt;boundary&amp;gt;&amp;gt;&lt;br&gt;ReviewSubmissionDialog" vertex="1">
+          <mxGeometry height="3713" width="170" x="225" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="act_123" parent="view" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="3426" width="10" x="80" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=52;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" value="&amp;lt;&amp;lt;controller&amp;gt;&amp;gt;&lt;br&gt;:PaymentController" vertex="1">
+          <mxGeometry height="3713" width="210" x="415" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="act_124" parent="ctrl" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="3336" width="10" x="100" y="155" as="geometry" />
+        </mxCell>
+        <mxCell id="svc" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=52;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" value="&amp;lt;&amp;lt;service&amp;gt;&amp;gt;&lt;br&gt;:PaymentService" vertex="1">
+          <mxGeometry height="3713" width="190" x="645" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="act_125" parent="svc" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="2894" width="10" x="90" y="562" as="geometry" />
+        </mxCell>
+        <mxCell id="act_self_24" parent="svc" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="36" width="10" x="95" y="834" as="geometry" />
+        </mxCell>
+        <mxCell id="act_self_33" parent="svc" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="36" width="10" x="95" y="1110" as="geometry" />
+        </mxCell>
+        <mxCell id="act_self_42" parent="svc" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="36" width="10" x="95" y="1376" as="geometry" />
+        </mxCell>
+        <mxCell id="act_self_51" parent="svc" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="36" width="10" x="95" y="1642" as="geometry" />
+        </mxCell>
+        <mxCell id="act_self_60" parent="svc" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="36" width="10" x="95" y="1908" as="geometry" />
+        </mxCell>
+        <mxCell id="act_self_69" parent="svc" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="36" width="10" x="95" y="2174" as="geometry" />
+        </mxCell>
+        <mxCell id="act_self_78" parent="svc" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="36" width="10" x="95" y="2410" as="geometry" />
+        </mxCell>
+        <mxCell id="ext" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=52;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" value="&amp;lt;&amp;lt;service&amp;gt;&amp;gt;&lt;br&gt;:StripeService" vertex="1">
+          <mxGeometry height="3713" width="150" x="875" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="act_82" parent="ext" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="38" width="10" x="70" y="2492" as="geometry" />
+        </mxCell>
+        <mxCell id="repo" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=52;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" value="&amp;lt;&amp;lt;repository&amp;gt;&amp;gt;&lt;br&gt;:PaymentRepository" vertex="1">
+          <mxGeometry height="3713" width="210" x="1055" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="act_21" parent="repo" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="184" width="10" x="100" y="602" as="geometry" />
+        </mxCell>
+        <mxCell id="act_89" parent="repo" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="184" width="10" x="100" y="2568" as="geometry" />
+        </mxCell>
+        <mxCell id="act_98" parent="repo" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="184" width="10" x="100" y="2790" as="geometry" />
+        </mxCell>
+        <mxCell id="act_107" parent="repo" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="184" width="10" x="100" y="3012" as="geometry" />
+        </mxCell>
+        <mxCell id="act_116" parent="repo" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="184" width="10" x="100" y="3234" as="geometry" />
+        </mxCell>
+        <mxCell id="prisma" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=52;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" value="&amp;lt;&amp;lt;service&amp;gt;&amp;gt;&lt;br&gt;:PrismaService" vertex="1">
+          <mxGeometry height="3713" width="140" x="1310" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="act_22" parent="prisma" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="111" width="10" x="65" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="act_90" parent="prisma" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="111" width="10" x="65" y="2606" as="geometry" />
+        </mxCell>
+        <mxCell id="act_99" parent="prisma" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="111" width="10" x="65" y="2828" as="geometry" />
+        </mxCell>
+        <mxCell id="act_108" parent="prisma" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="111" width="10" x="65" y="3050" as="geometry" />
+        </mxCell>
+        <mxCell id="act_117" parent="prisma" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="111" width="10" x="65" y="3272" as="geometry" />
+        </mxCell>
+        <mxCell id="db" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" value="" vertex="1">
+          <mxGeometry height="70" width="60" x="1550" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="act_23" parent="db" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="38" width="10" x="25" y="698" as="geometry" />
+        </mxCell>
+        <mxCell id="act_91" parent="db" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="38" width="10" x="25" y="2664" as="geometry" />
+        </mxCell>
+        <mxCell id="act_100" parent="db" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="38" width="10" x="25" y="2886" as="geometry" />
+        </mxCell>
+        <mxCell id="act_109" parent="db" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="38" width="10" x="25" y="3108" as="geometry" />
+        </mxCell>
+        <mxCell id="act_118" parent="db" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="38" width="10" x="25" y="3330" as="geometry" />
+        </mxCell>
+        <mxCell id="db_lbl" parent="1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="Database" vertex="1">
+          <mxGeometry height="25" width="80" x="1540" y="292" as="geometry" />
+        </mxCell>
+        <mxCell id="dash_db" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1580" y="320" as="sourcePoint" />
+            <mxPoint x="1580" y="3953" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_122" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="3426" width="10" x="95" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="m_2" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="1. Click &quot;Approve &amp; Release Payment&quot;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="105" y="340" as="sourcePoint" />
+            <mxPoint x="305" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_3" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="2. POST /api/payments/contracts/&lt;br&gt;:contractId/milestones/&lt;div&gt;:milestoneId/release&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="315" y="395" as="sourcePoint" />
+            <mxPoint x="515" y="395" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fr_ref_4" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=50;height=22;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" value="ref" vertex="1">
+          <mxGeometry height="50" width="200" x="420" y="445" as="geometry" />
+        </mxCell>
+        <mxCell id="fr_ref_lbl_5" parent="1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="3.1. Verify jwt" vertex="1">
+          <mxGeometry height="20" width="140" x="470" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="g_7" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[no Bearer token ||&lt;br&gt;verify failed || session is null]" vertex="1">
+          <mxGeometry height="32" width="260" x="115" y="518" as="geometry" />
+        </mxCell>
+        <mxCell id="m_8" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="2.1.1. Return 401 response">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="575" as="sourcePoint" />
+            <mxPoint x="315" y="575" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_9" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="2.1.2. Display error message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="605" as="sourcePoint" />
+            <mxPoint x="105" y="605" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="div_10" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="20" y="635" as="sourcePoint" />
+            <mxPoint x="620" y="635" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_11" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[user is banned || roleId is&lt;br&gt;missing || permission denied]" vertex="1">
+          <mxGeometry height="32" width="260" x="115" y="643" as="geometry" />
+        </mxCell>
+        <mxCell id="m_12" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="2.2.1. Return 403 response">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="700" as="sourcePoint" />
+            <mxPoint x="315" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_13" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="2.2.2. Display error message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="730" as="sourcePoint" />
+            <mxPoint x="105" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fr_6" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=24;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" value="alt" vertex="1">
+          <mxGeometry height="250" width="600" x="20" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="m_14" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="3. releaseMilestone(&lt;br&gt;userId, contractId, milestoneId)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="525" y="802" as="sourcePoint" />
+            <mxPoint x="735" y="802" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_15" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="4.1. findMilestoneById(milestoneId)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="842" as="sourcePoint" />
+            <mxPoint x="1155" y="842" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_16" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="4.2. prisma.milestone.&lt;br&gt;findUnique({where: {id}})">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1165" y="880" as="sourcePoint" />
+            <mxPoint x="1375" y="880" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_17" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="4.3. Execute SELECT query">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1385" y="918" as="sourcePoint" />
+            <mxPoint x="1575" y="918" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_18" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="4.4. Return milestone or null">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1575" y="956" as="sourcePoint" />
+            <mxPoint x="1385" y="956" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_19" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="4.5. Return milestone or null">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1375" y="991" as="sourcePoint" />
+            <mxPoint x="1165" y="991" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_20" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="4.6. Return milestone or null">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1155" y="1026" as="sourcePoint" />
+            <mxPoint x="745" y="1026" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ms_25" edge="1" parent="1" style="html=1;align=left;verticalAlign=middle;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="act_self_24" value="5. Check milestone&lt;div&gt;&amp;nbsp;&amp;amp; client ownership&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10" as="offset" />
+            <Array as="points">
+              <mxPoint x="790" y="1064" />
+              <mxPoint x="790" y="1092" />
+            </Array>
+            <mxPoint x="745" y="1064" as="sourcePoint" />
+            <mxPoint x="755" y="1092" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_27" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[!milestone || contractId mismatch&lt;br&gt;|| clientId != userId]" vertex="1">
+          <mxGeometry height="32" width="260" x="115" y="1134" as="geometry" />
+        </mxCell>
+        <mxCell id="m_28" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="5.1.1. throw 403&lt;br&gt;PaymentForbidden">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="1191" as="sourcePoint" />
+            <mxPoint x="525" y="1191" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_29" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="5.1.2. Return 403 response">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="1225" as="sourcePoint" />
+            <mxPoint x="315" y="1225" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_30" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="5.1.3. Display error message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="1255" as="sourcePoint" />
+            <mxPoint x="105" y="1255" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="div_31" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="20" y="1285" as="sourcePoint" />
+            <mxPoint x="1670" y="1285" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_32" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[owner valid]" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="1293" as="geometry" />
+        </mxCell>
+        <mxCell id="ms_34" edge="1" parent="1" style="html=1;align=left;verticalAlign=middle;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="act_self_33" value="6. Check milestone&amp;nbsp;&lt;div&gt;not DISPUTED&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10" as="offset" />
+            <Array as="points">
+              <mxPoint x="790" y="1340" />
+              <mxPoint x="790" y="1368" />
+            </Array>
+            <mxPoint x="745" y="1340" as="sourcePoint" />
+            <mxPoint x="755" y="1368" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_36" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[milestone.status == DISPUTED]" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="1410" as="geometry" />
+        </mxCell>
+        <mxCell id="m_37" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="6.1.1. throw 403&lt;br&gt;PaymentForbidden">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="1457" as="sourcePoint" />
+            <mxPoint x="525" y="1457" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_38" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="6.1.2. Return 403 response">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="1491" as="sourcePoint" />
+            <mxPoint x="315" y="1491" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_39" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="6.1.3. Display error message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="1521" as="sourcePoint" />
+            <mxPoint x="105" y="1521" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="div_40" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="30" y="1551" as="sourcePoint" />
+            <mxPoint x="1660" y="1551" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_41" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[not disputed]" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="1559" as="geometry" />
+        </mxCell>
+        <mxCell id="ms_43" edge="1" parent="1" style="html=1;align=left;verticalAlign=middle;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="act_self_42" value="7. Check not already&amp;nbsp;&lt;div&gt;RELEASED&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10" as="offset" />
+            <Array as="points">
+              <mxPoint x="790" y="1606" />
+              <mxPoint x="790" y="1634" />
+            </Array>
+            <mxPoint x="745" y="1606" as="sourcePoint" />
+            <mxPoint x="755" y="1634" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_45" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[paymentStatus == RELEASED]" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="1676" as="geometry" />
+        </mxCell>
+        <mxCell id="m_46" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="7.1.1. throw 422&lt;br&gt;MilestoneAlreadyReleased">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="1723" as="sourcePoint" />
+            <mxPoint x="525" y="1723" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_47" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="7.1.2. Return 422 response">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="1757" as="sourcePoint" />
+            <mxPoint x="315" y="1757" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_48" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="7.1.3. Display error message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="1787" as="sourcePoint" />
+            <mxPoint x="105" y="1787" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="div_49" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="40" y="1817" as="sourcePoint" />
+            <mxPoint x="1650" y="1817" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_50" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[not released]" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="1825" as="geometry" />
+        </mxCell>
+        <mxCell id="ms_52" edge="1" parent="1" style="html=1;align=left;verticalAlign=middle;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="act_self_51" value="8. Check paymentStatus&amp;nbsp;&lt;div&gt;== FUNDED&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10" as="offset" />
+            <Array as="points">
+              <mxPoint x="790" y="1872" />
+              <mxPoint x="790" y="1900" />
+            </Array>
+            <mxPoint x="745" y="1872" as="sourcePoint" />
+            <mxPoint x="755" y="1900" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_54" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[paymentStatus != FUNDED]" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="1942" as="geometry" />
+        </mxCell>
+        <mxCell id="m_55" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="8.1.1. throw 422&lt;br&gt;MilestoneNotFunded">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="1989" as="sourcePoint" />
+            <mxPoint x="525" y="1989" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_56" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="8.1.2. Return 422 response">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="2023" as="sourcePoint" />
+            <mxPoint x="315" y="2023" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_57" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="8.1.3. Display error message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="2053" as="sourcePoint" />
+            <mxPoint x="105" y="2053" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="div_58" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="50" y="2083" as="sourcePoint" />
+            <mxPoint x="1640" y="2083" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_59" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[paymentStatus == FUNDED]" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="2091" as="geometry" />
+        </mxCell>
+        <mxCell id="ms_61" edge="1" parent="1" style="html=1;align=left;verticalAlign=middle;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="act_self_60" value="9. Check&amp;nbsp;&lt;div&gt;freelancer.stripeAccountId&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10" as="offset" />
+            <Array as="points">
+              <mxPoint x="790" y="2138" />
+              <mxPoint x="790" y="2166" />
+            </Array>
+            <mxPoint x="745" y="2138" as="sourcePoint" />
+            <mxPoint x="755" y="2166" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_63" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[!freelancer.stripeAccountId]" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="2208" as="geometry" />
+        </mxCell>
+        <mxCell id="m_64" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="9.1.1. throw 422&lt;br&gt;StripeAccountNotConnected">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="2255" as="sourcePoint" />
+            <mxPoint x="525" y="2255" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_65" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="9.1.2. Return 422 response">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="2289" as="sourcePoint" />
+            <mxPoint x="315" y="2289" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_66" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="9.1.3. Display error message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="2319" as="sourcePoint" />
+            <mxPoint x="105" y="2319" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="div_67" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="60" y="2349" as="sourcePoint" />
+            <mxPoint x="1630" y="2349" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_68" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[account connected]" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="2357" as="geometry" />
+        </mxCell>
+        <mxCell id="ms_70" edge="1" parent="1" style="html=1;align=left;verticalAlign=middle;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="act_self_69" value="10. Check&amp;nbsp;&lt;div&gt;freelancer.stripeOnboarding&lt;/div&gt;&lt;div&gt;Completed&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10" as="offset" />
+            <Array as="points">
+              <mxPoint x="790" y="2404" />
+              <mxPoint x="790" y="2432" />
+            </Array>
+            <mxPoint x="745" y="2404" as="sourcePoint" />
+            <mxPoint x="755" y="2432" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_72" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[!freelancer.stripeOnboardingCompleted]" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="2474" as="geometry" />
+        </mxCell>
+        <mxCell id="m_73" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="10.1.1. throw 422&lt;br&gt;StripeOnboardingIncomplete">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="2521" as="sourcePoint" />
+            <mxPoint x="525" y="2521" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_74" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="10.1.2. Return 422 response">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="2555" as="sourcePoint" />
+            <mxPoint x="315" y="2555" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_75" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="10.1.3. Display error message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="2585" as="sourcePoint" />
+            <mxPoint x="105" y="2585" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="div_76" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="2615" as="sourcePoint" />
+            <mxPoint x="1620" y="2615" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_77" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" value="[onboarding completed]" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="2623" as="geometry" />
+        </mxCell>
+        <mxCell id="ms_79" edge="1" parent="1" style="html=1;align=left;verticalAlign=middle;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="act_self_78" value="11. Calculate 5%&amp;nbsp;&lt;div&gt;freelancerFee&lt;br&gt;&amp;amp; 95% freelancerPayout&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10" as="offset" />
+            <Array as="points">
+              <mxPoint x="790" y="2640" />
+              <mxPoint x="790" y="2668" />
+            </Array>
+            <mxPoint x="745" y="2640" as="sourcePoint" />
+            <mxPoint x="755" y="2668" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_80" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="12.1. createTransfer(amountInCents,&lt;br&gt;destination: stripeAccountId)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="2732" as="sourcePoint" />
+            <mxPoint x="945" y="2732" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_81" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="12.2. Return transfer">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="945" y="2770" as="sourcePoint" />
+            <mxPoint x="745" y="2770" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_83" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="13.1. updateMilestonePaymentStatus(&lt;br&gt;RELEASED, COMPLETED)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="2808" as="sourcePoint" />
+            <mxPoint x="1155" y="2808" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_84" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="13.2. prisma.milestone.update(&lt;br&gt;{where: {id}, data})">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1165" y="2846" as="sourcePoint" />
+            <mxPoint x="1375" y="2846" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_85" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="13.3. Execute UPDATE query">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1385" y="2884" as="sourcePoint" />
+            <mxPoint x="1575" y="2884" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_86" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="13.4. Return updated milestone">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1575" y="2922" as="sourcePoint" />
+            <mxPoint x="1385" y="2922" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_87" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="13.5. Return updated milestone">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1375" y="2957" as="sourcePoint" />
+            <mxPoint x="1165" y="2957" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_88" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="13.6. Return updated milestone">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1155" y="2992" as="sourcePoint" />
+            <mxPoint x="745" y="2992" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_92" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="14.1. approvePendingSubmissionsForMilestone(&lt;br&gt;milestoneId)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="3030" as="sourcePoint" />
+            <mxPoint x="1155" y="3030" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_93" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="14.2. prisma.milestoneSubmission.&lt;div&gt;updateMany(&lt;br&gt;{where: {milestoneId}, data})&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1165" y="3068" as="sourcePoint" />
+            <mxPoint x="1375" y="3068" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_94" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="14.3. Execute UPDATE query">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1385" y="3106" as="sourcePoint" />
+            <mxPoint x="1575" y="3106" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_95" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="14.4. Return updated count">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1575" y="3144" as="sourcePoint" />
+            <mxPoint x="1385" y="3144" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_96" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="14.5. Return updated count">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1375" y="3179" as="sourcePoint" />
+            <mxPoint x="1165" y="3179" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_97" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="14.6. Return updated count">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1155" y="3214" as="sourcePoint" />
+            <mxPoint x="745" y="3214" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_101" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="15.1. createTransaction(MILESTONE_PAYOUT&lt;br&gt;&amp; PLATFORM_FEE)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="3252" as="sourcePoint" />
+            <mxPoint x="1155" y="3252" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_102" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="15.2. prisma.transaction.create(&lt;br&gt;{data})">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1165" y="3290" as="sourcePoint" />
+            <mxPoint x="1375" y="3290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_103" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="15.3. Execute INSERT queries">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1385" y="3328" as="sourcePoint" />
+            <mxPoint x="1575" y="3328" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_104" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="15.4. Return transactions">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1575" y="3366" as="sourcePoint" />
+            <mxPoint x="1385" y="3366" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_105" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="15.5. Return transactions">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1375" y="3401" as="sourcePoint" />
+            <mxPoint x="1165" y="3401" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_106" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="15.6. Return transactions">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1155" y="3436" as="sourcePoint" />
+            <mxPoint x="745" y="3436" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_110" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="16.1. checkAndCompleteFreelancerFee &amp;&lt;br&gt;syncContractCompletion(contractId)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="3474" as="sourcePoint" />
+            <mxPoint x="1155" y="3474" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_111" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="16.2. prisma.$transaction(&lt;br&gt;update contract &amp; notify)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1165" y="3512" as="sourcePoint" />
+            <mxPoint x="1375" y="3512" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_112" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="16.3. Execute UPDATE &amp; INSERT">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1385" y="3550" as="sourcePoint" />
+            <mxPoint x="1575" y="3550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_113" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="16.4. Return sync result">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1575" y="3588" as="sourcePoint" />
+            <mxPoint x="1385" y="3588" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_114" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="16.5. Return sync result">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1375" y="3623" as="sourcePoint" />
+            <mxPoint x="1165" y="3623" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_115" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="16.6. Return sync result">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1155" y="3658" as="sourcePoint" />
+            <mxPoint x="745" y="3658" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_119" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="17.1. Return {success: true, transferId}">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="3696" as="sourcePoint" />
+            <mxPoint x="525" y="3696" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_120" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="17.2. Return 201 response">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="3731" as="sourcePoint" />
+            <mxPoint x="315" y="3731" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_121" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="17.3. Display released status&lt;br&gt;&amp; success toast">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="3766" as="sourcePoint" />
+            <mxPoint x="105" y="3766" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fr_71" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=24;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" value="alt" vertex="1">
+          <mxGeometry height="1335" width="1550" x="70" y="2466" as="geometry" />
+        </mxCell>
+        <mxCell id="fr_62" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=24;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" value="alt" vertex="1">
+          <mxGeometry height="1613" width="1570" x="60" y="2200" as="geometry" />
+        </mxCell>
+        <mxCell id="fr_53" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=24;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" value="alt" vertex="1">
+          <mxGeometry height="1891" width="1590" x="50" y="1934" as="geometry" />
+        </mxCell>
+        <mxCell id="fr_44" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=24;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" value="alt" vertex="1">
+          <mxGeometry height="2169" width="1610" x="40" y="1668" as="geometry" />
+        </mxCell>
+        <mxCell id="fr_35" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=24;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" value="alt" vertex="1">
+          <mxGeometry height="2447" width="1630" x="30" y="1402" as="geometry" />
+        </mxCell>
+        <mxCell id="fr_26" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=24;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" value="alt" vertex="1">
+          <mxGeometry height="2735" width="1650" x="20" y="1126" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
