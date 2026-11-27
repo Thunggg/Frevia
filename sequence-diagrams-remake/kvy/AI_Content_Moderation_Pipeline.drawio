@@ -1,0 +1,130 @@
+<mxfile host="Electron">
+  <diagram id="moderation-pipeline" name="AI-Content-Moderation-Pipeline">
+    <mxGraphModel dx="1493" dy="907" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1980" pageHeight="1280" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ll_nest" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" value="&amp;lt;&amp;lt;service&amp;gt;&amp;gt;&#10;:AIModerationService&#10;(NestJS)" vertex="1">
+          <mxGeometry height="1080" width="170" x="80" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="bar_nest" parent="ll_nest" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" value="" vertex="1">
+          <mxGeometry height="820" width="10" x="80" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_fastapi" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" value="&amp;lt;&amp;lt;controller&amp;gt;&amp;gt;&#10;:ModerationRouter&#10;(FastAPI)" vertex="1">
+          <mxGeometry height="1080" width="170" x="340" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="bar_fastapi" parent="ll_fastapi" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" value="" vertex="1">
+          <mxGeometry height="820" width="10" x="80" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_svc" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" value="&amp;lt;&amp;lt;service&amp;gt;&amp;gt;&#10;:ContentModerationService" vertex="1">
+          <mxGeometry height="1080" width="180" x="600" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="bar_svc" parent="ll_svc" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" value="" vertex="1">
+          <mxGeometry height="690" width="10" x="85" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_rule" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&#10;:TunedRuleEngine&#10;(668+ Regex)" vertex="1">
+          <mxGeometry height="1080" width="170" x="860" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="bar_rule" parent="ll_rule" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" value="" vertex="1">
+          <mxGeometry height="70" width="10" x="80" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_trans" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&#10;:TransformerEngine&#10;(mDeBERTa-v3 ICIER 2026)" vertex="1">
+          <mxGeometry height="1080" width="190" x="1110" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="bar_trans" parent="ll_trans" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" value="" vertex="1">
+          <mxGeometry height="200" width="10" x="90" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_mv" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" value="&amp;lt;&amp;lt;boundary&amp;gt;&amp;gt;&#10;MultiViewHead&#10;(cls + mean + max)" vertex="1">
+          <mxGeometry height="1080" width="180" x="1380" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="bar_mv" parent="ll_mv" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" value="" vertex="1">
+          <mxGeometry height="80" width="10" x="85" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_meta" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&#10;:MetaClassifier &amp;&#10;PolicyEngine" vertex="1">
+          <mxGeometry height="1080" width="180" x="1640" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="bar_meta" parent="ll_meta" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" value="" vertex="1">
+          <mxGeometry height="170" width="10" x="85" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" value="1. POST /moderate (text, context)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="170" y="200" as="sourcePoint" />
+            <mxPoint x="420" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" value="2. moderate(text)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="430" y="260" as="sourcePoint" />
+            <mxPoint x="685" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" value="3. match_patterns(normalized_text)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="695" y="320" as="sourcePoint" />
+            <mxPoint x="940" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" value="4. Return rule_score (&lt; 5ms)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="940" y="390" as="sourcePoint" />
+            <mxPoint x="695" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" value="5. predict(text) [ViHSD fine-tuned]">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="695" y="440" as="sourcePoint" />
+            <mxPoint x="1200" y="440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" value="6. forward(hidden_states, mask)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1210" y="500" as="sourcePoint" />
+            <mxPoint x="1465" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" value="7. Return Multi-View logits">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1465" y="580" as="sourcePoint" />
+            <mxPoint x="1210" y="580" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m8" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" value="8. Return transformer_score">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1200" y="640" as="sourcePoint" />
+            <mxPoint x="695" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m9" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" value="9. fuse_predictions() &amp; evaluate_decision()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="695" y="690" as="sourcePoint" />
+            <mxPoint x="1725" y="690" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="alt_policy" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=60;height=24;fillColor=none;fontSize=12;" value="alt" vertex="1">
+          <mxGeometry height="170" width="1160" x="610" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="g_block" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" value="[score &gt;= 0.80]  -&gt;  BLOCK (HTTP 400, no record)&#10;[0.30 &lt;= score &lt; 0.80]  -&gt;  REVIEW (PENDING for admin review)&#10;[score &lt; 0.30]  -&gt;  ALLOW (APPROVED, visible immediately)" vertex="1">
+          <mxGeometry height="60" width="460" x="740" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="m10" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" value="10. Return PolicyVerdict { decision, composite_score }">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1725" y="860" as="sourcePoint" />
+            <mxPoint x="695" y="860" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" value="11. Return ModerationResult">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="685" y="950" as="sourcePoint" />
+            <mxPoint x="430" y="950" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m12" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" value="12. 200 OK JSON (&lt; 50ms total)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="420" y="1020" as="sourcePoint" />
+            <mxPoint x="170" y="1020" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -93,7 +93,26 @@
     top=2.0cm,
     bottom=2.0cm,
     left=3.0cm,
-    right=2.0cm
+    right=2.0cm,
+    headheight=14pt
+}
+
+%====================================================
+% HEADER & FOOTER
+%====================================================
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[C]{\small\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
 }
 
 %====================================================

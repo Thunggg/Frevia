@@ -77,9 +77,10 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyfoot[R]{Page \thepage}
+\fancyfoot[C]{\small\thepage}
 \renewcommand{\headrulewidth}{0pt}
-\fancypagestyle{plain}{\fancyhf{}\fancyfoot[R]{Page \thepage}\renewcommand{\headrulewidth}{0pt}}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\thepage}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
 
 \newcommand{\hd}[1]{\textbf{#1}}
 
@@ -161,12 +162,12 @@ UTCID & Unit Test Case Identifier \\ \hline
 \rowcolor{headerbg}
 \hd{Date} & \hd{\makecell{A*\\M, D}} & \hd{In charge} & \hd{Change Description} \\ \hline
 12/09/2026 & A & Pham Kha Vy & Initial draft of the Software Test Documentation: testing scope, test levels, constraints, and test strategy. \\ \hline
-03/10/2026 & A & Nguyen Tien Thuan & Added unit and system test plans for Authentication, Role Management, Permissions, Sessions, Forum Categories, Users, Banners, Skills, and Job Categories. \\ \hline
-17/10/2026 & M & Tran Phat Tai & Added unit and system test specifications for Job Browsing, Job Management, Bookmarks, Saved Search, Job Alerts, Proposals, AI Recommendation, and Job Category Browsing. \\ \hline
-24/10/2026 & M & Nguyen Lu Nhat Huy & Added unit and pending system test specifications for Profiles, Skills, Portfolios, eKYC, Social Links, Favorites, Following, Notifications, Role Switching, Reviews, Account, and CV Management. \\ \hline
-31/10/2026 & M & Vo Nhut Tin & Added unit and system test specifications for Contracts, Shared Files, Milestones, Submissions, Disputes, and Stripe Connect Escrow Payments \& Webhooks. \\ \hline
-02/11/2026 & M & Nguyen Tien Thuan & Added Sprint 5 test specifications and documented unit test sheets \texttt{UF-01} to \texttt{UF-84} alongside module system test suites. \\ \hline
-10/11/2026 & M & Group Frevia & Expanded unit test matrix to \texttt{UF-01}--\texttt{UF-246} (2,005 cases; 1,972 passed, 33 untested) and system test workbook to 44 modules (935 cases; 886 passed, 49 pending), plus Jest live snapshot (\texttt{Report5\_Unit\_Test\_Backend.html}, 1,536/1,536 passed across 39 suites). \\ \hline
+03/10/2026 & A & Nguyen Tien Thuan & Added unit test and system test plans for Sprint 1 (Authentication, Roles, Freelancer Profiles, Jobs, Contracts, and Forum). \\ \hline
+17/10/2026 & M & Tran Phat Tai & Updated integration and system test specifications for Sprint 2 (Permissions, Sessions, Identity Upload, Client Profile, Milestones, and Conversations). \\ \hline
+31/10/2026 & M & Nguyen Lu Nhat Huy & Added test specifications for Sprint 3 (User Management, Notifications, Proposals, Disputes \& Expert Arbitration, Moderation, and ID Review). \\ \hline
+14/11/2026 & M & Vo Nhut Tin & Added test specifications for Sprint 4 (Banners, Skills, Reviews, Stripe Escrow Payments, Webhooks, AI Recommend, AI Moderation, and AI Face Scan). \\ \hline
+23/11/2026 & M & Nguyen Tien Thuan & Added Sprint 5 test specifications (Job Category Management, Freelancer CV Management) and completed unit test sheets \texttt{UF-01} to \texttt{UF-84}. \\ \hline
+27/11/2026 & M & Pham Kha Vy & Consolidated final test execution summary (2,005 unit test cases and 935 system test cases across 44 modules), defect metrics, test analysis, and final conclusion. \\ \hline
 \end{tabularx}
 \endgroup
 \end{center}
@@ -463,12 +464,12 @@ Web Browsers & Google Chrome / MS Edge & Google / Microsoft & 130+ \\ \hline
 \begin{tabularx}{\textwidth}{|L{4.0cm}|c|c|Y|}
 \hline
 \rowcolor{headerbg}\hd{Milestone Task} & \hd{Start Date} & \hd{End Date} & \hd{Comments} \\ \hline
-Test Planning \& Setup & 07/09/2026 & 19/09/2026 & Define test strategy, configure Jest 30, Docker Compose, and Stripe sandbox (Sprint 1). \\ \hline
-Sprint 1 Test Execution & 21/09/2026 & 03/10/2026 & Unit \& system tests for Authentication, RBAC Roles, Profiles, Jobs, and Forum foundation. \\ \hline
-Sprint 2 Test Execution & 05/10/2026 & 17/10/2026 & Unit \& system tests for Proposals, Contracts, Milestones, Permissions, Sessions, and Categories. \\ \hline
-Sprint 3 Test Execution & 19/10/2026 & 24/10/2026 & Unit \& system tests for Messaging, Moderation, ID Verification, Trash, and User Management. \\ \hline
-Sprint 4 Test Execution & 26/10/2026 & 31/10/2026 & Integration \& system tests for Stripe Escrow, Webhooks, Disputes, Banners, and Skills. \\ \hline
-Sprint 5 Regression \& UAT & 01/11/2026 & 10/11/2026 & Job Category tests, full regression run (2,005 Unit TCs across UF-01--UF-246; 935 System TCs across 44 modules), and final UAT sign-off. \\ \hline
+Test Planning \& Setup & 07/09/2026 & 19/09/2026 & Define test strategy, configure Jest 30, Docker Compose, and Stripe sandbox. \\ \hline
+Sprint 1 Test Execution & 20/09/2026 & 03/10/2026 & Unit \& system tests for Auth, Roles, Freelancer Profiles, Jobs, Contracts, and Forum (UC-01--UC-14). \\ \hline
+Sprint 2 Test Execution & 04/10/2026 & 17/10/2026 & Unit \& system tests for Permissions, Sessions, Identity Upload, Milestones, and Conversations (UC-15--UC-27). \\ \hline
+Sprint 3 Test Execution & 18/10/2026 & 31/10/2026 & Unit \& system tests for User Mgmt, Proposals, Disputes, Moderation, and ID Review (UC-28--UC-36). \\ \hline
+Sprint 4 Test Execution & 01/11/2026 & 14/11/2026 & Integration \& system tests for Banners, Skills, Reviews, Stripe Escrow, and AI Pipelines (UC-37--UC-45). \\ \hline
+Sprint 5 Regression \& UAT & 15/11/2026 & 27/11/2026 & Job Category \& CV tests, full regression run (2,005 Unit TCs across UF-01--UF-246; 935 System TCs across 44 modules), and final UAT sign-off. \\ \hline
 \end{tabularx}
 \end{table}
 
