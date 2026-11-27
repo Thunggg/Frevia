@@ -1,766 +1,797 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
-  <diagram id="d" name="Class Diagram">
-    <mxGraphModel dx="1737" dy="1043" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+  <diagram id="uc32_freelancer" name="UC-32 Freelancer Proposal Management">
+    <mxGraphModel dx="2300" dy="1848" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="2300" pageHeight="1848" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="route" value="&lt;&lt;route&gt;&gt;&#xa;ProposalRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="50" y="95" width="468" height="398" as="geometry" />
+        <mxCell id="ctrl" value="&lt;&lt;controller&gt;&gt;&#10;ProposalController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="80" y="90" width="510" height="284" as="geometry" />
         </mxCell>
-        <mxCell id="route_r0" value="+GET /proposals/my (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="route" vertex="1">
-          <mxGeometry x="0" y="56" width="468" height="38" as="geometry" />
+        <mxCell id="ctrl_r0" value="-proposalService: ProposalService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="ctrl" vertex="1">
+          <mxGeometry y="38" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="route_r1" value="+GET /proposals/jobs/:jobId/mine (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="route" vertex="1">
-          <mxGeometry x="0" y="94" width="468" height="38" as="geometry" />
+        <mxCell id="ctrl_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="ctrl" vertex="1">
+          <mxGeometry y="62" width="510" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="route_r2" value="+GET /proposals/:id (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="route" vertex="1">
-          <mxGeometry x="0" y="132" width="468" height="38" as="geometry" />
+        <mxCell id="ctrl_r1" value="+getMyProposals(userId, roleName, query: MyProposalsQueryDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="ctrl" vertex="1">
+          <mxGeometry y="68" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="route_r3" value="+POST /proposals/jobs/:jobId (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="route" vertex="1">
-          <mxGeometry x="0" y="170" width="468" height="38" as="geometry" />
+        <mxCell id="ctrl_r2" value="+getMyActiveProposalForJob(userId, roleName, jobId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="ctrl" vertex="1">
+          <mxGeometry y="92" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="route_r4" value="+POST /proposals/jobs/:jobId/drafts (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="route" vertex="1">
-          <mxGeometry x="0" y="208" width="468" height="38" as="geometry" />
+        <mxCell id="ctrl_r3" value="+getProposalDetail(userId, roleName, proposalId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="ctrl" vertex="1">
+          <mxGeometry y="116" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="route_r5" value="+PATCH /proposals/:id/draft (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="route" vertex="1">
-          <mxGeometry x="0" y="246" width="468" height="38" as="geometry" />
+        <mxCell id="ctrl_r4" value="+createProposal(userId, roleName, jobId, body: CreateProposalBodyDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="ctrl" vertex="1">
+          <mxGeometry y="140" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="route_r6" value="+PATCH /proposals/:id/submit (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="route" vertex="1">
-          <mxGeometry x="0" y="284" width="468" height="38" as="geometry" />
+        <mxCell id="ctrl_r5" value="+saveDraft(userId, roleName, jobId, body: SaveProposalDraftBodyDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="ctrl" vertex="1">
+          <mxGeometry y="164" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="route_r7" value="+PATCH /proposals/:id/withdraw (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="route" vertex="1">
-          <mxGeometry x="0" y="322" width="468" height="38" as="geometry" />
+        <mxCell id="ctrl_r6" value="+updateDraft(userId, roleName, proposalId, body: SaveProposalDraftBodyDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="ctrl" vertex="1">
+          <mxGeometry y="188" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="route_r8" value="+PATCH /proposals/:id (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="route" vertex="1">
-          <mxGeometry x="0" y="360" width="468" height="38" as="geometry" />
+        <mxCell id="ctrl_r7" value="+submitDraft(userId, roleName, proposalId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="ctrl" vertex="1">
+          <mxGeometry y="212" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="gAuth" value="AuthGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="50" y="535" width="468" height="190" as="geometry" />
+        <mxCell id="ctrl_r8" value="+withdrawProposal(userId, roleName, proposalId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="ctrl" vertex="1">
+          <mxGeometry y="236" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="gAuth_r0" value="-tokenService: TokenService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="gAuth" vertex="1">
-          <mxGeometry x="0" y="32" width="468" height="30" as="geometry" />
+        <mxCell id="ctrl_r9" value="+updateProposal(userId, roleName, proposalId, body: UpdateProposalBodyDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="ctrl" vertex="1">
+          <mxGeometry y="260" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="gAuth_r1" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="gAuth" vertex="1">
-          <mxGeometry x="0" y="62" width="468" height="30" as="geometry" />
+        <mxCell id="gAuth" value="&lt;&lt;guard&gt;&gt;&#10;AuthGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="80" y="406" width="510" height="164" as="geometry" />
         </mxCell>
-        <mxCell id="gAuth_r2" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="gAuth" vertex="1">
-          <mxGeometry x="0" y="92" width="468" height="30" as="geometry" />
+        <mxCell id="gAuth_r0" value="-tokenService: TokenService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="gAuth" vertex="1">
+          <mxGeometry y="38" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="gAuth_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="gAuth" vertex="1">
-          <mxGeometry x="0" y="122" width="468" height="8" as="geometry" />
+        <mxCell id="gAuth_r1" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="gAuth" vertex="1">
+          <mxGeometry y="62" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="gAuth_m0" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="gAuth" vertex="1">
-          <mxGeometry x="0" y="130" width="468" height="30" as="geometry" />
+        <mxCell id="gAuth_r2" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="gAuth" vertex="1">
+          <mxGeometry y="86" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="gAuth_m1" value="-extractTokenFromHeader(request: Request): string | undefined" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="gAuth" vertex="1">
-          <mxGeometry x="0" y="160" width="468" height="30" as="geometry" />
+        <mxCell id="gAuth_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="gAuth" vertex="1">
+          <mxGeometry y="110" width="510" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="gPerm" value="PermissionGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="50" y="767" width="468" height="130" as="geometry" />
+        <mxCell id="gAuth_r3" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="gAuth" vertex="1">
+          <mxGeometry y="116" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="gPerm_r0" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="gPerm" vertex="1">
-          <mxGeometry x="0" y="32" width="468" height="30" as="geometry" />
+        <mxCell id="gAuth_r4" value="-extractTokenFromHeader(request: Request): string | undefined" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="gAuth" vertex="1">
+          <mxGeometry y="140" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="gPerm_r1" value="-sharedPermissionRepository: SharedPermissionRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="gPerm" vertex="1">
-          <mxGeometry x="0" y="62" width="468" height="30" as="geometry" />
+        <mxCell id="gPerm" value="&lt;&lt;guard&gt;&gt;&#10;PermissionGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="80" y="602" width="510" height="116" as="geometry" />
         </mxCell>
-        <mxCell id="gPerm_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="gPerm" vertex="1">
-          <mxGeometry x="0" y="92" width="468" height="8" as="geometry" />
+        <mxCell id="gPerm_r0" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="gPerm" vertex="1">
+          <mxGeometry y="38" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="gPerm_m0" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="gPerm" vertex="1">
-          <mxGeometry x="0" y="100" width="468" height="30" as="geometry" />
+        <mxCell id="gPerm_r1" value="-sharedPermissionRepository: SharedPermissionRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="gPerm" vertex="1">
+          <mxGeometry y="62" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl" value="ProposalController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="613" y="95" width="538" height="340" as="geometry" />
+        <mxCell id="gPerm_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="gPerm" vertex="1">
+          <mxGeometry y="86" width="510" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl_r0" value="-proposalService: ProposalService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="ctrl" vertex="1">
-          <mxGeometry x="0" y="32" width="538" height="30" as="geometry" />
+        <mxCell id="gPerm_r2" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="gPerm" vertex="1">
+          <mxGeometry y="92" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="ctrl" vertex="1">
-          <mxGeometry x="0" y="62" width="538" height="8" as="geometry" />
+        <mxCell id="d1" value="&lt;&lt;dto&gt;&gt;&#10;CreateProposalBodyDto" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="674" y="90" width="220" height="116" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl_m0" value="+getMyProposals(userId, roleName, query: MyProposalsQueryDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="ctrl" vertex="1">
-          <mxGeometry x="0" y="70" width="538" height="30" as="geometry" />
+        <mxCell id="d1_r0" value="+coverLetter: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d1" vertex="1">
+          <mxGeometry y="38" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl_m1" value="+getMyActiveProposalForJob(userId, roleName, jobId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="ctrl" vertex="1">
-          <mxGeometry x="0" y="100" width="538" height="30" as="geometry" />
+        <mxCell id="d1_r1" value="+bidAmount: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d1" vertex="1">
+          <mxGeometry y="62" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl_m2" value="+getProposalDetail(userId, roleName, proposalId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="ctrl" vertex="1">
-          <mxGeometry x="0" y="130" width="538" height="30" as="geometry" />
+        <mxCell id="d1_r2" value="+deliveryDays: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d1" vertex="1">
+          <mxGeometry y="86" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl_m3" value="+createProposal(userId, roleName, jobId, body: CreateProposalBodyDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="ctrl" vertex="1">
-          <mxGeometry x="0" y="160" width="538" height="30" as="geometry" />
+        <mxCell id="d1_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="d1" vertex="1">
+          <mxGeometry y="110" width="220" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl_m4" value="+saveDraft(userId, roleName, jobId, body: SaveProposalDraftBodyDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="ctrl" vertex="1">
-          <mxGeometry x="0" y="190" width="538" height="30" as="geometry" />
+        <mxCell id="d2" value="&lt;&lt;dto&gt;&gt;&#10;SaveProposalDraftBodyDto" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="674" y="238" width="220" height="116" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl_m5" value="+updateDraft(userId, roleName, proposalId, body: SaveProposalDraftBodyDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="ctrl" vertex="1">
-          <mxGeometry x="0" y="220" width="538" height="30" as="geometry" />
+        <mxCell id="d2_r0" value="+coverLetter?: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d2" vertex="1">
+          <mxGeometry y="38" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl_m6" value="+submitDraft(userId, roleName, proposalId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="ctrl" vertex="1">
-          <mxGeometry x="0" y="250" width="538" height="30" as="geometry" />
+        <mxCell id="d2_r1" value="+bidAmount?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d2" vertex="1">
+          <mxGeometry y="62" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl_m7" value="+withdrawProposal(userId, roleName, proposalId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="ctrl" vertex="1">
-          <mxGeometry x="0" y="280" width="538" height="30" as="geometry" />
+        <mxCell id="d2_r2" value="+deliveryDays?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d2" vertex="1">
+          <mxGeometry y="86" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="ctrl_m8" value="+updateProposal(userId, roleName, proposalId, body: UpdateProposalBodyDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="ctrl" vertex="1">
-          <mxGeometry x="0" y="310" width="538" height="30" as="geometry" />
+        <mxCell id="d2_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="d2" vertex="1">
+          <mxGeometry y="110" width="220" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="d1" value="&lt;&lt;dto&gt;&gt;&#xa;CreateProposalBodyDto" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1246" y="95" width="260" height="142" as="geometry" />
+        <mxCell id="d3" value="&lt;&lt;dto&gt;&gt;&#10;UpdateProposalBodyDto" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="674" y="386" width="220" height="116" as="geometry" />
         </mxCell>
-        <mxCell id="d1_r0" value="+coverLetter: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d1" vertex="1">
-          <mxGeometry x="0" y="44" width="260" height="30" as="geometry" />
+        <mxCell id="d3_r0" value="+coverLetter?: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d3" vertex="1">
+          <mxGeometry y="38" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d1_r1" value="+bidAmount: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d1" vertex="1">
-          <mxGeometry x="0" y="74" width="260" height="30" as="geometry" />
+        <mxCell id="d3_r1" value="+bidAmount?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d3" vertex="1">
+          <mxGeometry y="62" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d1_r2" value="+deliveryDays: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d1" vertex="1">
-          <mxGeometry x="0" y="104" width="260" height="30" as="geometry" />
+        <mxCell id="d3_r2" value="+deliveryDays?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d3" vertex="1">
+          <mxGeometry y="86" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d1_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="d1" vertex="1">
-          <mxGeometry x="0" y="134" width="260" height="8" as="geometry" />
+        <mxCell id="d3_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="d3" vertex="1">
+          <mxGeometry y="110" width="220" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="d2" value="&lt;&lt;dto&gt;&gt;&#xa;SaveProposalDraftBodyDto" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1246" y="279" width="260" height="142" as="geometry" />
+        <mxCell id="d4" value="&lt;&lt;dto&gt;&gt;&#10;MyProposalsQueryDto" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="674" y="534" width="220" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="d2_r0" value="+coverLetter?: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d2" vertex="1">
-          <mxGeometry x="0" y="44" width="260" height="30" as="geometry" />
+        <mxCell id="d4_r0" value="+page: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d4" vertex="1">
+          <mxGeometry y="38" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d2_r1" value="+bidAmount?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d2" vertex="1">
-          <mxGeometry x="0" y="74" width="260" height="30" as="geometry" />
+        <mxCell id="d4_r1" value="+limit: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d4" vertex="1">
+          <mxGeometry y="62" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d2_r2" value="+deliveryDays?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d2" vertex="1">
-          <mxGeometry x="0" y="104" width="260" height="30" as="geometry" />
+        <mxCell id="d4_r2" value="+jobId?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d4" vertex="1">
+          <mxGeometry y="86" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d2_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="d2" vertex="1">
-          <mxGeometry x="0" y="134" width="260" height="8" as="geometry" />
+        <mxCell id="d4_r3" value="+status?: ProposalStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="d4" vertex="1">
+          <mxGeometry y="110" width="220" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d3" value="&lt;&lt;dto&gt;&gt;&#xa;UpdateProposalBodyDto" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1246" y="463" width="260" height="142" as="geometry" />
+        <mxCell id="d4_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="d4" vertex="1">
+          <mxGeometry y="134" width="220" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="d3_r0" value="+coverLetter?: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d3" vertex="1">
-          <mxGeometry x="0" y="44" width="260" height="30" as="geometry" />
+        <mxCell id="t1" value="&lt;&lt;type&gt;&gt;&#10;ProposalType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="978" y="586" width="210" height="380" as="geometry" />
         </mxCell>
-        <mxCell id="d3_r1" value="+bidAmount?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d3" vertex="1">
-          <mxGeometry x="0" y="74" width="260" height="30" as="geometry" />
+        <mxCell id="t1_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="38" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d3_r2" value="+deliveryDays?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d3" vertex="1">
-          <mxGeometry x="0" y="104" width="260" height="30" as="geometry" />
+        <mxCell id="t1_r1" value="+jobId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="62" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d3_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="d3" vertex="1">
-          <mxGeometry x="0" y="134" width="260" height="8" as="geometry" />
+        <mxCell id="t1_r2" value="+freelancerId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="86" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d4" value="&lt;&lt;dto&gt;&gt;&#xa;MyProposalsQueryDto" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1246" y="647" width="260" height="172" as="geometry" />
+        <mxCell id="t1_r3" value="+coverLetter: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="110" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d4_r0" value="+page: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d4" vertex="1">
-          <mxGeometry x="0" y="44" width="260" height="30" as="geometry" />
+        <mxCell id="t1_r4" value="+bidAmount: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="134" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d4_r1" value="+limit: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d4" vertex="1">
-          <mxGeometry x="0" y="74" width="260" height="30" as="geometry" />
+        <mxCell id="t1_r5" value="+deliveryDays: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="158" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d4_r2" value="+jobId?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d4" vertex="1">
-          <mxGeometry x="0" y="104" width="260" height="30" as="geometry" />
+        <mxCell id="t1_r6" value="+status: ProposalStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="182" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d4_r3" value="+status?: ProposalStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="d4" vertex="1">
-          <mxGeometry x="0" y="134" width="260" height="30" as="geometry" />
+        <mxCell id="t1_r7" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="206" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="d4_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="d4" vertex="1">
-          <mxGeometry x="0" y="164" width="260" height="8" as="geometry" />
+        <mxCell id="t1_r8" value="+submittedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="230" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1" value="&lt;&lt;type&gt;&gt;&#xa;ProposalType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1601" y="95" width="260" height="472" as="geometry" />
+        <mxCell id="t1_r9" value="+acceptedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="254" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="44" width="260" height="30" as="geometry" />
+        <mxCell id="t1_r10" value="+rejectedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="278" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r1" value="+jobId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="74" width="260" height="30" as="geometry" />
+        <mxCell id="t1_r11" value="+withdrawnAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="302" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r2" value="+freelancerId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="104" width="260" height="30" as="geometry" />
+        <mxCell id="t1_r12" value="+expiresAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="326" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r3" value="+coverLetter: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="134" width="260" height="30" as="geometry" />
+        <mxCell id="t1_r13" value="+updatedAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="350" width="210" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r4" value="+bidAmount: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="164" width="260" height="30" as="geometry" />
+        <mxCell id="t1_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="t1" vertex="1">
+          <mxGeometry y="374" width="210" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r5" value="+deliveryDays: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="194" width="260" height="30" as="geometry" />
+        <mxCell id="t2" value="&lt;&lt;type&gt;&gt;&#10;ProposalDetailType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1212" y="586" width="200" height="92" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r6" value="+status: ProposalStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="224" width="260" height="30" as="geometry" />
+        <mxCell id="t2_r0" value="+job: ProposalJobType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t2" vertex="1">
+          <mxGeometry y="38" width="200" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r7" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="254" width="260" height="30" as="geometry" />
+        <mxCell id="t2_r1" value="+client: ProposalClientType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t2" vertex="1">
+          <mxGeometry y="62" width="200" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r8" value="+submittedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="284" width="260" height="30" as="geometry" />
+        <mxCell id="t2_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="t2" vertex="1">
+          <mxGeometry y="86" width="200" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r9" value="+acceptedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="314" width="260" height="30" as="geometry" />
+        <mxCell id="t3" value="&lt;&lt;type&gt;&gt;&#10;MyProposalsResponseType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1436" y="586" width="200" height="164" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r10" value="+rejectedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="344" width="260" height="30" as="geometry" />
+        <mxCell id="t3_r0" value="+data: ProposalDetailType[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t3" vertex="1">
+          <mxGeometry y="38" width="200" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r11" value="+withdrawnAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="374" width="260" height="30" as="geometry" />
+        <mxCell id="t3_r1" value="+totalItems: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t3" vertex="1">
+          <mxGeometry y="62" width="200" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r12" value="+expiresAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="404" width="260" height="30" as="geometry" />
+        <mxCell id="t3_r2" value="+totalPages: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t3" vertex="1">
+          <mxGeometry y="86" width="200" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1_r13" value="+updatedAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="434" width="260" height="30" as="geometry" />
+        <mxCell id="t3_r3" value="+page: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t3" vertex="1">
+          <mxGeometry y="110" width="200" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t1_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="t1" vertex="1">
-          <mxGeometry x="0" y="464" width="260" height="8" as="geometry" />
+        <mxCell id="t3_r4" value="+limit: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="t3" vertex="1">
+          <mxGeometry y="134" width="200" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t2" value="&lt;&lt;type&gt;&gt;&#xa;ProposalDetailType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1601" y="609" width="260" height="112" as="geometry" />
+        <mxCell id="t3_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="t3" vertex="1">
+          <mxGeometry y="158" width="200" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="t2_r0" value="+job: ProposalJobType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t2" vertex="1">
-          <mxGeometry x="0" y="44" width="260" height="30" as="geometry" />
+        <mxCell id="svc" value="&lt;&lt;service&gt;&gt;&#10;ProposalService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1052" y="90" width="510" height="452" as="geometry" />
         </mxCell>
-        <mxCell id="t2_r1" value="+client: ProposalClientType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t2" vertex="1">
-          <mxGeometry x="0" y="74" width="260" height="30" as="geometry" />
+        <mxCell id="svc_r0" value="-proposalRepository: ProposalRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="38" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t2_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="t2" vertex="1">
-          <mxGeometry x="0" y="104" width="260" height="8" as="geometry" />
+        <mxCell id="svc_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="62" width="510" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="t3" value="&lt;&lt;type&gt;&gt;&#xa;MyProposalsResponseType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1601" y="763" width="260" height="202" as="geometry" />
+        <mxCell id="svc_r1" value="+getMyProposals(userId, roleName, query): MyProposalsResponseType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="68" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t3_r0" value="+data: ProposalDetailType[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t3" vertex="1">
-          <mxGeometry x="0" y="44" width="260" height="30" as="geometry" />
+        <mxCell id="svc_r2" value="+getMyActiveProposalForJob(userId, roleName, jobId): ProposalType | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="92" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t3_r1" value="+totalItems: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t3" vertex="1">
-          <mxGeometry x="0" y="74" width="260" height="30" as="geometry" />
+        <mxCell id="svc_r3" value="+getProposalDetail(userId, roleName, proposalId): ProposalDetailType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="116" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t3_r2" value="+totalPages: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t3" vertex="1">
-          <mxGeometry x="0" y="104" width="260" height="30" as="geometry" />
+        <mxCell id="svc_r4" value="+createProposal(userId, roleName, jobId, body): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="140" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t3_r3" value="+page: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t3" vertex="1">
-          <mxGeometry x="0" y="134" width="260" height="30" as="geometry" />
+        <mxCell id="svc_r5" value="+saveDraft(userId, roleName, jobId, body): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="164" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t3_r4" value="+limit: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="t3" vertex="1">
-          <mxGeometry x="0" y="164" width="260" height="30" as="geometry" />
+        <mxCell id="svc_r6" value="+updateDraft(userId, roleName, proposalId, body): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="188" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="t3_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="t3" vertex="1">
-          <mxGeometry x="0" y="194" width="260" height="8" as="geometry" />
+        <mxCell id="svc_r7" value="+updateProposal(userId, roleName, proposalId, body): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="212" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc" value="ProposalService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="50" y="1070" width="538" height="550" as="geometry" />
+        <mxCell id="svc_r8" value="+submitDraft(userId, roleName, proposalId): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="236" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_r0" value="-proposalRepository: ProposalRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="32" width="538" height="30" as="geometry" />
+        <mxCell id="svc_r9" value="+withdrawProposal(userId, roleName, proposalId): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="260" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="62" width="538" height="8" as="geometry" />
+        <mxCell id="svc_r10" value="-assertFreelancer(roleName): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="284" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m0" value="+getMyProposals(userId, roleName, query): MyProposalsResponseType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="70" width="538" height="30" as="geometry" />
+        <mxCell id="svc_r11" value="-assertActionable(status: ProposalStatusType): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="308" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m1" value="+getMyActiveProposalForJob(userId, roleName, jobId): ProposalType | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="100" width="538" height="30" as="geometry" />
+        <mxCell id="svc_r12" value="-assertCanPropose(userId, roleName, jobId, ignoredId?): Promise&lt;void&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="332" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m2" value="+getProposalDetail(userId, roleName, proposalId): ProposalDetailType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="130" width="538" height="30" as="geometry" />
+        <mxCell id="svc_r13" value="-assertBidSafeguard(bidAmount, budgetMin?, budgetMax?): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="356" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m3" value="+createProposal(userId, roleName, jobId, body): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="160" width="538" height="30" as="geometry" />
+        <mxCell id="svc_r14" value="-assertDeliveryDaysSafeguard(deliveryDays, deadline?): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="380" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m4" value="+saveDraft(userId, roleName, jobId, body): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="190" width="538" height="30" as="geometry" />
+        <mxCell id="svc_r15" value="-getOwnedDraft(userId, proposalId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="404" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m5" value="+updateDraft(userId, roleName, proposalId, body): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="220" width="538" height="30" as="geometry" />
+        <mxCell id="svc_r16" value="-expireStaleProposals(): Promise&lt;void&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="svc" vertex="1">
+          <mxGeometry y="428" width="510" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m6" value="+updateProposal(userId, roleName, proposalId, body): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="250" width="538" height="30" as="geometry" />
+        <mxCell id="repo" value="&lt;&lt;repository&gt;&gt;&#10;ProposalRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1720" y="90" width="460" height="476" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m7" value="+submitDraft(userId, roleName, proposalId): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="280" width="538" height="30" as="geometry" />
+        <mxCell id="repo_r0" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="38" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m8" value="+withdrawProposal(userId, roleName, proposalId): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="310" width="538" height="30" as="geometry" />
+        <mxCell id="repo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="62" width="460" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m9" value="-assertFreelancer(roleName): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="340" width="538" height="30" as="geometry" />
+        <mxCell id="repo_r1" value="+findJobForProposal(jobId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="68" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m10" value="-assertActionable(status: ProposalStatusType): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="370" width="538" height="30" as="geometry" />
+        <mxCell id="repo_r2" value="+findFreelancerStatus(userId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="92" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m11" value="-assertCanPropose(userId, roleName, jobId, ignoredId?): Promise&lt;void&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="400" width="538" height="30" as="geometry" />
+        <mxCell id="repo_r3" value="+countProposalsByFreelancerAndJob(freelancerId, jobId): number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="116" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m12" value="-assertBidSafeguard(bidAmount, budgetMin?, budgetMax?): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="430" width="538" height="30" as="geometry" />
+        <mxCell id="repo_r4" value="+findActiveProposal(jobId, freelancerId, ignoredId?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="140" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m13" value="-assertDeliveryDaysSafeguard(deliveryDays, deadline?): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="460" width="538" height="30" as="geometry" />
+        <mxCell id="repo_r5" value="+findMyActiveProposal(jobId, freelancerId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="164" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m14" value="-getOwnedDraft(userId, proposalId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="490" width="538" height="30" as="geometry" />
+        <mxCell id="repo_r6" value="+findProposal(proposalId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="188" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="svc_m15" value="-expireStaleProposals(): Promise&lt;void&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="svc" vertex="1">
-          <mxGeometry x="0" y="520" width="538" height="30" as="geometry" />
+        <mxCell id="repo_r7" value="+createDraft(jobId, freelancerId, data): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="212" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="repo" value="ProposalRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="683" y="1070" width="482" height="550" as="geometry" />
+        <mxCell id="repo_r8" value="+createSubmitted(jobId, freelancerId, data): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="236" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="repo_r0" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="32" width="482" height="30" as="geometry" />
+        <mxCell id="repo_r9" value="+updateDraft(proposalId, data): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="260" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="repo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="62" width="482" height="8" as="geometry" />
+        <mxCell id="repo_r10" value="+submitDraft(proposalId): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="284" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m0" value="+findJobForProposal(jobId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="70" width="482" height="30" as="geometry" />
+        <mxCell id="repo_r11" value="+withdrawProposal(proposalId): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="308" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m1" value="+findFreelancerStatus(userId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="100" width="482" height="30" as="geometry" />
+        <mxCell id="repo_r12" value="+expireOverdueProposals(jobId?): Promise&lt;number&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="332" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m2" value="+countProposalsByFreelancerAndJob(freelancerId, jobId): number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="130" width="482" height="30" as="geometry" />
+        <mxCell id="repo_r13" value="+getMyProposals(freelancerId, query): MyProposalsResponseType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="356" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m3" value="+findActiveProposal(jobId, freelancerId, ignoredId?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="160" width="482" height="30" as="geometry" />
+        <mxCell id="repo_r14" value="+getProposalDetail(proposalId): ProposalDetailType | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="380" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m4" value="+findMyActiveProposal(jobId, freelancerId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="190" width="482" height="30" as="geometry" />
+        <mxCell id="repo_r15" value="-normalize(proposal): ProposalType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="404" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m5" value="+findProposal(proposalId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="220" width="482" height="30" as="geometry" />
+        <mxCell id="repo_r16" value="-normalizeDetail(proposal): ProposalDetailType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="428" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m6" value="+createDraft(jobId, freelancerId, data): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="250" width="482" height="30" as="geometry" />
+        <mxCell id="repo_r17" value="+isIdentityVerified(userId: number): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="repo" vertex="1">
+          <mxGeometry y="452" width="460" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m7" value="+createSubmitted(jobId, freelancerId, data): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="280" width="482" height="30" as="geometry" />
+        <mxCell id="sUser" value="&lt;&lt;schema&gt;&gt;&#10;User" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="718" y="1056" width="200" height="152" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m8" value="+updateDraft(proposalId, data): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="310" width="482" height="30" as="geometry" />
+        <mxCell id="sUser_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sUser" vertex="1">
+          <mxGeometry y="36" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m9" value="+submitDraft(proposalId): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="340" width="482" height="30" as="geometry" />
+        <mxCell id="sUser_r1" value="+email: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sUser" vertex="1">
+          <mxGeometry y="58" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m10" value="+withdrawProposal(proposalId): Promise&lt;ProposalType&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="370" width="482" height="30" as="geometry" />
+        <mxCell id="sUser_r2" value="+isBanned: boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sUser" vertex="1">
+          <mxGeometry y="80" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m11" value="+expireOverdueProposals(jobId?): Promise&lt;number&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="400" width="482" height="30" as="geometry" />
+        <mxCell id="sUser_r3" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sUser" vertex="1">
+          <mxGeometry y="102" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m12" value="+getMyProposals(freelancerId, query): MyProposalsResponseType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="430" width="482" height="30" as="geometry" />
+        <mxCell id="sUser_r4" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sUser" vertex="1">
+          <mxGeometry y="124" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m13" value="+getProposalDetail(proposalId): ProposalDetailType | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="460" width="482" height="30" as="geometry" />
+        <mxCell id="sUser_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="sUser" vertex="1">
+          <mxGeometry y="146" width="200" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m14" value="-normalize(proposal): ProposalType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="490" width="482" height="30" as="geometry" />
+        <mxCell id="sProfile" value="&lt;&lt;schema&gt;&gt;&#10;Profile" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="678" y="1250" width="280" height="196" as="geometry" />
         </mxCell>
-        <mxCell id="repo_m15" value="-normalizeDetail(proposal): ProposalDetailType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="repo" vertex="1">
-          <mxGeometry x="0" y="520" width="482" height="30" as="geometry" />
+        <mxCell id="sProfile_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProfile" vertex="1">
+          <mxGeometry y="36" width="280" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sUser" value="&lt;&lt;schema&gt;&gt;&#xa;User" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1260" y="1070" width="295" height="190" as="geometry" />
+        <mxCell id="sProfile_r1" value="+userId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProfile" vertex="1">
+          <mxGeometry y="58" width="280" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sUser_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sUser" vertex="1">
-          <mxGeometry x="0" y="42" width="295" height="28" as="geometry" />
+        <mxCell id="sProfile_r2" value="+displayName: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProfile" vertex="1">
+          <mxGeometry y="80" width="280" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sUser_r1" value="+email: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sUser" vertex="1">
-          <mxGeometry x="0" y="70" width="295" height="28" as="geometry" />
+        <mxCell id="sProfile_r3" value="+avatarUrl: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProfile" vertex="1">
+          <mxGeometry y="102" width="280" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sUser_r2" value="+isBanned: boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sUser" vertex="1">
-          <mxGeometry x="0" y="98" width="295" height="28" as="geometry" />
+        <mxCell id="sProfile_r4" value="+bio: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProfile" vertex="1">
+          <mxGeometry y="124" width="280" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sUser_r3" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sUser" vertex="1">
-          <mxGeometry x="0" y="126" width="295" height="28" as="geometry" />
+        <mxCell id="sProfile_r5" value="+availabilityStatus: AvailabilityStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProfile" vertex="1">
+          <mxGeometry y="146" width="280" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sUser_r4" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sUser" vertex="1">
-          <mxGeometry x="0" y="154" width="295" height="28" as="geometry" />
+        <mxCell id="sProfile_r6" value="+profileCompletionPercent: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProfile" vertex="1">
+          <mxGeometry y="168" width="280" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sUser_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sUser" vertex="1">
-          <mxGeometry x="0" y="182" width="295" height="8" as="geometry" />
+        <mxCell id="sProfile_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="sProfile" vertex="1">
+          <mxGeometry y="190" width="280" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="sProfile" value="&lt;&lt;schema&gt;&gt;&#xa;Profile" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1260" y="1302" width="295" height="246" as="geometry" />
+        <mxCell id="sFreelancerProfile" value="&lt;&lt;schema&gt;&gt;&#10;FreelancerProfile" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="718" y="1488" width="200" height="240" as="geometry" />
         </mxCell>
-        <mxCell id="sProfile_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProfile" vertex="1">
-          <mxGeometry x="0" y="42" width="295" height="28" as="geometry" />
+        <mxCell id="sFreelancerProfile_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sFreelancerProfile" vertex="1">
+          <mxGeometry y="36" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProfile_r1" value="+userId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProfile" vertex="1">
-          <mxGeometry x="0" y="70" width="295" height="28" as="geometry" />
+        <mxCell id="sFreelancerProfile_r1" value="+profileId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sFreelancerProfile" vertex="1">
+          <mxGeometry y="58" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProfile_r2" value="+displayName: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProfile" vertex="1">
-          <mxGeometry x="0" y="98" width="295" height="28" as="geometry" />
+        <mxCell id="sFreelancerProfile_r2" value="+title: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sFreelancerProfile" vertex="1">
+          <mxGeometry y="80" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProfile_r3" value="+avatarUrl: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProfile" vertex="1">
-          <mxGeometry x="0" y="126" width="295" height="28" as="geometry" />
+        <mxCell id="sFreelancerProfile_r3" value="+experience: string[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sFreelancerProfile" vertex="1">
+          <mxGeometry y="102" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProfile_r4" value="+bio: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProfile" vertex="1">
-          <mxGeometry x="0" y="154" width="295" height="28" as="geometry" />
+        <mxCell id="sFreelancerProfile_r4" value="+education: string[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sFreelancerProfile" vertex="1">
+          <mxGeometry y="124" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProfile_r5" value="+availabilityStatus: AvailabilityStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProfile" vertex="1">
-          <mxGeometry x="0" y="182" width="295" height="28" as="geometry" />
+        <mxCell id="sFreelancerProfile_r5" value="+certifications: string[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sFreelancerProfile" vertex="1">
+          <mxGeometry y="146" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProfile_r6" value="+profileCompletionPercent: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProfile" vertex="1">
-          <mxGeometry x="0" y="210" width="295" height="28" as="geometry" />
+        <mxCell id="sFreelancerProfile_r6" value="+languages: string[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sFreelancerProfile" vertex="1">
+          <mxGeometry y="168" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProfile_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sProfile" vertex="1">
-          <mxGeometry x="0" y="238" width="295" height="8" as="geometry" />
+        <mxCell id="sFreelancerProfile_r7" value="+cvUrl: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sFreelancerProfile" vertex="1">
+          <mxGeometry y="190" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sFreelancerProfile" value="&lt;&lt;schema&gt;&gt;&#xa;FreelancerProfile" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1260" y="1590" width="295" height="302" as="geometry" />
+        <mxCell id="sFreelancerProfile_r8" value="+idVerified: boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sFreelancerProfile" vertex="1">
+          <mxGeometry y="212" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sFreelancerProfile_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sFreelancerProfile" vertex="1">
-          <mxGeometry x="0" y="42" width="295" height="28" as="geometry" />
+        <mxCell id="sFreelancerProfile_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="sFreelancerProfile" vertex="1">
+          <mxGeometry y="234" width="200" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="sFreelancerProfile_r1" value="+profileId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sFreelancerProfile" vertex="1">
-          <mxGeometry x="0" y="70" width="295" height="28" as="geometry" />
+        <mxCell id="sProposal" value="&lt;&lt;schema&gt;&gt;&#10;Proposal" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1022" y="1056" width="210" height="372" as="geometry" />
         </mxCell>
-        <mxCell id="sFreelancerProfile_r2" value="+title: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sFreelancerProfile" vertex="1">
-          <mxGeometry x="0" y="98" width="295" height="28" as="geometry" />
+        <mxCell id="sProposal_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="36" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sFreelancerProfile_r3" value="+experience: string[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sFreelancerProfile" vertex="1">
-          <mxGeometry x="0" y="126" width="295" height="28" as="geometry" />
+        <mxCell id="sProposal_r1" value="+jobId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="58" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sFreelancerProfile_r4" value="+education: string[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sFreelancerProfile" vertex="1">
-          <mxGeometry x="0" y="154" width="295" height="28" as="geometry" />
+        <mxCell id="sProposal_r2" value="+freelancerId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="80" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sFreelancerProfile_r5" value="+certifications: string[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sFreelancerProfile" vertex="1">
-          <mxGeometry x="0" y="182" width="295" height="28" as="geometry" />
+        <mxCell id="sProposal_r3" value="+coverLetter: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="102" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sFreelancerProfile_r6" value="+languages: string[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sFreelancerProfile" vertex="1">
-          <mxGeometry x="0" y="210" width="295" height="28" as="geometry" />
+        <mxCell id="sProposal_r4" value="+bidAmount: Decimal | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="124" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sFreelancerProfile_r7" value="+cvUrl: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sFreelancerProfile" vertex="1">
-          <mxGeometry x="0" y="238" width="295" height="28" as="geometry" />
+        <mxCell id="sProposal_r5" value="+deliveryDays: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="146" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sFreelancerProfile_r8" value="+idVerified: boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sFreelancerProfile" vertex="1">
-          <mxGeometry x="0" y="266" width="295" height="28" as="geometry" />
+        <mxCell id="sProposal_r6" value="+status: ProposalStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="168" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sFreelancerProfile_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sFreelancerProfile" vertex="1">
-          <mxGeometry x="0" y="294" width="295" height="8" as="geometry" />
+        <mxCell id="sProposal_r7" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="190" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal" value="&lt;&lt;schema&gt;&gt;&#xa;Proposal" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1650" y="1070" width="260" height="470" as="geometry" />
+        <mxCell id="sProposal_r8" value="+submittedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="212" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="42" width="260" height="28" as="geometry" />
+        <mxCell id="sProposal_r9" value="+acceptedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="234" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r1" value="+jobId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="70" width="260" height="28" as="geometry" />
+        <mxCell id="sProposal_r10" value="+rejectedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="256" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r2" value="+freelancerId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="98" width="260" height="28" as="geometry" />
+        <mxCell id="sProposal_r11" value="+withdrawnAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="278" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r3" value="+coverLetter: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="126" width="260" height="28" as="geometry" />
+        <mxCell id="sProposal_r12" value="+expiresAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="300" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r4" value="+bidAmount: Decimal | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="154" width="260" height="28" as="geometry" />
+        <mxCell id="sProposal_r13" value="+updatedAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="322" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r5" value="+deliveryDays: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="182" width="260" height="28" as="geometry" />
+        <mxCell id="sProposal_r14" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="344" width="210" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r6" value="+status: ProposalStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="210" width="260" height="28" as="geometry" />
+        <mxCell id="sProposal_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="sProposal" vertex="1">
+          <mxGeometry y="366" width="210" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r7" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="238" width="260" height="28" as="geometry" />
+        <mxCell id="sJob" value="&lt;&lt;schema&gt;&gt;&#10;Job" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1471" y="1056" width="200" height="416" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r8" value="+submittedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="266" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="36" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r9" value="+acceptedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="294" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r1" value="+clientId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="58" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r10" value="+rejectedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="322" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r2" value="+title: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="80" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r11" value="+withdrawnAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="350" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r3" value="+slug: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="102" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r12" value="+expiresAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="378" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r4" value="+description: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="124" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r13" value="+updatedAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="406" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r5" value="+budgetMin: Decimal | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="146" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_r14" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="434" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r6" value="+budgetMax: Decimal | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="168" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sProposal_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sProposal" vertex="1">
-          <mxGeometry x="0" y="462" width="260" height="8" as="geometry" />
+        <mxCell id="sJob_r7" value="+budgetType: BudgetType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="190" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob" value="&lt;&lt;schema&gt;&gt;&#xa;Job" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1650" y="1582" width="260" height="526" as="geometry" />
+        <mxCell id="sJob_r8" value="+deadline: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="212" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="42" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r9" value="+status: JobStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="234" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r1" value="+clientId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="70" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r10" value="+expiryDate: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="256" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r2" value="+title: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="98" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r11" value="+hiringType: HiringType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="278" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r3" value="+slug: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="126" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r12" value="+positionsRequired: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="300" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r4" value="+description: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="154" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r13" value="+positionsFilled: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="322" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r5" value="+budgetMin: Decimal | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="182" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r14" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="344" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r6" value="+budgetMax: Decimal | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="210" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r15" value="+updatedAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="366" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r7" value="+budgetType: BudgetType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="238" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_r16" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="388" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r8" value="+deadline: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="266" width="260" height="28" as="geometry" />
+        <mxCell id="sJob_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="sJob" vertex="1">
+          <mxGeometry y="410" width="200" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r9" value="+status: JobStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="294" width="260" height="28" as="geometry" />
+        <mxCell id="sIdVerificationDocument" value="&lt;&lt;schema&gt;&gt;&#10;IdVerificationDocument" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="414" y="1056" width="200" height="152" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r10" value="+expiryDate: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="322" width="260" height="28" as="geometry" />
+        <mxCell id="sIdVerificationDocument_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sIdVerificationDocument" vertex="1">
+          <mxGeometry y="36" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r11" value="+hiringType: HiringType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="350" width="260" height="28" as="geometry" />
+        <mxCell id="sIdVerificationDocument_r1" value="+userId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sIdVerificationDocument" vertex="1">
+          <mxGeometry y="58" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r12" value="+positionsRequired: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="378" width="260" height="28" as="geometry" />
+        <mxCell id="sIdVerificationDocument_r2" value="+status: VerificationStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sIdVerificationDocument" vertex="1">
+          <mxGeometry y="80" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r13" value="+positionsFilled: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="406" width="260" height="28" as="geometry" />
+        <mxCell id="sIdVerificationDocument_r3" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sIdVerificationDocument" vertex="1">
+          <mxGeometry y="102" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r14" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="434" width="260" height="28" as="geometry" />
+        <mxCell id="sIdVerificationDocument_r4" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="sIdVerificationDocument" vertex="1">
+          <mxGeometry y="124" width="200" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r15" value="+updatedAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="462" width="260" height="28" as="geometry" />
+        <mxCell id="sIdVerificationDocument_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="sIdVerificationDocument" vertex="1">
+          <mxGeometry y="146" width="200" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_r16" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="490" width="260" height="28" as="geometry" />
+        <mxCell id="eProposalStatus" value="&lt;&lt;enum&gt;&gt;&#10;ProposalStatus" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1042" y="1470" width="170" height="174" as="geometry" />
         </mxCell>
-        <mxCell id="sJob_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sJob" vertex="1">
-          <mxGeometry x="0" y="518" width="260" height="8" as="geometry" />
+        <mxCell id="eProposalStatus_r0" value="DRAFT" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eProposalStatus" vertex="1">
+          <mxGeometry y="36" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eProposalStatus" value="&lt;&lt;enum&gt;&gt;&#xa;ProposalStatus" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="2005" y="1070" width="260" height="232" as="geometry" />
+        <mxCell id="eProposalStatus_r1" value="SUBMITTED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eProposalStatus" vertex="1">
+          <mxGeometry y="58" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eProposalStatus_r0" value="DRAFT" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eProposalStatus" vertex="1">
-          <mxGeometry x="0" y="44" width="260" height="30" as="geometry" />
+        <mxCell id="eProposalStatus_r2" value="HIRED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eProposalStatus" vertex="1">
+          <mxGeometry y="80" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eProposalStatus_r1" value="SUBMITTED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eProposalStatus" vertex="1">
-          <mxGeometry x="0" y="74" width="260" height="30" as="geometry" />
+        <mxCell id="eProposalStatus_r3" value="REJECTED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eProposalStatus" vertex="1">
+          <mxGeometry y="102" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eProposalStatus_r2" value="HIRED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eProposalStatus" vertex="1">
-          <mxGeometry x="0" y="104" width="260" height="30" as="geometry" />
+        <mxCell id="eProposalStatus_r4" value="WITHDRAWN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eProposalStatus" vertex="1">
+          <mxGeometry y="124" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eProposalStatus_r3" value="REJECTED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eProposalStatus" vertex="1">
-          <mxGeometry x="0" y="134" width="260" height="30" as="geometry" />
+        <mxCell id="eProposalStatus_r5" value="EXPIRED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eProposalStatus" vertex="1">
+          <mxGeometry y="146" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eProposalStatus_r4" value="WITHDRAWN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eProposalStatus" vertex="1">
-          <mxGeometry x="0" y="164" width="260" height="30" as="geometry" />
+        <mxCell id="eProposalStatus_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="eProposalStatus" vertex="1">
+          <mxGeometry y="168" width="170" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="eProposalStatus_r5" value="EXPIRED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eProposalStatus" vertex="1">
-          <mxGeometry x="0" y="194" width="260" height="30" as="geometry" />
+        <mxCell id="eJobStatus" value="&lt;&lt;enum&gt;&gt;&#10;JobStatus" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1296" y="1514" width="170" height="174" as="geometry" />
         </mxCell>
-        <mxCell id="eProposalStatus_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="eProposalStatus" vertex="1">
-          <mxGeometry x="0" y="224" width="260" height="8" as="geometry" />
+        <mxCell id="eJobStatus_r0" value="DRAFT" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eJobStatus" vertex="1">
+          <mxGeometry y="36" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eJobStatus" value="&lt;&lt;enum&gt;&gt;&#xa;JobStatus" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="2005" y="1344" width="260" height="232" as="geometry" />
+        <mxCell id="eJobStatus_r1" value="OPEN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eJobStatus" vertex="1">
+          <mxGeometry y="58" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eJobStatus_r0" value="DRAFT" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eJobStatus" vertex="1">
-          <mxGeometry x="0" y="44" width="260" height="30" as="geometry" />
+        <mxCell id="eJobStatus_r2" value="IN_PROGRESS" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eJobStatus" vertex="1">
+          <mxGeometry y="80" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eJobStatus_r1" value="OPEN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eJobStatus" vertex="1">
-          <mxGeometry x="0" y="74" width="260" height="30" as="geometry" />
+        <mxCell id="eJobStatus_r3" value="COMPLETED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eJobStatus" vertex="1">
+          <mxGeometry y="102" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eJobStatus_r2" value="IN_PROGRESS" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eJobStatus" vertex="1">
-          <mxGeometry x="0" y="104" width="260" height="30" as="geometry" />
+        <mxCell id="eJobStatus_r4" value="CLOSED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eJobStatus" vertex="1">
+          <mxGeometry y="124" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eJobStatus_r3" value="COMPLETED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eJobStatus" vertex="1">
-          <mxGeometry x="0" y="134" width="260" height="30" as="geometry" />
+        <mxCell id="eJobStatus_r5" value="CANCELLED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eJobStatus" vertex="1">
+          <mxGeometry y="146" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eJobStatus_r4" value="CLOSED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eJobStatus" vertex="1">
-          <mxGeometry x="0" y="164" width="260" height="30" as="geometry" />
+        <mxCell id="eJobStatus_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="eJobStatus" vertex="1">
+          <mxGeometry y="168" width="170" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="eJobStatus_r5" value="CANCELLED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eJobStatus" vertex="1">
-          <mxGeometry x="0" y="194" width="260" height="30" as="geometry" />
+        <mxCell id="eHiringType" value="&lt;&lt;enum&gt;&gt;&#10;HiringType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1486" y="1514" width="170" height="86" as="geometry" />
         </mxCell>
-        <mxCell id="eJobStatus_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="eJobStatus" vertex="1">
-          <mxGeometry x="0" y="224" width="260" height="8" as="geometry" />
+        <mxCell id="eHiringType_r0" value="SINGLE" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eHiringType" vertex="1">
+          <mxGeometry y="36" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eHiringType" value="&lt;&lt;enum&gt;&gt;&#xa;HiringType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="2005" y="1618" width="260" height="112" as="geometry" />
+        <mxCell id="eHiringType_r1" value="MULTIPLE" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eHiringType" vertex="1">
+          <mxGeometry y="58" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eHiringType_r0" value="SINGLE" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eHiringType" vertex="1">
-          <mxGeometry x="0" y="44" width="260" height="30" as="geometry" />
+        <mxCell id="eHiringType_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="eHiringType" vertex="1">
+          <mxGeometry y="80" width="170" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="eHiringType_r1" value="MULTIPLE" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eHiringType" vertex="1">
-          <mxGeometry x="0" y="74" width="260" height="30" as="geometry" />
+        <mxCell id="eBudgetType" value="&lt;&lt;enum&gt;&gt;&#10;BudgetType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1676" y="1514" width="170" height="64" as="geometry" />
         </mxCell>
-        <mxCell id="eHiringType_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="eHiringType" vertex="1">
-          <mxGeometry x="0" y="104" width="260" height="8" as="geometry" />
+        <mxCell id="eBudgetType_r0" value="FIXED_PRICE" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eBudgetType" vertex="1">
+          <mxGeometry y="36" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="eBudgetType" value="&lt;&lt;enum&gt;&gt;&#xa;BudgetType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="2005" y="1772" width="260" height="82" as="geometry" />
+        <mxCell id="eBudgetType_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="eBudgetType" vertex="1">
+          <mxGeometry y="58" width="170" height="6" as="geometry" />
         </mxCell>
-        <mxCell id="eBudgetType_r0" value="FIXED_PRICE" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="eBudgetType" vertex="1">
-          <mxGeometry x="0" y="44" width="260" height="30" as="geometry" />
+        <mxCell id="eVerificationStatus" value="&lt;&lt;enum&gt;&gt;&#10;VerificationStatus" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="429" y="1250" width="170" height="108" as="geometry" />
         </mxCell>
-        <mxCell id="eBudgetType_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="eBudgetType" vertex="1">
-          <mxGeometry x="0" y="74" width="260" height="8" as="geometry" />
+        <mxCell id="eVerificationStatus_r0" value="PENDING" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eVerificationStatus" vertex="1">
+          <mxGeometry y="36" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="e0" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.1600;entryX=0;entryY=0.5000;" parent="1" source="route" target="ctrl" edge="1">
-          <mxGeometry relative="1" as="geometry">
-          </mxGeometry>
+        <mxCell id="eVerificationStatus_r1" value="APPROVED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eVerificationStatus" vertex="1">
+          <mxGeometry y="58" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="e1" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="route" target="gAuth" edge="1">
-          <mxGeometry relative="1" as="geometry">
-          </mxGeometry>
+        <mxCell id="eVerificationStatus_r2" value="REJECTED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;" parent="eVerificationStatus" vertex="1">
+          <mxGeometry y="80" width="170" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="e2" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="route" target="gPerm" edge="1">
+        <mxCell id="eVerificationStatus_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=12;" parent="eVerificationStatus" vertex="1">
+          <mxGeometry y="102" width="170" height="6" as="geometry" />
+        </mxCell>
+        <mxCell id="e_0" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="ctrl" target="gAuth" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_1" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.6;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="ctrl" target="gPerm" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="26" y="294.0" />
-              <mxPoint x="26" y="832.0" />
+              <mxPoint x="56" y="260" />
+              <mxPoint x="56" y="660" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.1600;entryX=0;entryY=0.5000;" parent="1" source="ctrl" target="d1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.3543;entryX=0;entryY=0.5000;" parent="1" source="ctrl" target="d2" edge="1">
-          <mxGeometry relative="1" as="geometry">
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.4514;entryX=0;entryY=0.5000;" parent="1" source="ctrl" target="d3" edge="1">
-          <mxGeometry relative="1" as="geometry">
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.6457;entryX=0;entryY=0.5000;" parent="1" source="ctrl" target="d4" edge="1">
-          <mxGeometry relative="1" as="geometry">
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e7" value="returns" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.2571;entryX=0;entryY=0.5000;" parent="1" source="ctrl" target="t1" edge="1">
+        <mxCell id="e_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.18;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="ctrl" target="d1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1169" y="182.42857142857144" />
-              <mxPoint x="1169" y="26" />
-              <mxPoint x="1583" y="26" />
-              <mxPoint x="1583" y="331.0" />
+              <mxPoint x="662" y="141" />
+              <mxPoint x="662" y="148" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e8" value="returns" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.5486;entryX=0;entryY=0.1600;" parent="1" source="ctrl" target="t2" edge="1">
+        <mxCell id="e_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.39;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="ctrl" target="d2" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1181" y="281.51428571428573" />
-              <mxPoint x="1181" y="44" />
-              <mxPoint x="1571" y="44" />
-              <mxPoint x="1571" y="626.92" />
+              <mxPoint x="647" y="202" />
+              <mxPoint x="647" y="296" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e9" value="returns" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.7429;entryX=0;entryY=0.5000;" parent="1" source="ctrl" target="t3" edge="1">
+        <mxCell id="e_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.61;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="ctrl" target="d3" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1193" y="347.57142857142856" />
-              <mxPoint x="1193" y="62" />
-              <mxPoint x="1559" y="62" />
-              <mxPoint x="1559" y="864.0" />
+              <mxPoint x="632" y="262" />
+              <mxPoint x="632" y="444" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e10" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" source="t3" target="t2" edge="1">
-          <mxGeometry relative="1" as="geometry">
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e11" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;exitX=0.8400;exitY=1;entryX=0.5000;entryY=0;" parent="1" source="ctrl" target="svc" edge="1">
+        <mxCell id="e_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.82;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="ctrl" target="d4" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1064.92" y="1001" />
-              <mxPoint x="319.0" y="1001" />
+              <mxPoint x="617" y="323" />
+              <mxPoint x="617" y="604" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e12" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;exitX=1;exitY=0.5000;entryX=0;entryY=0.5000;" parent="1" source="svc" target="repo" edge="1">
-          <mxGeometry relative="1" as="geometry">
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e13" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.5000;entryX=0;entryY=0.1600;" parent="1" source="repo" target="sProposal" edge="1">
+        <mxCell id="e_6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=0.18;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="svc" target="t1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1183" y="1345.0" />
-              <mxPoint x="1183" y="1008" />
-              <mxPoint x="1632" y="1008" />
-              <mxPoint x="1632" y="1145.2" />
+              <mxPoint x="1144" y="556" />
+              <mxPoint x="1083" y="556" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e14" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" source="sJob" target="sProposal" edge="1">
-          <mxGeometry relative="1" as="geometry">
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e15" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.1600;entryX=0;entryY=0.5000;" parent="1" source="sUser" target="sProposal" edge="1">
+        <mxCell id="e_7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=0.50;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="svc" target="t2" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1573" y="1100.4" />
-              <mxPoint x="1573" y="1305.0" />
+              <mxPoint x="1307" y="568" />
+              <mxPoint x="1312" y="568" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e16" value="1..1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="sUser" target="sProfile" edge="1">
-          <mxGeometry relative="1" as="geometry">
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e17" value="1..1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="sProfile" target="sFreelancerProfile" edge="1">
-          <mxGeometry relative="1" as="geometry">
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e18" value="status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.5000;entryX=0;entryY=0.5000;" parent="1" source="sProposal" target="eProposalStatus" edge="1">
+        <mxCell id="e_8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=0.82;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="svc" target="t3" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1928" y="1305.0" />
-              <mxPoint x="1928" y="1186.0" />
+              <mxPoint x="1470" y="556" />
+              <mxPoint x="1536" y="556" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e19" value="status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.3867;entryX=0;entryY=0.5000;" parent="1" source="sJob" target="eJobStatus" edge="1">
+        <mxCell id="e_9" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="t3" target="t2" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1939" y="1785.3866666666668" />
-              <mxPoint x="1939" y="1460.0" />
+              <mxPoint x="1424" y="668" />
+              <mxPoint x="1424" y="632" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e20" value="hiringType" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.6133;entryX=0;entryY=0.5000;" parent="1" source="sJob" target="eHiringType" edge="1">
+        <mxCell id="e_10" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0.0;exitDx=0;exitDy=0;entryX=0.45;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="ctrl" target="svc" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1950" y="1904.6133333333332" />
-              <mxPoint x="1950" y="1674.0" />
+              <mxPoint x="335" y="48" />
+              <mxPoint x="1282" y="48" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e21" value="budgetType" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.8400;entryX=0;entryY=0.5000;" parent="1" source="sJob" target="eBudgetType" edge="1">
+        <mxCell id="e_11" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="svc" target="repo" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1961" y="2023.8400000000001" />
-              <mxPoint x="1961" y="1813.0" />
+              <mxPoint x="1641" y="316" />
+              <mxPoint x="1641" y="328" />
             </Array>
           </mxGeometry>
+        </mxCell>
+        <mxCell id="e_12" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.70;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="repo" target="sProposal" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2042" y="1020" />
+              <mxPoint x="1127" y="1020" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_13" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sJob" target="sProposal" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1352" y="1264" />
+              <mxPoint x="1352" y="1242" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_14" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sUser" target="sProposal" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="970" y="1132" />
+              <mxPoint x="970" y="1242" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_15" value="1..1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.50;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="sUser" target="sProfile" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_16" value="1..1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.50;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="sProfile" target="sFreelancerProfile" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_17" value="status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=0.50;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="sProposal" target="eProposalStatus" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_18" value="status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=0.18;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="sJob" target="eJobStatus" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1507" y="1486" />
+              <mxPoint x="1381" y="1486" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_19" value="hiringType" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=0.50;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="sJob" target="eHiringType" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_20" value="budgetType" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=0.82;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="sJob" target="eBudgetType" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1635" y="1486" />
+              <mxPoint x="1761" y="1486" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_21" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.30;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="repo" target="sIdVerificationDocument" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1858" y="1002" />
+              <mxPoint x="514" y="1002" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_22" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sUser" target="sIdVerificationDocument" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="666" y="1132" />
+              <mxPoint x="666" y="1132" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_23" value="status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=10;fontSize=11;labelBackgroundColor=#ffffff;dashed=1;exitX=0.50;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="sIdVerificationDocument" target="eVerificationStatus" edge="1">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

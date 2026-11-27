@@ -1,435 +1,537 @@
-\contentsline {section}{I. Record of Changes}{7}{Doc-Start}%
-\contentsline {section}{II. Release Package \& User Guides}{9}{table.1}%
-\contentsline {section}{\numberline {1}Deliverable Package}{9}{section.1}%
-\contentsline {section}{\numberline {2}Installation Guides}{10}{section.24}%
-\contentsline {subsection}{\numberline {2.1}System Requirements}{10}{subsection.25}%
-\contentsline {subsubsection}{\numberline {2.1.1}Hardware Requirements}{11}{subsubsection.26}%
-\contentsline {subsubsection}{\numberline {2.1.2}Software Prerequisites}{11}{subsubsection.28}%
-\contentsline {subsection}{\numberline {2.2}Software Prerequisites \& Download Instructions}{12}{subsection.30}%
-\contentsline {subsubsection}{\numberline {2.2.1}Step 1: Download and Install Git SCM}{12}{subsubsection.31}%
-\contentsline {subsubsection}{\numberline {2.2.2}Step 2: Download and Install Node.js LTS and pnpm}{13}{subsubsection.33}%
-\contentsline {subsubsection}{\numberline {2.2.3}Step 3: Download and Install Docker Desktop}{14}{subsubsection.39}%
-\contentsline {subsubsection}{\numberline {2.2.4}Step 4: Verify Installed Runtime Environments}{15}{subsubsection.41}%
-\contentsline {subsection}{\numberline {2.3}Third-Party Services Configuration \& Environment Variables}{15}{subsection.43}%
-\contentsline {subsection}{\numberline {2.4}Monorepo Setup, Dependencies \& Database Initialization}{16}{subsection.44}%
-\contentsline {subsubsection}{\numberline {2.4.1}Step 1: Clone Repository and Install Dependencies}{16}{subsubsection.45}%
-\contentsline {subsubsection}{\numberline {2.4.2}Step 2: Configure Environment Files}{17}{subsubsection.47}%
-\contentsline {subsubsection}{\numberline {2.4.3}Step 3: Database Schema Migration and Initial Seeding}{18}{subsubsection.61}%
-\contentsline {subsection}{\numberline {2.5}Service Port Mapping}{18}{subsection.63}%
-\contentsline {subsection}{\numberline {2.6}System Startup Options}{19}{subsection.65}%
-\contentsline {subsubsection}{\numberline {2.6.1}Option 1: Automated Deployment via Docker Compose (Recommended)}{19}{subsubsection.66}%
-\contentsline {subsubsection}{\numberline {2.6.2}Option 2: Local Development Workflow}{20}{subsubsection.76}%
-\contentsline {subsection}{\numberline {2.7}Post-Installation System Verification}{21}{subsection.83}%
-\contentsline {subsubsection}{\numberline {2.7.1}Frontend Web Application Verification}{21}{subsubsection.84}%
-\contentsline {subsubsection}{\numberline {2.7.2}Backend RESTful API \& AI Health Check Verification}{22}{subsubsection.86}%
-\contentsline {subsubsection}{\numberline {2.7.3}Seeded Test Accounts}{22}{subsubsection.93}%
-\contentsline {section}{\numberline {3}User Manual}{23}{section.94}%
-\contentsline {subsection}{\numberline {3.1}Overview of the Application \& System Actors}{23}{subsection.95}%
-\contentsline {subsection}{\numberline {3.2}Module 2: Authentication \& Session Management}{24}{subsection.96}%
-\contentsline {subsubsection}{\numberline {3.2.1}M2.01 -- New User Registration \& Email OTP Verification (UC-04)}{24}{subsubsection.97}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{24}{paragraph*.99}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{25}{paragraph*.109}%
-\contentsline {subsubsection}{\numberline {3.2.2}M2.02 -- User Authentication via Email \& Password (UC-02)}{26}{subsubsection.110}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{26}{paragraph*.112}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{26}{paragraph*.118}%
-\contentsline {subsubsection}{\numberline {3.2.3}M2.03 -- Single Sign-On via Google OAuth 2.0 (UC-01)}{28}{subsubsection.119}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{28}{paragraph*.121}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{28}{paragraph*.124}%
-\contentsline {subsubsection}{\numberline {3.2.4}M2.04 -- Password Recovery \& Reset via Email OTP (UC-05)}{29}{subsubsection.125}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{29}{paragraph*.127}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{30}{paragraph*.135}%
-\contentsline {subsubsection}{\numberline {3.2.5}M2.05 -- Active Sessions \& Detail Audit (UC-16.01, UC-16.02)}{31}{subsubsection.136}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{31}{paragraph*.138}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{32}{paragraph*.144}%
-\contentsline {subsubsection}{\numberline {3.2.6}M2.06 -- Remote Session Revocation \& Security Enforcement (UC-16.03)}{33}{subsubsection.145}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{33}{paragraph*.147}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{33}{paragraph*.151}%
-\contentsline {subsubsection}{\numberline {3.2.7}M2.07 -- Secure User Sign-Out \& Session Invalidation (UC-03)}{34}{subsubsection.152}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{34}{paragraph*.154}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{34}{paragraph*.157}%
-\contentsline {subsection}{\numberline {3.3}Public Profiles, Account Settings and Client Workspace}{35}{subsection.158}%
-\contentsline {subsubsection}{\numberline {3.3.1}M1.07 -- View Public Client Profile}{35}{subsubsection.159}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{35}{paragraph*.160}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{35}{paragraph*.162}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{35}{paragraph*.166}%
-\contentsline {subsubsection}{\numberline {3.3.2}M1.08 -- Public Expert Directory -- Availability}{36}{subsubsection.167}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{36}{paragraph*.168}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{36}{paragraph*.169}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{36}{paragraph*.172}%
-\contentsline {subsubsection}{\numberline {3.3.3}M3.01 -- Update Personal Information}{37}{subsubsection.173}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{37}{paragraph*.174}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{37}{paragraph*.176}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{37}{paragraph*.180}%
-\contentsline {subsubsection}{\numberline {3.3.4}M3.02 -- Upload Profile Photo}{38}{subsubsection.181}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{38}{paragraph*.182}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{38}{paragraph*.184}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{38}{paragraph*.188}%
-\contentsline {subsubsection}{\numberline {3.3.5}M3.03 -- Change Password}{39}{subsubsection.189}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{39}{paragraph*.190}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{39}{paragraph*.192}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{39}{paragraph*.196}%
-\contentsline {subsubsection}{\numberline {3.3.6}M3.04 -- Manage Social Links}{40}{subsubsection.197}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{40}{paragraph*.198}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{40}{paragraph*.200}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{40}{paragraph*.205}%
-\contentsline {subsubsection}{\numberline {3.3.7}M3.05 -- Join a Marketplace Role}{41}{subsubsection.206}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{41}{paragraph*.207}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{41}{paragraph*.209}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{41}{paragraph*.213}%
-\contentsline {subsubsection}{\numberline {3.3.8}M3.06 -- Switch Active Role}{42}{subsubsection.214}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{42}{paragraph*.215}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{42}{paragraph*.217}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{42}{paragraph*.221}%
-\contentsline {subsubsection}{\numberline {3.3.9}M7.01 -- Open Client Workspace}{43}{subsubsection.222}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{43}{paragraph*.223}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{43}{paragraph*.225}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{43}{paragraph*.229}%
-\contentsline {subsubsection}{\numberline {3.3.10}M7.02 -- Update Company Information}{44}{subsubsection.230}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{44}{paragraph*.231}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{44}{paragraph*.233}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{44}{paragraph*.237}%
-\contentsline {subsubsection}{\numberline {3.3.11}M7.03 -- Manage Favorite Freelancers}{45}{subsubsection.238}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{45}{paragraph*.239}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{45}{paragraph*.241}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{45}{paragraph*.245}%
-\contentsline {subsubsection}{\numberline {3.3.12}M7.04 -- Manage Following List}{46}{subsubsection.246}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{46}{paragraph*.247}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{46}{paragraph*.249}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{46}{paragraph*.253}%
-\contentsline {subsection}{\numberline {3.4}Identity Verification and Expert Workspace}{47}{subsection.254}%
-\contentsline {subsubsection}{\numberline {3.4.1}M5.01 -- Submit Identity Verification}{47}{subsubsection.255}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{47}{paragraph*.256}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{47}{paragraph*.258}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{47}{paragraph*.264}%
-\contentsline {subsubsection}{\numberline {3.4.2}M5.02 -- View Identity Verification Status}{48}{subsubsection.265}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{48}{paragraph*.266}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{48}{paragraph*.268}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{48}{paragraph*.272}%
-\contentsline {subsubsection}{\numberline {3.4.3}M13.01 -- Open Expert Workspace in Admin User Management}{49}{subsubsection.273}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{49}{paragraph*.274}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{49}{paragraph*.276}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{49}{paragraph*.280}%
-\contentsline {subsubsection}{\numberline {3.4.4}M13.02 -- Maintain Expert Profile in User Management}{50}{subsubsection.281}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{50}{paragraph*.282}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{50}{paragraph*.284}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{50}{paragraph*.290}%
-\contentsline {subsubsection}{\numberline {3.4.5}M13.03 -- Check Expert Profile Status and Review Outcome}{51}{subsubsection.291}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{51}{paragraph*.292}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{51}{paragraph*.294}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{51}{paragraph*.298}%
-\contentsline {subsection}{\numberline {3.5}Administrator System, RBAC \& User Management}{52}{subsection.299}%
-\contentsline {subsubsection}{\numberline {3.5.1}M14.01 -- Administrator Central Operations Dashboard (\texttt {/admin})}{52}{subsubsection.300}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{52}{paragraph*.302}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{53}{paragraph*.307}%
-\contentsline {subsubsection}{\numberline {3.5.2}M14.02 -- Administrator Profile \& Privileges}{54}{subsubsection.308}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{54}{paragraph*.310}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{54}{paragraph*.315}%
-\contentsline {subsubsection}{\numberline {3.5.3}M14.03 -- System \& Custom Roles Management (UC-06.01--06.05)}{55}{subsubsection.316}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{55}{paragraph*.318}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{56}{paragraph*.324}%
-\contentsline {subsubsection}{\numberline {3.5.4}M14.04 -- Dynamic Role-Permission Assignment Matrix (UC-06.06)}{57}{subsubsection.325}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{57}{paragraph*.327}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{57}{paragraph*.334}%
-\contentsline {subsubsection}{\numberline {3.5.5}M14.05 -- API Permission Catalog \& Detail (UC-15.01--15.02)}{58}{subsubsection.335}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{58}{paragraph*.337}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{59}{paragraph*.344}%
-\contentsline {subsubsection}{\numberline {3.5.6}M14.06 -- User Directory \& Account Provisioning (UC-28.01, UC-28.03)}{60}{subsubsection.345}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{60}{paragraph*.347}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{60}{paragraph*.353}%
-\contentsline {subsubsection}{\numberline {3.5.7}M14.07 -- User Account Status \& Suspension (UC-28.04)}{61}{subsubsection.354}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{61}{paragraph*.356}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{61}{paragraph*.362}%
-\contentsline {subsubsection}{\numberline {3.5.8}M14.08 -- User Multi-Profile Management (UC-28.02, UC-28.05--28.09)}{62}{subsubsection.363}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{62}{paragraph*.365}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{63}{paragraph*.376}%
-\contentsline {subsection}{\numberline {3.6}Module 15: Administrator Master Data Catalog Management}{64}{subsection.377}%
-\contentsline {subsubsection}{\numberline {3.6.1}M15.01 -- Skills Catalog Management (UC-38.01--38.06)}{64}{subsubsection.378}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{64}{paragraph*.380}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{65}{paragraph*.386}%
-\contentsline {subsubsection}{\numberline {3.6.2}M15.02 -- Job Categories Management (UC-46.01--46.06)}{66}{subsubsection.387}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{66}{paragraph*.389}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{66}{paragraph*.395}%
-\contentsline {subsubsection}{\numberline {3.6.3}M15.03 -- Forum Discussion Categories Management (UC-17.01 to UC-17.06)}{67}{subsubsection.396}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{67}{paragraph*.398}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{67}{paragraph*.404}%
-\contentsline {subsubsection}{\numberline {3.6.4}M15.04 -- Advertisement Banners Management (UC-37.01--37.05)}{68}{subsubsection.405}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{68}{paragraph*.407}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{69}{paragraph*.414}%
-\contentsline {subsection}{\numberline {3.7}Contract Reviews, Banner Management and Approval Workflows}{70}{subsection.415}%
-\contentsline {subsubsection}{\numberline {3.7.1}M11.05 -- Write, Update and Delete Contract Reviews}{70}{subsubsection.416}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{70}{paragraph*.417}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{70}{paragraph*.419}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{70}{paragraph*.424}%
-\contentsline {subsubsection}{\numberline {3.7.2}M11.06 -- Respond to a Review}{71}{subsubsection.425}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{71}{paragraph*.426}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{71}{paragraph*.428}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{71}{paragraph*.432}%
-\contentsline {subsubsection}{\numberline {3.7.3}M15.04 -- Manage Banners}{72}{subsubsection.433}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{72}{paragraph*.434}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{72}{paragraph*.436}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{72}{paragraph*.441}%
-\contentsline {subsubsection}{\numberline {3.7.4}M16.01 -- Review Identity Verification Requests}{73}{subsubsection.442}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{73}{paragraph*.443}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{73}{paragraph*.445}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{73}{paragraph*.449}%
-\contentsline {subsubsection}{\numberline {3.7.5}M16.02 -- Review Profile Update Requests}{74}{subsubsection.450}%
-\contentsline {paragraph}{Screen-Transition Workflow:}{74}{paragraph*.451}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{74}{paragraph*.453}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{74}{paragraph*.458}%
-\contentsline {subsection}{\numberline {3.8}Module 14: Forum Management}{74}{subsection.459}%
-\contentsline {subsubsection}{\numberline {3.8.1}M14.01 -- View Forum Category List (UC-14.01)}{74}{subsubsection.460}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{75}{paragraph*.462}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{75}{paragraph*.467}%
-\contentsline {subsubsection}{\numberline {3.8.2}M14.02 -- View Forum Category Detail (UC-14.02)}{75}{subsubsection.468}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{76}{paragraph*.470}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{76}{paragraph*.474}%
-\contentsline {subsubsection}{\numberline {3.8.3}M14.03 -- View Post List (UC-14.03)}{76}{subsubsection.475}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{77}{paragraph*.477}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{77}{paragraph*.481}%
-\contentsline {subsubsection}{\numberline {3.8.4}M14.04 -- View Post Detail (UC-14.04)}{77}{subsubsection.482}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{78}{paragraph*.484}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{78}{paragraph*.489}%
-\contentsline {subsubsection}{\numberline {3.8.5}M14.05 -- Create Post (UC-14.05)}{78}{subsubsection.490}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{79}{paragraph*.492}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{79}{paragraph*.496}%
-\contentsline {subsubsection}{\numberline {3.8.6}M14.06 -- Update Post (UC-14.06)}{79}{subsubsection.497}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{80}{paragraph*.499}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{80}{paragraph*.503}%
-\contentsline {subsubsection}{\numberline {3.8.7}M14.07 -- Delete Post (UC-14.07)}{80}{subsubsection.504}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{81}{paragraph*.506}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{81}{paragraph*.509}%
-\contentsline {subsubsection}{\numberline {3.8.8}M14.08 -- Like Post (UC-14.08)}{81}{subsubsection.510}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{82}{paragraph*.512}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{82}{paragraph*.515}%
-\contentsline {subsubsection}{\numberline {3.8.9}M14.09 -- Unlike Post (UC-14.09)}{82}{subsubsection.516}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{83}{paragraph*.518}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{83}{paragraph*.521}%
-\contentsline {subsubsection}{\numberline {3.8.10}M14.10 -- View Post Likes (UC-14.10)}{83}{subsubsection.522}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{84}{paragraph*.524}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{84}{paragraph*.527}%
-\contentsline {subsubsection}{\numberline {3.8.11}M14.11 -- View Post Comments (UC-14.11)}{84}{subsubsection.528}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{85}{paragraph*.530}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{85}{paragraph*.533}%
-\contentsline {subsubsection}{\numberline {3.8.12}M14.12 -- Create Comment (UC-14.12)}{85}{subsubsection.534}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{86}{paragraph*.536}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{86}{paragraph*.539}%
-\contentsline {subsubsection}{\numberline {3.8.13}M14.13 -- Update Comment (UC-14.13)}{86}{subsubsection.540}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{87}{paragraph*.542}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{87}{paragraph*.545}%
-\contentsline {subsubsection}{\numberline {3.8.14}M14.14 -- Delete Comment (UC-14.14)}{87}{subsubsection.546}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{88}{paragraph*.548}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{88}{paragraph*.551}%
-\contentsline {subsubsection}{\numberline {3.8.15}M14.15 -- Like Comment (UC-14.15)}{88}{subsubsection.552}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{89}{paragraph*.554}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{89}{paragraph*.556}%
-\contentsline {subsubsection}{\numberline {3.8.16}M14.16 -- Unlike Comment (UC-14.16)}{89}{subsubsection.557}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{90}{paragraph*.559}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{90}{paragraph*.561}%
-\contentsline {subsubsection}{\numberline {3.8.17}M14.17 -- Report Content (UC-14.17)}{90}{subsubsection.562}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{91}{paragraph*.564}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{91}{paragraph*.567}%
-\contentsline {subsection}{\numberline {3.9}Module 27: Conversation Management}{91}{subsection.568}%
-\contentsline {subsubsection}{\numberline {3.9.1}M27.01 -- View Conversation List (UC-27.01)}{91}{subsubsection.569}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{92}{paragraph*.571}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{92}{paragraph*.575}%
-\contentsline {subsubsection}{\numberline {3.9.2}M27.02 -- Start Conversation (UC-27.02)}{92}{subsubsection.576}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{93}{paragraph*.578}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{93}{paragraph*.582}%
-\contentsline {subsubsection}{\numberline {3.9.3}M27.03 -- View Conversation Detail (UC-27.03)}{93}{subsubsection.583}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{94}{paragraph*.585}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{94}{paragraph*.589}%
-\contentsline {subsubsection}{\numberline {3.9.4}M27.04 -- Send Message (UC-27.04)}{94}{subsubsection.590}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{95}{paragraph*.592}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{95}{paragraph*.596}%
-\contentsline {subsubsection}{\numberline {3.9.5}M27.05 -- Mark Message as Read (UC-27.05)}{95}{subsubsection.597}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{96}{paragraph*.599}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{96}{paragraph*.602}%
-\contentsline {subsubsection}{\numberline {3.9.6}M27.06 -- Delete / Recall Message (UC-27.06)}{96}{subsubsection.603}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{97}{paragraph*.605}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{97}{paragraph*.608}%
-\contentsline {subsubsection}{\numberline {3.9.7}M27.07 -- Pin / Unpin Conversation (UC-27.07)}{97}{subsubsection.609}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{98}{paragraph*.611}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{98}{paragraph*.614}%
-\contentsline {subsubsection}{\numberline {3.9.8}M27.08 -- Send File Attachment (UC-27.08)}{98}{subsubsection.615}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{99}{paragraph*.617}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{99}{paragraph*.622}%
-\contentsline {subsection}{\numberline {3.10}Module 34--36: Moderation, ID Verification \& Forum Trash}{99}{subsection.623}%
-\contentsline {subsubsection}{\numberline {3.10.1}M34.01 -- View Moderation Queue (UC-34.01)}{99}{subsubsection.624}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{100}{paragraph*.626}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{100}{paragraph*.630}%
-\contentsline {subsubsection}{\numberline {3.10.2}M34.02 -- View Moderation Item Detail (UC-34.02)}{100}{subsubsection.631}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{101}{paragraph*.633}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{101}{paragraph*.637}%
-\contentsline {subsubsection}{\numberline {3.10.3}M34.03 -- Resolve Moderation Item (UC-34.03)}{101}{subsubsection.638}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{102}{paragraph*.640}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{102}{paragraph*.643}%
-\contentsline {subsubsection}{\numberline {3.10.4}M35.01 -- View ID Verification Request List (UC-35.01)}{102}{subsubsection.644}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{103}{paragraph*.646}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{103}{paragraph*.650}%
-\contentsline {subsubsection}{\numberline {3.10.5}M35.02 -- View ID Verification Request Detail (UC-35.02)}{103}{subsubsection.651}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{104}{paragraph*.653}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{104}{paragraph*.658}%
-\contentsline {subsubsection}{\numberline {3.10.6}M35.03 -- Approve ID Verification (UC-35.03)}{104}{subsubsection.659}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{105}{paragraph*.661}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{105}{paragraph*.665}%
-\contentsline {subsubsection}{\numberline {3.10.7}M35.04 -- Reject ID Verification (UC-35.04)}{105}{subsubsection.666}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{106}{paragraph*.668}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{106}{paragraph*.672}%
-\contentsline {subsubsection}{\numberline {3.10.8}M36.01 -- View Deleted Posts/Comments List (UC-36.01)}{106}{subsubsection.673}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{107}{paragraph*.675}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{107}{paragraph*.679}%
-\contentsline {subsubsection}{\numberline {3.10.9}M36.02 -- View Deleted Posts/Comments Detail (UC-36.02)}{107}{subsubsection.680}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{108}{paragraph*.682}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{108}{paragraph*.685}%
-\contentsline {subsubsection}{\numberline {3.10.10}M36.03 -- Restore Deleted Posts/Comments (UC-36.03)}{108}{subsubsection.686}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{109}{paragraph*.688}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{109}{paragraph*.691}%
-\contentsline {subsection}{\numberline {3.11}Module 44--45: AI Content Moderation \& Face Scan}{109}{subsection.692}%
-\contentsline {subsubsection}{\numberline {3.11.1}M44.01 -- Moderate Content by AI (UC-44.01)}{109}{subsubsection.693}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{110}{paragraph*.695}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{110}{paragraph*.700}%
-\contentsline {subsubsection}{\numberline {3.11.2}M45.01 -- Scan Face and Detect Duplicate Identity (UC-45.01)}{110}{subsubsection.701}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{111}{paragraph*.703}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{111}{paragraph*.708}%
-\contentsline {subsection}{\numberline {3.12}Module 13: Contract Management}{112}{subsection.709}%
-\contentsline {subsubsection}{\numberline {3.12.1}M13.01 -- Create Contract (UC-13.01)}{112}{subsubsection.710}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{112}{paragraph*.712}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{113}{paragraph*.717}%
-\contentsline {subsubsection}{\numberline {3.12.2}M13.02 -- Update Contract (UC-13.02)}{114}{subsubsection.718}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{114}{paragraph*.720}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{114}{paragraph*.725}%
-\contentsline {subsubsection}{\numberline {3.12.3}M13.03 -- View Contracts List (UC-13.04)}{115}{subsubsection.726}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{115}{paragraph*.728}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{115}{paragraph*.733}%
-\contentsline {subsubsection}{\numberline {3.12.4}M13.04 -- View Contract Details (UC-13.05)}{116}{subsubsection.734}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{116}{paragraph*.736}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{116}{paragraph*.741}%
-\contentsline {subsubsection}{\numberline {3.12.5}M13.05 -- Sign Contract Agreement (UC-13.06)}{117}{subsubsection.742}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{117}{paragraph*.744}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{117}{paragraph*.747}%
-\contentsline {subsubsection}{\numberline {3.12.6}M13.06 -- Export Signed Contract PDF (UC-13.07)}{118}{subsubsection.748}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{118}{paragraph*.750}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{118}{paragraph*.753}%
-\contentsline {subsubsection}{\numberline {3.12.7}M13.07 -- Cancel Contract (UC-13.08)}{119}{subsubsection.754}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{119}{paragraph*.756}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{119}{paragraph*.759}%
-\contentsline {subsubsection}{\numberline {3.12.8}M13.08 -- Complete Contract (UC-13.03)}{120}{subsubsection.760}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{120}{paragraph*.762}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{120}{paragraph*.765}%
-\contentsline {subsubsection}{\numberline {3.12.9}M13.09 -- View Contract Shared Files (UC-13.09)}{121}{subsubsection.766}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{121}{paragraph*.768}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{121}{paragraph*.771}%
-\contentsline {subsubsection}{\numberline {3.12.10}M13.10 -- Upload Contract File (UC-13.10)}{122}{subsubsection.772}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{122}{paragraph*.774}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{122}{paragraph*.778}%
-\contentsline {subsubsection}{\numberline {3.12.11}M13.11 -- Delete Contract File (UC-13.11)}{123}{subsubsection.779}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{123}{paragraph*.781}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{123}{paragraph*.784}%
-\contentsline {subsubsection}{\numberline {3.12.12}M13.12 -- Reject Contract Offer (UC-13.12)}{124}{subsubsection.785}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{124}{paragraph*.787}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{124}{paragraph*.791}%
-\contentsline {subsection}{\numberline {3.13}Modules 24--26: Milestones, Shared Files \& Deliverable Submissions}{125}{subsection.792}%
-\contentsline {subsubsection}{\numberline {3.13.1}M24.01 -- View Milestones List (UC-24.01)}{125}{subsubsection.793}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{125}{paragraph*.795}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{126}{paragraph*.800}%
-\contentsline {subsubsection}{\numberline {3.13.2}M24.02 -- View Milestone Details (UC-24.02)}{127}{subsubsection.801}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{127}{paragraph*.803}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{127}{paragraph*.807}%
-\contentsline {subsubsection}{\numberline {3.13.3}M24.03 -- Create Milestone (UC-24.03)}{128}{subsubsection.808}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{128}{paragraph*.810}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{128}{paragraph*.814}%
-\contentsline {subsubsection}{\numberline {3.13.4}M24.04 -- Update Milestone (UC-24.04)}{129}{subsubsection.815}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{129}{paragraph*.817}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{129}{paragraph*.821}%
-\contentsline {subsubsection}{\numberline {3.13.5}M24.05 -- Delete Milestone (UC-24.05)}{130}{subsubsection.822}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{130}{paragraph*.824}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{130}{paragraph*.827}%
-\contentsline {subsubsection}{\numberline {3.13.6}M24.06 -- Update Milestone Progress (UC-24.06)}{131}{subsubsection.828}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{131}{paragraph*.830}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{131}{paragraph*.833}%
-\contentsline {subsubsection}{\numberline {3.13.7}M25.01 -- View Milestone Files (UC-25.01)}{132}{subsubsection.834}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{132}{paragraph*.836}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{132}{paragraph*.840}%
-\contentsline {subsubsection}{\numberline {3.13.8}M25.02 -- Upload Milestone File (UC-25.02)}{133}{subsubsection.841}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{133}{paragraph*.843}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{133}{paragraph*.847}%
-\contentsline {subsubsection}{\numberline {3.13.9}M25.03 -- Delete Milestone File (UC-25.03)}{134}{subsubsection.848}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{134}{paragraph*.850}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{134}{paragraph*.853}%
-\contentsline {subsubsection}{\numberline {3.13.10}M26.01 -- Submit Milestone Deliverable (UC-26.01)}{135}{subsubsection.854}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{135}{paragraph*.856}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{135}{paragraph*.861}%
-\contentsline {subsubsection}{\numberline {3.13.11}M26.02 -- View Milestone Submissions List (UC-26.02)}{136}{subsubsection.862}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{136}{paragraph*.864}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{136}{paragraph*.867}%
-\contentsline {subsubsection}{\numberline {3.13.12}M26.03 -- View Milestone Submission Details (UC-26.03)}{137}{subsubsection.868}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{137}{paragraph*.870}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{137}{paragraph*.874}%
-\contentsline {subsubsection}{\numberline {3.13.13}M26.04 -- Request Milestone Changes (UC-26.04)}{138}{subsubsection.875}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{138}{paragraph*.877}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{138}{paragraph*.882}%
-\contentsline {subsubsection}{\numberline {3.13.14}M26.05 -- Approve Milestone Deliverable (UC-26.05)}{139}{subsubsection.883}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{139}{paragraph*.885}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{139}{paragraph*.889}%
-\contentsline {subsection}{\numberline {3.14}Module 33: Dispute Resolution \& Expert Arbitration}{140}{subsection.890}%
-\contentsline {subsubsection}{\numberline {3.14.1}M33.01 -- Open Formal Dispute (UC-33.01)}{140}{subsubsection.891}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{140}{paragraph*.893}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{141}{paragraph*.898}%
-\contentsline {subsubsection}{\numberline {3.14.2}M33.02 -- View Disputes List (UC-33.02)}{142}{subsubsection.899}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{142}{paragraph*.901}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{142}{paragraph*.905}%
-\contentsline {subsubsection}{\numberline {3.14.3}M33.03 -- View Dispute Case Details (UC-33.03)}{143}{subsubsection.906}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{143}{paragraph*.908}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{143}{paragraph*.912}%
-\contentsline {subsubsection}{\numberline {3.14.4}M33.04 -- View Dispute by Milestone (UC-33.04)}{144}{subsubsection.913}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{144}{paragraph*.915}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{144}{paragraph*.918}%
-\contentsline {subsubsection}{\numberline {3.14.5}M33.05 -- Respond to Dispute Proposal (UC-33.05)}{145}{subsubsection.919}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{145}{paragraph*.921}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{145}{paragraph*.925}%
-\contentsline {subsubsection}{\numberline {3.14.6}M33.06 -- Withdraw Dispute Request (UC-33.06)}{146}{subsubsection.926}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{146}{paragraph*.928}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{146}{paragraph*.931}%
-\contentsline {subsubsection}{\numberline {3.14.7}M33.07 -- Escalate Dispute to Expert (UC-33.07)}{147}{subsubsection.932}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{147}{paragraph*.934}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{147}{paragraph*.937}%
-\contentsline {subsubsection}{\numberline {3.14.8}M33.08 -- View Expert Disputes Queue (UC-33.08)}{148}{subsubsection.938}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{148}{paragraph*.940}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{148}{paragraph*.944}%
-\contentsline {subsubsection}{\numberline {3.14.9}M33.09 -- View Expert Dispute Details (UC-33.09)}{149}{subsubsection.945}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{149}{paragraph*.947}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{149}{paragraph*.951}%
-\contentsline {subsubsection}{\numberline {3.14.10}M33.10 -- Expert Make Dispute Decision (UC-33.10)}{150}{subsubsection.952}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{150}{paragraph*.954}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{150}{paragraph*.959}%
-\contentsline {subsection}{\numberline {3.15}Module 43: Payments, Stripe Escrow \& Connect Payouts}{151}{subsection.960}%
-\contentsline {subsubsection}{\numberline {3.15.1}M43.01 -- Connect Stripe Payout Account (UC-43.01)}{151}{subsubsection.961}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{151}{paragraph*.963}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{152}{paragraph*.967}%
-\contentsline {subsubsection}{\numberline {3.15.2}M43.02 -- Check Stripe Connect Status (UC-43.02)}{153}{subsubsection.968}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{153}{paragraph*.970}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{153}{paragraph*.974}%
-\contentsline {subsubsection}{\numberline {3.15.3}M43.03 -- View Saved Payment Methods (UC-43.03)}{154}{subsubsection.975}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{154}{paragraph*.977}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{154}{paragraph*.980}%
-\contentsline {subsubsection}{\numberline {3.15.4}M43.04 -- Set Default Payment Method (UC-43.04)}{155}{subsubsection.981}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{155}{paragraph*.983}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{155}{paragraph*.986}%
-\contentsline {subsubsection}{\numberline {3.15.5}M43.05 -- Remove Saved Payment Method (UC-43.05)}{156}{subsubsection.987}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{156}{paragraph*.989}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{156}{paragraph*.992}%
-\contentsline {subsubsection}{\numberline {3.15.6}M43.06 -- Create Contract Hold Deposit (UC-43.06)}{157}{subsubsection.993}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{157}{paragraph*.995}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{157}{paragraph*.999}%
-\contentsline {subsubsection}{\numberline {3.15.7}M43.07 -- Fund Milestone via Stripe Checkout (UC-43.07)}{158}{subsubsection.1000}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{158}{paragraph*.1002}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{158}{paragraph*.1006}%
-\contentsline {subsubsection}{\numberline {3.15.8}M43.08 -- Fund Milestone with Saved Card (UC-43.08)}{159}{subsubsection.1007}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{159}{paragraph*.1009}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{159}{paragraph*.1013}%
-\contentsline {subsubsection}{\numberline {3.15.9}M43.09 -- Release Milestone Escrow (UC-43.09)}{160}{subsubsection.1014}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{160}{paragraph*.1016}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{160}{paragraph*.1020}%
-\contentsline {subsubsection}{\numberline {3.15.10}M43.10 -- Payment History & Sync (UC-43.10--43.13)}{161}{subsubsection.1021}%
-\contentsline {paragraph}{Step-by-Step User Guide:}{161}{paragraph*.1023}%
-\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{161}{paragraph*.1028}%
+\contentsline {section}{I. Record of Changes}{9}{Doc-Start}%
+\contentsline {section}{II. Release Package \& User Guides}{11}{table.1}%
+\contentsline {section}{\numberline {1}Deliverable Package}{11}{section*.1}%
+\contentsline {section}{\numberline {2}Installation Guides}{12}{section*.24}%
+\contentsline {subsection}{\numberline {2.1}System Requirements}{12}{subsection*.25}%
+\contentsline {subsubsection}{\numberline {2.1.1}Hardware Requirements}{13}{subsubsection*.26}%
+\contentsline {subsubsection}{\numberline {2.1.2}Software Prerequisites}{13}{subsubsection*.28}%
+\contentsline {subsection}{\numberline {2.2}Software Prerequisites \& Download Instructions}{14}{subsection*.30}%
+\contentsline {subsubsection}{\numberline {2.2.1}Step 1: Download and Install Git SCM}{14}{subsubsection*.31}%
+\contentsline {subsubsection}{\numberline {2.2.2}Step 2: Download and Install Node.js LTS and pnpm}{15}{subsubsection*.33}%
+\contentsline {subsubsection}{\numberline {2.2.3}Step 3: Download and Install Docker Desktop}{16}{subsubsection*.39}%
+\contentsline {subsubsection}{\numberline {2.2.4}Step 4: Verify Installed Runtime Environments}{17}{subsubsection*.41}%
+\contentsline {subsection}{\numberline {2.3}Third-Party Services Configuration \& Environment Variables}{17}{subsection*.43}%
+\contentsline {subsection}{\numberline {2.4}Monorepo Setup, Dependencies \& Database Initialization}{18}{subsection*.44}%
+\contentsline {subsubsection}{\numberline {2.4.1}Step 1: Clone Repository and Install Dependencies}{18}{subsubsection*.45}%
+\contentsline {subsubsection}{\numberline {2.4.2}Step 2: Configure Environment Files}{19}{subsubsection*.47}%
+\contentsline {subsubsection}{\numberline {2.4.3}Step 3: Database Schema Migration and Initial Seeding}{20}{subsubsection*.61}%
+\contentsline {subsection}{\numberline {2.5}Service Port Mapping}{20}{subsection*.63}%
+\contentsline {subsection}{\numberline {2.6}System Startup Options}{21}{subsection*.65}%
+\contentsline {subsubsection}{\numberline {2.6.1}Option 1: Automated Deployment via Docker Compose (Recommended)}{21}{subsubsection*.66}%
+\contentsline {subsubsection}{\numberline {2.6.2}Option 2: Local Development Workflow}{22}{subsubsection*.76}%
+\contentsline {subsection}{\numberline {2.7}Post-Installation System Verification}{23}{subsection*.83}%
+\contentsline {subsubsection}{\numberline {2.7.1}Frontend Web Application Verification}{23}{subsubsection*.84}%
+\contentsline {subsubsection}{\numberline {2.7.2}Backend RESTful API \& AI Health Check Verification}{24}{subsubsection*.86}%
+\contentsline {subsubsection}{\numberline {2.7.3}Seeded Test Accounts}{24}{subsubsection*.93}%
+\contentsline {section}{\numberline {3}User Manual}{25}{section*.94}%
+\contentsline {subsection}{\numberline {3.1}Overview of the Application \& System Actors}{25}{subsection*.95}%
+\contentsline {subsection}{\numberline {3.2}Module 2: Authentication \& Session Management}{26}{subsection*.96}%
+\contentsline {subsubsection}{\numberline {3.2.1}M2.01 -- New User Registration \& Email OTP Verification (UC-04)}{26}{subsubsection*.97}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{26}{paragraph*.99}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{27}{paragraph*.109}%
+\contentsline {subsubsection}{\numberline {3.2.2}M2.02 -- User Authentication via Email \& Password (UC-02)}{28}{subsubsection*.110}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{28}{paragraph*.112}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{28}{paragraph*.118}%
+\contentsline {subsubsection}{\numberline {3.2.3}M2.03 -- Single Sign-On via Google OAuth 2.0 (UC-01)}{30}{subsubsection*.119}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{30}{paragraph*.121}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{30}{paragraph*.124}%
+\contentsline {subsubsection}{\numberline {3.2.4}M2.04 -- Password Recovery \& Reset via Email OTP (UC-05)}{31}{subsubsection*.125}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{31}{paragraph*.127}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{32}{paragraph*.135}%
+\contentsline {subsubsection}{\numberline {3.2.5}M2.05 -- Active Sessions \& Detail Audit (UC-16.01, UC-16.02)}{33}{subsubsection*.136}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{33}{paragraph*.138}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{34}{paragraph*.144}%
+\contentsline {subsubsection}{\numberline {3.2.6}M2.06 -- Remote Session Revocation \& Security Enforcement (UC-16.03)}{35}{subsubsection*.145}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{35}{paragraph*.147}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{35}{paragraph*.151}%
+\contentsline {subsubsection}{\numberline {3.2.7}M2.07 -- Secure User Sign-Out \& Session Invalidation (UC-03)}{36}{subsubsection*.152}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{36}{paragraph*.154}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{36}{paragraph*.157}%
+\contentsline {subsection}{\numberline {3.3}Public Profiles, Account Settings and Client Workspace}{37}{subsection*.158}%
+\contentsline {subsubsection}{\numberline {3.3.1}M1.07 -- View Public Client Profile}{37}{subsubsection*.159}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{37}{paragraph*.160}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{37}{paragraph*.162}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{37}{paragraph*.166}%
+\contentsline {subsubsection}{\numberline {3.3.2}M1.08 -- Public Expert Directory -- Availability}{38}{subsubsection*.167}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{38}{paragraph*.168}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{38}{paragraph*.169}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{38}{paragraph*.172}%
+\contentsline {subsubsection}{\numberline {3.3.3}M3.01 -- Update Personal Information}{39}{subsubsection*.173}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{39}{paragraph*.174}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{39}{paragraph*.176}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{39}{paragraph*.180}%
+\contentsline {subsubsection}{\numberline {3.3.4}M3.02 -- Upload Profile Photo}{40}{subsubsection*.181}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{40}{paragraph*.182}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{40}{paragraph*.184}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{40}{paragraph*.188}%
+\contentsline {subsubsection}{\numberline {3.3.5}M3.03 -- Change Password}{41}{subsubsection*.189}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{41}{paragraph*.190}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{41}{paragraph*.192}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{41}{paragraph*.196}%
+\contentsline {subsubsection}{\numberline {3.3.6}M3.04 -- Manage Social Links}{42}{subsubsection*.197}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{42}{paragraph*.198}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{42}{paragraph*.200}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{42}{paragraph*.205}%
+\contentsline {subsubsection}{\numberline {3.3.7}M3.05 -- Join a Marketplace Role}{43}{subsubsection*.206}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{43}{paragraph*.207}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{43}{paragraph*.209}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{43}{paragraph*.213}%
+\contentsline {subsubsection}{\numberline {3.3.8}M3.06 -- Switch Active Role}{44}{subsubsection*.214}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{44}{paragraph*.215}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{44}{paragraph*.217}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{44}{paragraph*.221}%
+\contentsline {subsubsection}{\numberline {3.3.9}M7.01 -- Open Client Workspace}{45}{subsubsection*.222}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{45}{paragraph*.223}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{45}{paragraph*.225}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{45}{paragraph*.229}%
+\contentsline {subsubsection}{\numberline {3.3.10}M7.02 -- Update Company Information}{46}{subsubsection*.230}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{46}{paragraph*.231}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{46}{paragraph*.233}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{46}{paragraph*.237}%
+\contentsline {subsubsection}{\numberline {3.3.11}M7.03 -- Manage Favorite Freelancers}{47}{subsubsection*.238}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{47}{paragraph*.239}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{47}{paragraph*.241}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{47}{paragraph*.245}%
+\contentsline {subsubsection}{\numberline {3.3.12}M7.04 -- Manage Following List}{48}{subsubsection*.246}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{48}{paragraph*.247}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{48}{paragraph*.249}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{48}{paragraph*.253}%
+\contentsline {subsection}{\numberline {3.4}Identity Verification and Expert Workspace}{49}{subsection*.254}%
+\contentsline {subsubsection}{\numberline {3.4.1}M5.01 -- Submit Identity Verification}{49}{subsubsection*.255}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{49}{paragraph*.256}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{49}{paragraph*.258}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{49}{paragraph*.264}%
+\contentsline {subsubsection}{\numberline {3.4.2}M5.02 -- View Identity Verification Status}{50}{subsubsection*.265}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{50}{paragraph*.266}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{50}{paragraph*.268}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{50}{paragraph*.272}%
+\contentsline {subsubsection}{\numberline {3.4.3}M13.01 -- Open Expert Workspace in Admin User Management}{51}{subsubsection*.273}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{51}{paragraph*.274}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{51}{paragraph*.276}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{51}{paragraph*.280}%
+\contentsline {subsubsection}{\numberline {3.4.4}M13.02 -- Maintain Expert Profile in User Management}{52}{subsubsection*.281}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{52}{paragraph*.282}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{52}{paragraph*.284}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{52}{paragraph*.290}%
+\contentsline {subsubsection}{\numberline {3.4.5}M13.03 -- Check Expert Profile Status and Review Outcome}{53}{subsubsection*.291}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{53}{paragraph*.292}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{53}{paragraph*.294}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{53}{paragraph*.298}%
+\contentsline {subsection}{\numberline {3.5}Modules 10--12: Job Browsing, Client Job Management \& Bookmarked Jobs}{54}{subsection*.299}%
+\contentsline {subsubsection}{\numberline {3.5.1}M10.01 -- View Jobs List (UC-10.01)}{54}{subsubsection*.300}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{55}{paragraph*.303}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{55}{paragraph*.308}%
+\contentsline {subsubsection}{\numberline {3.5.2}M10.02 -- View Job Details (UC-10.02)}{56}{subsubsection*.309}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{57}{paragraph*.312}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{57}{paragraph*.316}%
+\contentsline {subsubsection}{\numberline {3.5.3}M11.01 -- View My Jobs Dashboard (UC-11.01)}{58}{subsubsection*.317}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{58}{paragraph*.319}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{58}{paragraph*.324}%
+\contentsline {subsubsection}{\numberline {3.5.4}M11.02 -- Create Job (UC-11.02)}{59}{subsubsection*.325}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{59}{paragraph*.327}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{59}{paragraph*.332}%
+\contentsline {subsubsection}{\numberline {3.5.5}M11.03 -- Publish Draft Job (UC-11.03)}{61}{subsubsection*.333}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{61}{paragraph*.335}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{61}{paragraph*.338}%
+\contentsline {subsubsection}{\numberline {3.5.6}M11.04 -- Update Job (UC-11.04)}{62}{subsubsection*.339}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{62}{paragraph*.341}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{62}{paragraph*.345}%
+\contentsline {subsubsection}{\numberline {3.5.7}M11.05 -- Delete Job (UC-11.05)}{63}{subsubsection*.346}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{63}{paragraph*.348}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{63}{paragraph*.351}%
+\contentsline {subsubsection}{\numberline {3.5.8}M11.06 -- Close Job (UC-11.06)}{64}{subsubsection*.352}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{64}{paragraph*.354}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{64}{paragraph*.358}%
+\contentsline {subsubsection}{\numberline {3.5.9}M11.07 -- Reopen Job (UC-11.07)}{65}{subsubsection*.359}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{65}{paragraph*.361}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{65}{paragraph*.365}%
+\contentsline {subsubsection}{\numberline {3.5.10}M12.01 -- View Bookmarked Jobs List (UC-12.01)}{66}{subsubsection*.366}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{66}{paragraph*.368}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{66}{paragraph*.372}%
+\contentsline {subsubsection}{\numberline {3.5.11}M12.02 -- Bookmark Job (UC-12.02)}{67}{subsubsection*.373}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{67}{paragraph*.375}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{67}{paragraph*.378}%
+\contentsline {subsubsection}{\numberline {3.5.12}M12.03 -- Remove Bookmark (UC-12.03)}{68}{subsubsection*.379}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{68}{paragraph*.381}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{68}{paragraph*.384}%
+\contentsline {subsection}{\numberline {3.6}Modules 22, 23 \& 46: Saved Searches, Job Alerts \& Job Category Browsing}{69}{subsection*.385}%
+\contentsline {subsubsection}{\numberline {3.6.1}M22.01 -- View Saved Searches List (UC-22.01)}{69}{subsubsection*.386}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{69}{paragraph*.388}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{70}{paragraph*.393}%
+\contentsline {subsubsection}{\numberline {3.6.2}M22.02 -- View Saved Search Details (UC-22.02)}{71}{subsubsection*.394}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{71}{paragraph*.396}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{71}{paragraph*.399}%
+\contentsline {subsubsection}{\numberline {3.6.3}M22.03 -- Create Saved Search (UC-22.03)}{72}{subsubsection*.400}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{72}{paragraph*.402}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{72}{paragraph*.406}%
+\contentsline {subsubsection}{\numberline {3.6.4}M22.04 -- Delete Saved Search (UC-22.04)}{73}{subsubsection*.407}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{73}{paragraph*.409}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{73}{paragraph*.412}%
+\contentsline {subsubsection}{\numberline {3.6.5}M23.01 -- View Job Alerts List (UC-23.01)}{74}{subsubsection*.413}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{74}{paragraph*.415}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{74}{paragraph*.420}%
+\contentsline {subsubsection}{\numberline {3.6.6}M23.02 -- View Job Alert Details \& Matching Jobs (UC-23.02)}{75}{subsubsection*.421}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{75}{paragraph*.423}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{75}{paragraph*.427}%
+\contentsline {subsubsection}{\numberline {3.6.7}M23.03 -- Create Job Alert (UC-23.03)}{76}{subsubsection*.428}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{76}{paragraph*.430}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{76}{paragraph*.435}%
+\contentsline {subsubsection}{\numberline {3.6.8}M23.04 -- Update Job Alert (UC-23.04)}{77}{subsubsection*.436}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{77}{paragraph*.438}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{77}{paragraph*.443}%
+\contentsline {subsubsection}{\numberline {3.6.9}M23.05 -- Delete Job Alert (UC-23.05)}{78}{subsubsection*.444}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{78}{paragraph*.446}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{78}{paragraph*.449}%
+\contentsline {subsubsection}{\numberline {3.6.10}M46.07 -- View Job Categories List (UC-46.07)}{79}{subsubsection*.450}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{79}{paragraph*.452}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{79}{paragraph*.456}%
+\contentsline {subsubsection}{\numberline {3.6.11}M46.08 -- View Job Category Details (UC-46.08)}{80}{subsubsection*.457}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{80}{paragraph*.459}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{80}{paragraph*.463}%
+\contentsline {subsection}{\numberline {3.7}Modules 32 \& 42: Proposal Management \& AI Job--Freelancer Recommendation}{81}{subsection*.464}%
+\contentsline {subsubsection}{\numberline {3.7.1}M32.01 -- View My Proposals List (UC-32.01)}{81}{subsubsection*.465}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{81}{paragraph*.467}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{82}{paragraph*.472}%
+\contentsline {subsubsection}{\numberline {3.7.2}M32.02 -- View My Proposal Details (UC-32.02)}{83}{subsubsection*.473}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{83}{paragraph*.475}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{83}{paragraph*.479}%
+\contentsline {subsubsection}{\numberline {3.7.3}M32.03 -- Submit Proposal (UC-32.03)}{84}{subsubsection*.480}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{84}{paragraph*.482}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{84}{paragraph*.487}%
+\contentsline {subsubsection}{\numberline {3.7.4}M32.04 -- Update Draft Proposal (UC-32.04)}{85}{subsubsection*.488}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{85}{paragraph*.490}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{85}{paragraph*.494}%
+\contentsline {subsubsection}{\numberline {3.7.5}M32.05 -- Withdraw Proposal (UC-32.05)}{86}{subsubsection*.495}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{86}{paragraph*.497}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{86}{paragraph*.500}%
+\contentsline {subsubsection}{\numberline {3.7.6}M32.06 -- Accept Proposal \& Hire Freelancer (UC-32.06)}{87}{subsubsection*.501}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{87}{paragraph*.503}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{87}{paragraph*.508}%
+\contentsline {subsubsection}{\numberline {3.7.7}M32.07 -- Reject Proposal (UC-32.07)}{89}{subsubsection*.509}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{89}{paragraph*.511}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{89}{paragraph*.514}%
+\contentsline {subsubsection}{\numberline {3.7.8}M32.08 -- View Job Proposals List (UC-32.08)}{90}{subsubsection*.515}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{90}{paragraph*.517}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{90}{paragraph*.521}%
+\contentsline {subsubsection}{\numberline {3.7.9}M32.09 -- View Proposal Details (Client Drawer) (UC-32.09)}{91}{subsubsection*.522}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{91}{paragraph*.524}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{91}{paragraph*.528}%
+\contentsline {subsubsection}{\numberline {3.7.10}M42.01 -- AI Job \& Freelancer Recommendations (UC-42.01)}{92}{subsubsection*.529}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{92}{paragraph*.531}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{93}{paragraph*.536}%
+\contentsline {subsection}{\numberline {3.8}Administrator System, RBAC \& User Management}{94}{subsection*.537}%
+\contentsline {subsubsection}{\numberline {3.8.1}M14.01 -- Administrator Central Operations Dashboard (\texttt {/admin})}{94}{subsubsection*.538}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{94}{paragraph*.540}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{95}{paragraph*.545}%
+\contentsline {subsubsection}{\numberline {3.8.2}M14.02 -- Administrator Profile \& Privileges}{96}{subsubsection*.546}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{96}{paragraph*.548}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{96}{paragraph*.553}%
+\contentsline {subsubsection}{\numberline {3.8.3}M14.03 -- System \& Custom Roles Management (UC-06.01--06.05)}{97}{subsubsection*.554}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{97}{paragraph*.556}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{98}{paragraph*.562}%
+\contentsline {subsubsection}{\numberline {3.8.4}M14.04 -- Dynamic Role-Permission Assignment Matrix (UC-06.06)}{99}{subsubsection*.563}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{99}{paragraph*.565}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{99}{paragraph*.572}%
+\contentsline {subsubsection}{\numberline {3.8.5}M14.05 -- API Permission Catalog \& Detail (UC-15.01--15.02)}{100}{subsubsection*.573}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{100}{paragraph*.575}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{101}{paragraph*.582}%
+\contentsline {subsubsection}{\numberline {3.8.6}M14.06 -- User Directory \& Account Provisioning (UC-28.01, UC-28.03)}{102}{subsubsection*.583}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{102}{paragraph*.585}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{102}{paragraph*.591}%
+\contentsline {subsubsection}{\numberline {3.8.7}M14.07 -- User Account Status \& Suspension (UC-28.04)}{103}{subsubsection*.592}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{103}{paragraph*.594}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{103}{paragraph*.600}%
+\contentsline {subsubsection}{\numberline {3.8.8}M14.08 -- User Multi-Profile Management (UC-28.02, UC-28.05--28.09)}{104}{subsubsection*.601}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{104}{paragraph*.603}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{105}{paragraph*.614}%
+\contentsline {subsection}{\numberline {3.9}Module 15: Administrator Master Data Catalog Management}{106}{subsection*.615}%
+\contentsline {subsubsection}{\numberline {3.9.1}M15.01 -- Skills Catalog Management (UC-38.01--38.06)}{106}{subsubsection*.616}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{106}{paragraph*.618}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{107}{paragraph*.624}%
+\contentsline {subsubsection}{\numberline {3.9.2}M15.02 -- Job Categories Management (UC-46.01--46.06)}{108}{subsubsection*.625}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{108}{paragraph*.627}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{108}{paragraph*.633}%
+\contentsline {subsubsection}{\numberline {3.9.3}M15.03 -- Forum Discussion Categories Management (UC-17.01 to UC-17.06)}{109}{subsubsection*.634}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{109}{paragraph*.636}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{109}{paragraph*.642}%
+\contentsline {subsubsection}{\numberline {3.9.4}M15.04 -- Advertisement Banners Management (UC-37.01--37.05)}{110}{subsubsection*.643}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{110}{paragraph*.645}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{111}{paragraph*.652}%
+\contentsline {subsection}{\numberline {3.10}Contract Reviews, Banner Management and Approval Workflows}{112}{subsection*.653}%
+\contentsline {subsubsection}{\numberline {3.10.1}M11.05 -- Write, Update and Delete Contract Reviews}{112}{subsubsection*.654}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{112}{paragraph*.655}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{112}{paragraph*.657}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{112}{paragraph*.662}%
+\contentsline {subsubsection}{\numberline {3.10.2}M11.06 -- Respond to a Review}{113}{subsubsection*.663}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{113}{paragraph*.664}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{113}{paragraph*.666}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{113}{paragraph*.670}%
+\contentsline {subsubsection}{\numberline {3.10.3}M15.04 -- Manage Banners}{114}{subsubsection*.671}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{114}{paragraph*.672}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{114}{paragraph*.674}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{114}{paragraph*.679}%
+\contentsline {subsubsection}{\numberline {3.10.4}M16.01 -- Review Identity Verification Requests}{115}{subsubsection*.680}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{115}{paragraph*.681}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{115}{paragraph*.683}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{115}{paragraph*.687}%
+\contentsline {subsubsection}{\numberline {3.10.5}M16.02 -- Review Profile Update Requests}{116}{subsubsection*.688}%
+\contentsline {paragraph}{Screen-Transition Workflow:}{116}{paragraph*.689}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{116}{paragraph*.691}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{116}{paragraph*.696}%
+\contentsline {subsection}{\numberline {3.11}Module 14: Forum Management}{116}{subsection*.697}%
+\contentsline {subsubsection}{\numberline {3.11.1}M14.01 -- View Forum Category List (UC-14.01)}{116}{subsubsection*.698}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{117}{paragraph*.700}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{117}{paragraph*.705}%
+\contentsline {subsubsection}{\numberline {3.11.2}M14.02 -- View Forum Category Detail (UC-14.02)}{117}{subsubsection*.706}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{118}{paragraph*.708}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{118}{paragraph*.712}%
+\contentsline {subsubsection}{\numberline {3.11.3}M14.03 -- View Post List (UC-14.03)}{118}{subsubsection*.713}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{119}{paragraph*.715}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{119}{paragraph*.719}%
+\contentsline {subsubsection}{\numberline {3.11.4}M14.04 -- View Post Detail (UC-14.04)}{119}{subsubsection*.720}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{120}{paragraph*.722}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{120}{paragraph*.727}%
+\contentsline {subsubsection}{\numberline {3.11.5}M14.05 -- Create Post (UC-14.05)}{120}{subsubsection*.728}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{121}{paragraph*.730}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{121}{paragraph*.734}%
+\contentsline {subsubsection}{\numberline {3.11.6}M14.06 -- Update Post (UC-14.06)}{121}{subsubsection*.735}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{122}{paragraph*.737}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{122}{paragraph*.741}%
+\contentsline {subsubsection}{\numberline {3.11.7}M14.07 -- Delete Post (UC-14.07)}{122}{subsubsection*.742}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{123}{paragraph*.744}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{123}{paragraph*.747}%
+\contentsline {subsubsection}{\numberline {3.11.8}M14.08 -- Like Post (UC-14.08)}{123}{subsubsection*.748}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{124}{paragraph*.750}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{124}{paragraph*.753}%
+\contentsline {subsubsection}{\numberline {3.11.9}M14.09 -- Unlike Post (UC-14.09)}{124}{subsubsection*.754}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{125}{paragraph*.756}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{125}{paragraph*.759}%
+\contentsline {subsubsection}{\numberline {3.11.10}M14.10 -- View Post Likes (UC-14.10)}{125}{subsubsection*.760}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{126}{paragraph*.762}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{126}{paragraph*.765}%
+\contentsline {subsubsection}{\numberline {3.11.11}M14.11 -- View Post Comments (UC-14.11)}{126}{subsubsection*.766}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{127}{paragraph*.768}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{127}{paragraph*.771}%
+\contentsline {subsubsection}{\numberline {3.11.12}M14.12 -- Create Comment (UC-14.12)}{127}{subsubsection*.772}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{128}{paragraph*.774}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{128}{paragraph*.777}%
+\contentsline {subsubsection}{\numberline {3.11.13}M14.13 -- Update Comment (UC-14.13)}{128}{subsubsection*.778}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{129}{paragraph*.780}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{129}{paragraph*.783}%
+\contentsline {subsubsection}{\numberline {3.11.14}M14.14 -- Delete Comment (UC-14.14)}{129}{subsubsection*.784}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{130}{paragraph*.786}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{130}{paragraph*.789}%
+\contentsline {subsubsection}{\numberline {3.11.15}M14.15 -- Like Comment (UC-14.15)}{130}{subsubsection*.790}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{131}{paragraph*.792}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{131}{paragraph*.794}%
+\contentsline {subsubsection}{\numberline {3.11.16}M14.16 -- Unlike Comment (UC-14.16)}{131}{subsubsection*.795}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{132}{paragraph*.797}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{132}{paragraph*.799}%
+\contentsline {subsubsection}{\numberline {3.11.17}M14.17 -- Report Content (UC-14.17)}{132}{subsubsection*.800}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{133}{paragraph*.802}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{133}{paragraph*.805}%
+\contentsline {subsection}{\numberline {3.12}Module 27: Conversation Management}{133}{subsection*.806}%
+\contentsline {subsubsection}{\numberline {3.12.1}M27.01 -- View Conversation List (UC-27.01)}{133}{subsubsection*.807}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{134}{paragraph*.809}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{134}{paragraph*.813}%
+\contentsline {subsubsection}{\numberline {3.12.2}M27.02 -- Start Conversation (UC-27.02)}{134}{subsubsection*.814}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{135}{paragraph*.816}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{135}{paragraph*.820}%
+\contentsline {subsubsection}{\numberline {3.12.3}M27.03 -- View Conversation Detail (UC-27.03)}{135}{subsubsection*.821}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{136}{paragraph*.823}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{136}{paragraph*.827}%
+\contentsline {subsubsection}{\numberline {3.12.4}M27.04 -- Send Message (UC-27.04)}{136}{subsubsection*.828}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{137}{paragraph*.830}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{137}{paragraph*.834}%
+\contentsline {subsubsection}{\numberline {3.12.5}M27.05 -- Mark Message as Read (UC-27.05)}{137}{subsubsection*.835}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{138}{paragraph*.837}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{138}{paragraph*.840}%
+\contentsline {subsubsection}{\numberline {3.12.6}M27.06 -- Delete / Recall Message (UC-27.06)}{138}{subsubsection*.841}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{139}{paragraph*.843}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{139}{paragraph*.846}%
+\contentsline {subsubsection}{\numberline {3.12.7}M27.07 -- Pin / Unpin Conversation (UC-27.07)}{139}{subsubsection*.847}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{140}{paragraph*.849}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{140}{paragraph*.852}%
+\contentsline {subsubsection}{\numberline {3.12.8}M27.08 -- Send File Attachment (UC-27.08)}{140}{subsubsection*.853}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{141}{paragraph*.855}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{141}{paragraph*.860}%
+\contentsline {subsection}{\numberline {3.13}Module 34--36: Moderation, ID Verification \& Forum Trash}{141}{subsection*.861}%
+\contentsline {subsubsection}{\numberline {3.13.1}M34.01 -- View Moderation Queue (UC-34.01)}{141}{subsubsection*.862}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{142}{paragraph*.864}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{142}{paragraph*.868}%
+\contentsline {subsubsection}{\numberline {3.13.2}M34.02 -- View Moderation Item Detail (UC-34.02)}{142}{subsubsection*.869}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{143}{paragraph*.871}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{143}{paragraph*.875}%
+\contentsline {subsubsection}{\numberline {3.13.3}M34.03 -- Resolve Moderation Item (UC-34.03)}{143}{subsubsection*.876}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{144}{paragraph*.878}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{144}{paragraph*.881}%
+\contentsline {subsubsection}{\numberline {3.13.4}M35.01 -- View ID Verification Request List (UC-35.01)}{144}{subsubsection*.882}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{145}{paragraph*.884}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{145}{paragraph*.888}%
+\contentsline {subsubsection}{\numberline {3.13.5}M35.02 -- View ID Verification Request Detail (UC-35.02)}{145}{subsubsection*.889}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{146}{paragraph*.891}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{146}{paragraph*.896}%
+\contentsline {subsubsection}{\numberline {3.13.6}M35.03 -- Approve ID Verification (UC-35.03)}{146}{subsubsection*.897}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{147}{paragraph*.899}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{147}{paragraph*.903}%
+\contentsline {subsubsection}{\numberline {3.13.7}M35.04 -- Reject ID Verification (UC-35.04)}{147}{subsubsection*.904}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{148}{paragraph*.906}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{148}{paragraph*.910}%
+\contentsline {subsubsection}{\numberline {3.13.8}M36.01 -- View Deleted Posts/Comments List (UC-36.01)}{148}{subsubsection*.911}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{149}{paragraph*.913}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{149}{paragraph*.917}%
+\contentsline {subsubsection}{\numberline {3.13.9}M36.02 -- View Deleted Posts/Comments Detail (UC-36.02)}{149}{subsubsection*.918}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{150}{paragraph*.920}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{150}{paragraph*.923}%
+\contentsline {subsubsection}{\numberline {3.13.10}M36.03 -- Restore Deleted Posts/Comments (UC-36.03)}{150}{subsubsection*.924}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{151}{paragraph*.926}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{151}{paragraph*.929}%
+\contentsline {subsection}{\numberline {3.14}Module 44--45: AI Content Moderation \& Face Scan}{151}{subsection*.930}%
+\contentsline {subsubsection}{\numberline {3.14.1}M44.01 -- Moderate Content by AI (UC-44.01)}{151}{subsubsection*.931}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{152}{paragraph*.933}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{152}{paragraph*.938}%
+\contentsline {subsubsection}{\numberline {3.14.2}M45.01 -- Scan Face and Detect Duplicate Identity (UC-45.01)}{152}{subsubsection*.939}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{153}{paragraph*.941}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{153}{paragraph*.946}%
+\contentsline {subsection}{\numberline {3.15}Module 13: Contract Management}{154}{subsection*.947}%
+\contentsline {subsubsection}{\numberline {3.15.1}M13.01 -- Create Contract (UC-13.01)}{154}{subsubsection*.948}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{154}{paragraph*.950}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{155}{paragraph*.955}%
+\contentsline {subsubsection}{\numberline {3.15.2}M13.02 -- Update Contract (UC-13.02)}{156}{subsubsection*.956}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{156}{paragraph*.958}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{156}{paragraph*.963}%
+\contentsline {subsubsection}{\numberline {3.15.3}M13.03 -- View Contracts List (UC-13.04)}{157}{subsubsection*.964}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{157}{paragraph*.966}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{157}{paragraph*.971}%
+\contentsline {subsubsection}{\numberline {3.15.4}M13.04 -- View Contract Details (UC-13.05)}{158}{subsubsection*.972}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{158}{paragraph*.974}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{158}{paragraph*.979}%
+\contentsline {subsubsection}{\numberline {3.15.5}M13.05 -- Sign Contract Agreement (UC-13.06)}{159}{subsubsection*.980}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{159}{paragraph*.982}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{159}{paragraph*.985}%
+\contentsline {subsubsection}{\numberline {3.15.6}M13.06 -- Export Signed Contract PDF (UC-13.07)}{160}{subsubsection*.986}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{160}{paragraph*.988}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{160}{paragraph*.991}%
+\contentsline {subsubsection}{\numberline {3.15.7}M13.07 -- Cancel Contract (UC-13.08)}{161}{subsubsection*.992}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{161}{paragraph*.994}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{161}{paragraph*.997}%
+\contentsline {subsubsection}{\numberline {3.15.8}M13.08 -- Complete Contract (UC-13.03)}{162}{subsubsection*.998}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{162}{paragraph*.1000}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{162}{paragraph*.1003}%
+\contentsline {subsubsection}{\numberline {3.15.9}M13.09 -- View Contract Shared Files (UC-13.09)}{163}{subsubsection*.1004}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{163}{paragraph*.1006}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{163}{paragraph*.1009}%
+\contentsline {subsubsection}{\numberline {3.15.10}M13.10 -- Upload Contract File (UC-13.10)}{164}{subsubsection*.1010}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{164}{paragraph*.1012}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{164}{paragraph*.1016}%
+\contentsline {subsubsection}{\numberline {3.15.11}M13.11 -- Delete Contract File (UC-13.11)}{165}{subsubsection*.1017}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{165}{paragraph*.1019}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{165}{paragraph*.1022}%
+\contentsline {subsubsection}{\numberline {3.15.12}M13.12 -- Reject Contract Offer (UC-13.12)}{166}{subsubsection*.1023}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{166}{paragraph*.1025}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{166}{paragraph*.1029}%
+\contentsline {subsection}{\numberline {3.16}Modules 24--26: Milestones, Shared Files \& Deliverable Submissions}{167}{subsection*.1030}%
+\contentsline {subsubsection}{\numberline {3.16.1}M24.01 -- View Milestones List (UC-24.01)}{167}{subsubsection*.1031}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{167}{paragraph*.1033}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{168}{paragraph*.1038}%
+\contentsline {subsubsection}{\numberline {3.16.2}M24.02 -- View Milestone Details (UC-24.02)}{169}{subsubsection*.1039}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{169}{paragraph*.1041}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{169}{paragraph*.1045}%
+\contentsline {subsubsection}{\numberline {3.16.3}M24.03 -- Create Milestone (UC-24.03)}{170}{subsubsection*.1046}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{170}{paragraph*.1048}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{170}{paragraph*.1052}%
+\contentsline {subsubsection}{\numberline {3.16.4}M24.04 -- Update Milestone (UC-24.04)}{171}{subsubsection*.1053}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{171}{paragraph*.1055}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{171}{paragraph*.1059}%
+\contentsline {subsubsection}{\numberline {3.16.5}M24.05 -- Delete Milestone (UC-24.05)}{172}{subsubsection*.1060}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{172}{paragraph*.1062}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{172}{paragraph*.1065}%
+\contentsline {subsubsection}{\numberline {3.16.6}M24.06 -- Update Milestone Progress (UC-24.06)}{173}{subsubsection*.1066}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{173}{paragraph*.1068}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{173}{paragraph*.1071}%
+\contentsline {subsubsection}{\numberline {3.16.7}M25.01 -- View Milestone Files (UC-25.01)}{174}{subsubsection*.1072}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{174}{paragraph*.1074}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{174}{paragraph*.1078}%
+\contentsline {subsubsection}{\numberline {3.16.8}M25.02 -- Upload Milestone File (UC-25.02)}{175}{subsubsection*.1079}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{175}{paragraph*.1081}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{175}{paragraph*.1085}%
+\contentsline {subsubsection}{\numberline {3.16.9}M25.03 -- Delete Milestone File (UC-25.03)}{176}{subsubsection*.1086}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{176}{paragraph*.1088}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{176}{paragraph*.1091}%
+\contentsline {subsubsection}{\numberline {3.16.10}M26.01 -- Submit Milestone Deliverable (UC-26.01)}{177}{subsubsection*.1092}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{177}{paragraph*.1094}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{177}{paragraph*.1099}%
+\contentsline {subsubsection}{\numberline {3.16.11}M26.02 -- View Milestone Submissions List (UC-26.02)}{178}{subsubsection*.1100}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{178}{paragraph*.1102}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{178}{paragraph*.1105}%
+\contentsline {subsubsection}{\numberline {3.16.12}M26.03 -- View Milestone Submission Details (UC-26.03)}{179}{subsubsection*.1106}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{179}{paragraph*.1108}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{179}{paragraph*.1112}%
+\contentsline {subsubsection}{\numberline {3.16.13}M26.04 -- Request Milestone Changes (UC-26.04)}{180}{subsubsection*.1113}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{180}{paragraph*.1115}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{180}{paragraph*.1120}%
+\contentsline {subsubsection}{\numberline {3.16.14}M26.05 -- Approve Milestone Deliverable (UC-26.05)}{181}{subsubsection*.1121}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{181}{paragraph*.1123}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{181}{paragraph*.1127}%
+\contentsline {subsection}{\numberline {3.17}Module 33: Dispute Resolution \& Expert Arbitration}{182}{subsection*.1128}%
+\contentsline {subsubsection}{\numberline {3.17.1}M33.01 -- Open Formal Dispute (UC-33.01)}{182}{subsubsection*.1129}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{182}{paragraph*.1131}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{183}{paragraph*.1136}%
+\contentsline {subsubsection}{\numberline {3.17.2}M33.02 -- View Disputes List (UC-33.02)}{184}{subsubsection*.1137}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{184}{paragraph*.1139}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{184}{paragraph*.1143}%
+\contentsline {subsubsection}{\numberline {3.17.3}M33.03 -- View Dispute Case Details (UC-33.03)}{185}{subsubsection*.1144}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{185}{paragraph*.1146}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{185}{paragraph*.1150}%
+\contentsline {subsubsection}{\numberline {3.17.4}M33.04 -- View Dispute by Milestone (UC-33.04)}{186}{subsubsection*.1151}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{186}{paragraph*.1153}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{186}{paragraph*.1156}%
+\contentsline {subsubsection}{\numberline {3.17.5}M33.05 -- Respond to Dispute Proposal (UC-33.05)}{187}{subsubsection*.1157}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{187}{paragraph*.1159}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{187}{paragraph*.1163}%
+\contentsline {subsubsection}{\numberline {3.17.6}M33.06 -- Withdraw Dispute Request (UC-33.06)}{188}{subsubsection*.1164}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{188}{paragraph*.1166}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{188}{paragraph*.1169}%
+\contentsline {subsubsection}{\numberline {3.17.7}M33.07 -- Escalate Dispute to Expert (UC-33.07)}{189}{subsubsection*.1170}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{189}{paragraph*.1172}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{189}{paragraph*.1175}%
+\contentsline {subsubsection}{\numberline {3.17.8}M33.08 -- View Expert Disputes Queue (UC-33.08)}{190}{subsubsection*.1176}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{190}{paragraph*.1178}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{190}{paragraph*.1182}%
+\contentsline {subsubsection}{\numberline {3.17.9}M33.09 -- View Expert Dispute Details (UC-33.09)}{191}{subsubsection*.1183}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{191}{paragraph*.1185}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{191}{paragraph*.1189}%
+\contentsline {subsubsection}{\numberline {3.17.10}M33.10 -- Expert Make Dispute Decision (UC-33.10)}{192}{subsubsection*.1190}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{192}{paragraph*.1192}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{192}{paragraph*.1197}%
+\contentsline {subsection}{\numberline {3.18}Module 43: Payments, Stripe Escrow \& Connect Payouts}{193}{subsection*.1198}%
+\contentsline {subsubsection}{\numberline {3.18.1}M43.01 -- Connect Stripe Payout Account (UC-43.01)}{193}{subsubsection*.1199}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{193}{paragraph*.1201}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{194}{paragraph*.1205}%
+\contentsline {subsubsection}{\numberline {3.18.2}M43.02 -- Check Stripe Connect Status (UC-43.02)}{195}{subsubsection*.1206}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{195}{paragraph*.1208}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{195}{paragraph*.1212}%
+\contentsline {subsubsection}{\numberline {3.18.3}M43.03 -- View Saved Payment Methods (UC-43.03)}{196}{subsubsection*.1213}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{196}{paragraph*.1215}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{196}{paragraph*.1218}%
+\contentsline {subsubsection}{\numberline {3.18.4}M43.04 -- Set Default Payment Method (UC-43.04)}{197}{subsubsection*.1219}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{197}{paragraph*.1221}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{197}{paragraph*.1224}%
+\contentsline {subsubsection}{\numberline {3.18.5}M43.05 -- Remove Saved Payment Method (UC-43.05)}{198}{subsubsection*.1225}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{198}{paragraph*.1227}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{198}{paragraph*.1230}%
+\contentsline {subsubsection}{\numberline {3.18.6}M43.06 -- Create Contract Hold Deposit (UC-43.06)}{199}{subsubsection*.1231}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{199}{paragraph*.1233}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{199}{paragraph*.1237}%
+\contentsline {subsubsection}{\numberline {3.18.7}M43.07 -- Fund Milestone via Stripe Checkout (UC-43.07)}{200}{subsubsection*.1238}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{200}{paragraph*.1240}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{200}{paragraph*.1244}%
+\contentsline {subsubsection}{\numberline {3.18.8}M43.08 -- Fund Milestone with Saved Card (UC-43.08)}{201}{subsubsection*.1245}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{201}{paragraph*.1247}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{201}{paragraph*.1251}%
+\contentsline {subsubsection}{\numberline {3.18.9}M43.09 -- Release Milestone Escrow (UC-43.09)}{202}{subsubsection*.1252}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{202}{paragraph*.1254}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{202}{paragraph*.1258}%
+\contentsline {subsubsection}{\numberline {3.18.10}M43.10 -- Payment History & Sync (UC-43.10--43.13)}{203}{subsubsection*.1259}%
+\contentsline {paragraph}{Step-by-Step User Guide:}{203}{paragraph*.1261}%
+\contentsline {paragraph}{After You Submit (Result \& Troubleshooting):}{203}{paragraph*.1266}%

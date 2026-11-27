@@ -1,37 +1,37 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  27 NOV 2026 18:41
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.10.8)  28 NOV 2026 02:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **./Report6_Software_User_Guides.tex
 (Report6_Software_User_Guides.tex
-LaTeX2e <2025-11-01>
-L3 programming layer <2025-12-24>
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-09-09>
+(C:\Program Files\MiKTeX\tex/latex/base\article.cls
 Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+(C:\Program Files\MiKTeX\tex/latex/base\size12.clo
 File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 )
-\c@part=\count275
-\c@section=\count276
-\c@subsection=\count277
-\c@subsubsection=\count278
-\c@paragraph=\count279
-\c@subparagraph=\count280
-\c@figure=\count281
-\c@table=\count282
+\c@part=\count276
+\c@section=\count277
+\c@subsection=\count278
+\c@subsubsection=\count279
+\c@paragraph=\count280
+\c@subparagraph=\count281
+\c@figure=\count282
+\c@table=\count283
 \abovecaptionskip=\skip49
 \belowcaptionskip=\skip50
-\bibindent=\dimen148
+\bibindent=\dimen150
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+(C:\Program Files\MiKTeX\tex/latex/base\inputenc.sty
 Package: inputenc 2024/02/08 v1.3d Input encoding file
 \inpenc@prehook=\toks17
 \inpenc@posthook=\toks18
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Program Files\MiKTeX\tex/latex/base\fontenc.sty
 Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\mathptmx.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/psnfss\mathptmx.sty
 Package: mathptmx 2020/03/25 PSNFSS-v9.3 Times w/ Math, improved (SPQR, WaS) 
 LaTeX Font Info:    Redeclaring symbol font `operators' on input line 28.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
@@ -67,34 +67,34 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> OT1/ptm/m/it on input line 35.
 LaTeX Info: Redefining \hbar on input line 50.
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
-Package: amsmath 2025/07/09 v2.17z AMS math features
+(C:\Program Files\MiKTeX\tex/latex/amsmath\amsmath.sty
+Package: amsmath 2026/05/19 v2.18d AMS math features
 \@mathmargin=\skip51
 
 For additional information on amsmath, use the `?' option.
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Program Files\MiKTeX\tex/latex/amsmath\amstext.sty
 Package: amstext 2024/11/17 v2.01 AMS text
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+(C:\Program Files\MiKTeX\tex/latex/amsmath\amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks19
-\ex@=\dimen149
+\ex@=\dimen151
 ))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+(C:\Program Files\MiKTeX\tex/latex/amsmath\amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen150
+\pmbraise@=\dimen152
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+(C:\Program Files\MiKTeX\tex/latex/amsmath\amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
-\inf@bad=\count283
+\inf@bad=\count284
 LaTeX Info: Redefining \frac on input line 233.
-\uproot@=\count284
-\leftroot@=\count285
+\uproot@=\count285
+\leftroot@=\count286
 LaTeX Info: Redefining \overline on input line 398.
 LaTeX Info: Redefining \colon on input line 409.
-\classnum@=\count286
-\DOTSCASE@=\count287
+\classnum@=\count287
+\DOTSCASE@=\count288
 LaTeX Info: Redefining \ldots on input line 495.
 LaTeX Info: Redefining \dots on input line 498.
 LaTeX Info: Redefining \cdots on input line 619.
@@ -104,76 +104,76 @@ LaTeX Info: Redefining \big on input line 721.
 LaTeX Info: Redefining \Big on input line 722.
 LaTeX Info: Redefining \bigg on input line 723.
 LaTeX Info: Redefining \Bigg on input line 724.
-\big@size=\dimen151
+\big@size=\dimen153
 LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
-\macc@depth=\count288
+\macc@depth=\count289
 LaTeX Info: Redefining \bmod on input line 904.
 LaTeX Info: Redefining \pmod on input line 909.
 LaTeX Info: Redefining \smash on input line 939.
 LaTeX Info: Redefining \relbar on input line 969.
 LaTeX Info: Redefining \Relbar on input line 970.
-\c@MaxMatrixCols=\count289
+\c@MaxMatrixCols=\count290
 \dotsspace@=\muskip17
-\c@parentequation=\count290
-\dspbrk@lvl=\count291
+\c@parentequation=\count291
+\dspbrk@lvl=\count292
 \tag@help=\toks20
-\row@=\count292
-\column@=\count293
-\maxfields@=\count294
+\row@=\count293
+\column@=\count294
+\maxfields@=\count295
 \andhelp@=\toks21
-\eqnshift@=\dimen152
-\alignsep@=\dimen153
-\tagshift@=\dimen154
-\tagwidth@=\dimen155
-\totwidth@=\dimen156
-\lineht@=\dimen157
+\eqnshift@=\dimen154
+\alignsep@=\dimen155
+\tagshift@=\dimen156
+\tagwidth@=\dimen157
+\totwidth@=\dimen158
+\lineht@=\dimen159
 \@envbody=\toks22
 \multlinegap=\skip52
 \multlinetaggap=\skip53
 \mathdisplay@stack=\toks23
-LaTeX Info: Redefining \[ on input line 2950.
-LaTeX Info: Redefining \] on input line 2951.
+LaTeX Info: Redefining \[ on input line 2965.
+LaTeX Info: Redefining \] on input line 2966.
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/geometry\geometry.sty
 Package: geometry 2026/03/07 v6.0 Page Geometry
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
-Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+(C:\Program Files\MiKTeX\tex/latex/graphics\keyval.sty
+Package: keyval 2026-05-17 v1.15 key=value parser (DPC)
 \KV@toks@=\toks24
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Program Files\MiKTeX\tex/generic/iftex\ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+(C:\Program Files\MiKTeX\tex/generic/iftex\iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
 ))
-\Gm@cnth=\count295
-\Gm@cntv=\count296
-\c@Gm@tempcnt=\count297
-\Gm@bindingoffset=\dimen158
-\Gm@wd@mp=\dimen159
-\Gm@odd@mp=\dimen160
-\Gm@even@mp=\dimen161
-\Gm@layoutwidth=\dimen162
-\Gm@layoutheight=\dimen163
-\Gm@layouthoffset=\dimen164
-\Gm@layoutvoffset=\dimen165
+\Gm@cnth=\count296
+\Gm@cntv=\count297
+\c@Gm@tempcnt=\count298
+\Gm@bindingoffset=\dimen160
+\Gm@wd@mp=\dimen161
+\Gm@odd@mp=\dimen162
+\Gm@even@mp=\dimen163
+\Gm@layoutwidth=\dimen164
+\Gm@layoutheight=\dimen165
+\Gm@layouthoffset=\dimen166
+\Gm@layoutvoffset=\dimen167
 \Gm@dimlist=\toks25
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Program Files\MiKTeX\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+(C:\Program Files\MiKTeX\tex/latex/graphics-cfg\color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Driver file: pdftex.def on input line 274.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+(C:\Program Files\MiKTeX\tex/latex/graphics-def\pdftex.def
 File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx
 )
+(C:\Program Files\MiKTeX\tex/latex/graphics\mathcolor.ltx)
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
 Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
 Package xcolor Info: Model `RGB' extended on input line 1365.
@@ -183,56 +183,56 @@ Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
 Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+)
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/colortbl\colortbl.sty
 Package: colortbl 2026/05/01 v1.0l Color table columns (DPC)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
-Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
-\col@sep=\dimen166
+(C:\Program Files\MiKTeX\tex/latex/tools\array.sty
+Package: array 2026/02/24 v2.7b Tabular extension package (FMi)
+\col@sep=\dimen168
 \ar@mcellbox=\box55
-\extrarowheight=\dimen167
+\extrarowheight=\dimen169
 \NC@list=\toks26
 \extratabsurround=\skip54
 \backup@length=\skip55
 \ar@cellbox=\box56
 )
-\everycr=\toks27
+new hooks used!!
 \minrowclearance=\skip56
-\rownum=\count298
-)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
-Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+\rownum=\count299
+) (C:\Program Files\MiKTeX\tex/latex/graphics\graphicx.sty
+Package: graphicx 2026-05-17 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
-Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+(C:\Program Files\MiKTeX\tex/latex/graphics\graphics.sty
+Package: graphics 2026-05-17 v1.4h Standard LaTeX Graphics (DPC,SPQR)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+(C:\Program Files\MiKTeX\tex/latex/graphics\trig.sty
 Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.cf
-g
+(C:\Program Files\MiKTeX\tex/latex/graphics-cfg\graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 106.
 )
-\Gin@req@height=\dimen168
-\Gin@req@width=\dimen169
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\hhline.sty
-Package: hhline 2020/01/04 v2.04 Table rule package (DPC)
+\Gin@req@height=\dimen170
+\Gin@req@width=\dimen171
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
+(C:\Program Files\MiKTeX\tex/latex/tools\hhline.sty
+Package: hhline 2026/05/02 v2.05 Table rule package (DPC)
+)
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/titlesec\titlesec.sty
 Package: titlesec 2025/01/04 v2.17 Sectioning titles
 \ttl@box=\box57
 \beforetitleunit=\skip57
 \aftertitleunit=\skip58
-\ttl@plus=\dimen170
-\ttl@minus=\dimen171
-\ttl@toksa=\toks28
-\titlewidth=\dimen172
-\titlewidthlast=\dimen173
-\titlewidthfirst=\dimen174
+\ttl@plus=\dimen172
+\ttl@minus=\dimen173
+\ttl@toksa=\toks27
+\titlewidth=\dimen174
+\titlewidthlast=\dimen175
+\titlewidthfirst=\dimen176
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
 Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 
 \f@nch@headwidth=\skip59
@@ -249,130 +249,125 @@ Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 \f@nch@widthL=\skip70
 \f@nch@widthC=\skip71
 \f@nch@widthR=\skip72
-\@temptokenb=\toks29
+\@temptokenb=\toks28
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
-\lst@mode=\count299
+(C:\Program Files\MiKTeX\tex/latex/listings\listings.sty
+\lst@mode=\count300
 \lst@gtempboxa=\box58
-\lst@token=\toks30
-\lst@length=\count300
-\lst@currlwidth=\dimen175
-\lst@column=\count301
-\lst@pos=\count302
-\lst@lostspace=\dimen176
-\lst@width=\dimen177
-\lst@newlines=\count303
-\lst@lineno=\count304
-\lst@maxwidth=\dimen178
+\lst@token=\toks29
+\lst@length=\count301
+\lst@currlwidth=\dimen177
+\lst@column=\count302
+\lst@pos=\count303
+\lst@lostspace=\dimen178
+\lst@width=\dimen179
+\lst@newlines=\count304
+\lst@lineno=\count305
+\lst@maxwidth=\dimen180
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstpatch.sty
+(C:\Program Files\MiKTeX\tex/latex/listings\lstpatch.sty
 File: lstpatch.sty 2025/11/14 1.11b (Carsten Heinz)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
+(C:\Program Files\MiKTeX\tex/latex/listings\lstmisc.sty
 File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
-\c@lstnumber=\count305
-\lst@skipnumbers=\count306
+\c@lstnumber=\count306
+\lst@skipnumbers=\count307
 \lst@framebox=\box59
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
+(C:\Program Files\MiKTeX\tex/latex/listings\listings.cfg
 File: listings.cfg 2025/11/14 1.11b listings configuration
 ))
 Package: listings 2025/11/14 1.11b (Carsten Heinz)
 
-==> First Aid for listings.sty no longer applied!
-    Expected:
-        2024/09/23 1.10c (Carsten Heinz)
-    but found:
-        2025/11/14 1.11b (Carsten Heinz)
-    so I'm assuming it got fixed.
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/enumitem\enumitem.sty
 Package: enumitem 2025/02/06 v3.11 Customized lists
 \labelindent=\skip73
-\enit@outerparindent=\dimen179
-\enit@toks=\toks31
+\enit@outerparindent=\dimen181
+\enit@toks=\toks30
 \enit@inbox=\box60
-\enit@count@id=\count307
-\enitdp@description=\count308
+\enit@count@id=\count308
+\enitdp@description=\count309
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty
-Package: longtable 2025-10-13 v4.24 Multi-page Table package (DPC)
+(C:\Program Files\MiKTeX\tex/latex/tools\longtable.sty
+Package: longtable 2026-01-28 v4.27 Multi-page Table package (DPC)
 \LTleft=\skip74
 \LTright=\skip75
 \LTpre=\skip76
 \LTpost=\skip77
-\LTchunksize=\count309
-\LTcapwidth=\dimen180
+\LTchunksize=\count310
+\LTcapwidth=\dimen182
 \LT@head=\box61
 \LT@firsthead=\box62
 \LT@foot=\box63
 \LT@lastfoot=\box64
 \LT@gbox=\box65
-\LT@cols=\count310
-\LT@rows=\count311
-\c@LT@tables=\count312
-\c@LT@chunks=\count313
-\LT@p@ftn=\toks32
+\LT@cols=\count311
+\LT@rows=\count312
+\c@LT@tables=\count313
+\c@LT@chunks=\count314
+\LT@p@ftn=\toks31
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/float\float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count314
-\float@exts=\toks33
+\c@float@type=\count315
+\float@exts=\toks32
 \float@box=\box66
-\@float@everytoks=\toks34
+\@float@everytoks=\toks33
 \@floatcapt=\box67
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/booktabs\booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen181
-\lightrulewidth=\dimen182
-\cmidrulewidth=\dimen183
-\belowrulesep=\dimen184
-\belowbottomsep=\dimen185
-\aboverulesep=\dimen186
-\abovetopsep=\dimen187
-\cmidrulesep=\dimen188
-\cmidrulekern=\dimen189
-\defaultaddspace=\dimen190
-\@cmidla=\count315
-\@cmidlb=\count316
-\@aboverulesep=\dimen191
-\@belowrulesep=\dimen192
-\@thisruleclass=\count317
-\@lastruleclass=\count318
-\@thisrulewidth=\dimen193
+\heavyrulewidth=\dimen183
+\lightrulewidth=\dimen184
+\cmidrulewidth=\dimen185
+\belowrulesep=\dimen186
+\belowbottomsep=\dimen187
+\aboverulesep=\dimen188
+\abovetopsep=\dimen189
+\cmidrulesep=\dimen190
+\cmidrulekern=\dimen191
+\defaultaddspace=\dimen192
+\@cmidla=\count316
+\@cmidlb=\count317
+\@aboverulesep=\dimen193
+\@belowrulesep=\dimen194
+\@thisruleclass=\count318
+\@lastruleclass=\count319
+\@thisrulewidth=\dimen195
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/needspace\needspace.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/needspace\needspace.sty
 Package: needspace 2026/10/13 v1.3f reserve vertical space
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+)
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/caption\caption.sty
 Package: caption 2023/08/05 v3.6o Customizing captions (AR)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/caption\caption3.sty
 Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
-\caption@tempdima=\dimen194
-\captionmargin=\dimen195
-\caption@leftmargin=\dimen196
-\caption@rightmargin=\dimen197
-\caption@width=\dimen198
-\caption@indent=\dimen199
-\caption@parindent=\dimen256
-\caption@hangindent=\dimen257
+\caption@tempdima=\dimen196
+\captionmargin=\dimen197
+\caption@leftmargin=\dimen198
+\caption@rightmargin=\dimen199
+\caption@width=\dimen256
+\caption@indent=\dimen257
+\caption@parindent=\dimen258
+\caption@hangindent=\dimen259
 Package caption Info: Standard document class detected.
 )
-\c@caption@flags=\count319
-\c@continuedfloat=\count320
+\c@caption@flags=\count320
+\c@continuedfloat=\count321
 Package caption Info: float package is loaded.
 Package caption Info: listings package is loaded.
 Package caption Info: longtable package is loaded.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\ltcaption.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/caption\ltcaption.sty
 Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
 ))
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/tocloft\tocloft.sty
 Package: tocloft 2026-09-12 v3.0c parameterised ToC, etc., typesetting
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+(C:\Program Files\MiKTeX\tex/latex/etoolbox\etoolbox.sty
 Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count321
+\etb@tempcnta=\count322
 )
 Package tocloft Info: The document has section divisions on input line 64.
 \cftparskip=\skip78
@@ -401,133 +396,128 @@ Package tocloft Info: The document has section divisions on input line 64.
 \cftbeforefigskip=\skip101
 \cftfigindent=\skip102
 \cftfignumwidth=\skip103
-\c@lofdepth=\count322
-\c@lotdepth=\count323
+\c@lofdepth=\count323
+\c@lotdepth=\count324
 \cftbeforelottitleskip=\skip104
 \cftafterlottitleskip=\skip105
 \cftbeforetabskip=\skip106
 \cfttabindent=\skip107
 \cfttabnumwidth=\skip108
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
-Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
+(C:\Program Files\MiKTeX\tex/latex/hyperref\hyperref.sty
+Package: hyperref 2026-06-17 v7.01r Hypertext links for LaTeX
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
 Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefinek
-eys.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/generic/kvdefinekeys\kvdefinekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
-)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.st
-y
+) (C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/generic/pdfescape\pdfescape.sty
 Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
- (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
 Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds.
-sty
+(C:\Program Files\MiKTeX\tex/generic/pdftexcmds\pdftexcmds.sty
 Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
 )
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.st
-y
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/generic/infwarerr\infwarerr.sty
 Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
-)) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+))
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/hycolor\hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
-Package: nameref 2025-06-21 v2.57 Cross-referencing by name of section
+)
+(C:\Program Files\MiKTeX\tex/latex/hyperref\nameref.sty
+Package: nameref 2026-01-29 v2.58 Cross-referencing by name of section
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/refcount\refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettitl
-estring.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/generic/gettitlestring\gettitlestring
+.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
-
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+ (C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/kvoptions\kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count324
-)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.st
-y
+\c@section@level=\count325
+) (C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/generic/stringenc\stringenc.sty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
-\@linkdim=\dimen258
-\Hy@linkcounter=\count325
-\Hy@pagecounter=\count326
- (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
-File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
+\@linkdim=\dimen260
+\Hy@linkcounter=\count326
+\Hy@pagecounter=\count327
+
+(C:\Program Files\MiKTeX\tex/latex/hyperref\pd1enc.def
+File: pd1enc.def 2026-06-17 v7.01r Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count327
+\Hy@SavedSpaceFactor=\count328
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
-File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
+(C:\Program Files\MiKTeX\tex/latex/hyperref\puenc.def
+File: puenc.def 2026-06-17 v7.01r Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
 )
-Package hyperref Info: Hyper figures OFF on input line 4195.
-Package hyperref Info: Link nesting OFF on input line 4200.
-Package hyperref Info: Hyper index ON on input line 4203.
-Package hyperref Info: Plain pages OFF on input line 4210.
-Package hyperref Info: Backreferencing OFF on input line 4215.
+Package hyperref Info: Hyper figures OFF on input line 4199.
+Package hyperref Info: Link nesting OFF on input line 4204.
+Package hyperref Info: Hyper index ON on input line 4207.
+Package hyperref Info: Plain pages OFF on input line 4214.
+Package hyperref Info: Backreferencing OFF on input line 4219.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
-Package hyperref Info: Bookmarks ON on input line 4462.
-\c@Hy@tempcnt=\count328
+Package hyperref Info: Bookmarks ON on input line 4466.
+\c@Hy@tempcnt=\count329
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+(C:\Program Files\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
-LaTeX Info: Redefining \url on input line 4801.
-\XeTeXLinkMargin=\dimen259
+LaTeX Info: Redefining \url on input line 4805.
+\XeTeXLinkMargin=\dimen261
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/generic/bitset\bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc.
-sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/generic/bigintcalc\bigintcalc.sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count329
-\Field@Width=\dimen260
-\Fld@charsize=\dimen261
-Package hyperref Info: Hyper figures OFF on input line 6078.
-Package hyperref Info: Link nesting OFF on input line 6083.
-Package hyperref Info: Hyper index ON on input line 6086.
-Package hyperref Info: backreferencing OFF on input line 6093.
-Package hyperref Info: Link coloring OFF on input line 6098.
-Package hyperref Info: Link coloring with OCG OFF on input line 6103.
-Package hyperref Info: PDF/A mode OFF on input line 6108.
-\Hy@abspage=\count330
-\c@Item=\count331
-\c@Hfootnote=\count332
+\Fld@menulength=\count330
+\Field@Width=\dimen262
+\Fld@charsize=\dimen263
+Package hyperref Info: Hyper figures OFF on input line 6091.
+Package hyperref Info: Link nesting OFF on input line 6096.
+Package hyperref Info: Hyper index ON on input line 6099.
+Package hyperref Info: backreferencing OFF on input line 6106.
+Package hyperref Info: Link coloring OFF on input line 6111.
+Package hyperref Info: Link coloring with OCG OFF on input line 6116.
+Package hyperref Info: PDF/A mode OFF on input line 6121.
+\Hy@abspage=\count331
+\c@Item=\count332
+\c@Hfootnote=\count333
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
-File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
-\Fld@listcount=\count333
-\c@bookmark@seq@number=\count334
+(C:\Program Files\MiKTeX\tex/latex/hyperref\hpdftex.def
+File: hpdftex.def 2026-06-17 v7.01r Hyperref driver for pdfTeX
+\Fld@listcount=\count334
+\c@bookmark@seq@number=\count335
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfile
-check.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/rerunfilecheck\rerunfilecheck.s
+ty
 Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniqueco
-unter.sty
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/generic/uniquecounter\uniquecounter.s
+ty
 Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
@@ -539,15 +529,14 @@ Package hyperref Info: Option `hypertexnames' set `false' on input line 83.
 Package hyperref Info: Option `colorlinks' set `true' on input line 83.
 LaTeX Font Info:    Trying to load font information for T1+ptm on input line 12
 5.
-
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
+ (C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/psnfss\t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdft
-ex.def
-File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count335
-) (Report6_Software_User_Guides.aux)
+(C:\Program Files\MiKTeX\tex/latex/l3kernel\l3backend-pdftex.def
+File: l3backend-pdftex.def 2026-09-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count336
+)
+(Report6_Software_User_Guides.aux)
 \openout1 = `Report6_Software_User_Guides.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 125.
@@ -603,80 +592,75 @@ LaTeX Font Info:    ... okay on input line 125.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
-i
+(C:\Program Files\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count336
-\scratchdimen=\dimen262
+\scratchcounter=\count337
+\scratchdimen=\dimen264
 \scratchbox=\box68
-\nofMPsegments=\count337
-\nofMParguments=\count338
-\everyMPshowfont=\toks35
-\MPscratchCnt=\count339
-\MPscratchDim=\dimen263
-\MPnumerator=\count340
-\makeMPintoPDFobject=\count341
-\everyMPtoPDFconversion=\toks36
-)
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-ba
-se.sty
+\nofMPsegments=\count338
+\nofMParguments=\count339
+\everyMPshowfont=\toks34
+\MPscratchCnt=\count340
+\MPscratchDim=\dimen265
+\MPnumerator=\count341
+\makeMPintoPDFobject=\count342
+\everyMPtoPDFconversion=\toks35
+) (C:\Program Files\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 85.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cf
-g
+(C:\Program Files\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-\c@lstlisting=\count342
+\c@lstlisting=\count343
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
 Package hyperref Info: Link coloring ON on input line 125.
- (Report6_Software_User_Guides.out) (Report6_Software_User_Guides.out)
+
+(Report6_Software_User_Guides.out) (Report6_Software_User_Guides.out)
 \@outlinefile=\write3
 \openout3 = `Report6_Software_User_Guides.out'.
 
-<fpt_logo_r6.png, id=111, 1284.8pt x 500.87125pt>
+<fpt_logo_r6.png, id=123, 1284.8pt x 500.87125pt>
 File: fpt_logo_r6.png Graphic file (type png)
 <use fpt_logo_r6.png>
 Package pdftex.def Info: fpt_logo_r6.png  used on input line 134.
 (pdftex.def)             Requested size: 184.9429pt x 72.09329pt.
+ [1
 
-[1
-
-{C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ASUS/
-AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./fpt_logo_r6.png>]
- (Report6_Software_User_Guides.toc
+{C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Program Fil
+es/MiKTeX/fonts/enc/dvips/base/8r.enc} <./fpt_logo_r6.png>]
+(Report6_Software_User_Guides.toc
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
  1.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line
  1.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omlztmcm.fd
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/psnfss\omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line
  1.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omsztmcm.fd
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/psnfss\omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line
  1.
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omxztmcm.fd
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/psnfss\omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 1
 .
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
+(C:\Users\ASUS\AppData\Roaming\MiKTeX\tex/latex/psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
@@ -689,17 +673,17 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
 \tf@toc=\write4
 \openout4 = `Report6_Software_User_Guides.toc'.
 
-
-[1] (Report6_Software_User_Guides.lof [2] [3] [4])
+ [1]
+(Report6_Software_User_Guides.lof [2] [3] [4] [5] [6])
 \tf@lof=\write5
 \openout5 = `Report6_Software_User_Guides.lof'.
 
- [5]
+ [7]
 (Report6_Software_User_Guides.lot)
 \tf@lot=\write6
 \openout6 = `Report6_Software_User_Guides.lot'.
 
- [6]
+ [8]
 Overfull \hbox (0.32083pt too wide) in alignment at lines 166--169
  [] [] [] [] 
  []
@@ -710,12 +694,11 @@ Overfull \hbox (0.32083pt too wide) in alignment at lines 169--172
  []
 
 
-Overfull \hbox (0.32083pt too wide) in alignment at lines 172--188
+Overfull \hbox (0.32083pt too wide) in alignment at lines 172--189
  [] [] [] [] 
  []
 
-ignored error: Infinite glue shrinkage found in box being split [7] [8]
-(sections/sec1_deliverables_install.tex
+[9] [10] (sections/sec1_deliverables_install.tex
 Overfull \hbox (0.32083pt too wide) in alignment at lines 13--17
  [] [] [] [] 
  []
@@ -741,76 +724,73 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has
 <to be read again> 
                    \relax 
 l.30 \end{longtable}
-                    
-ignored error: Infinite glue shrinkage found in box being split [9] [10]
-[11]
-<images/install/a01_git_download.png, id=560, 1445.4pt x 903.375pt>
+                     [11] [12] [13]
+<images/install/a01_git_download.png, id=683, 1445.4pt x 903.375pt>
 File: images/install/a01_git_download.png Graphic file (type png)
 <use images/install/a01_git_download.png>
 Package pdftex.def Info: images/install/a01_git_download.png  used on input lin
 e 112.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-<images/install/a02_nodejs_download.png, id=562, 1445.4pt x 903.375pt>
+<images/install/a02_nodejs_download.png, id=685, 1445.4pt x 903.375pt>
 File: images/install/a02_nodejs_download.png Graphic file (type png)
 <use images/install/a02_nodejs_download.png>
 Package pdftex.def Info: images/install/a02_nodejs_download.png  used on input 
 line 126.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [12 <./images/install/a01_git_download.png (PNG copy)>]
+ [14 <./images/install/a01_git_download.png (PNG copy)>]
 Underfull \hbox (badness 1394) in paragraph at lines 131--132
 [][]\T1/ptm/b/n/12 [1][] \T1/ptm/m/n/12 Nav-i-gate to the of-fi-cial Node.js do
 wn-load por-tal at [][]$\T1/cmtt/m/n/12 https : / / nodejs . org / en /
  []
 
-<images/install/a03_docker_download.png, id=572, 1445.4pt x 903.375pt>
+<images/install/a03_docker_download.png, id=694, 1445.4pt x 903.375pt>
 File: images/install/a03_docker_download.png Graphic file (type png)
 <use images/install/a03_docker_download.png>
 Package pdftex.def Info: images/install/a03_docker_download.png  used on input 
 line 145.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-[13 <./images/install/a02_nodejs_download.png (PNG copy)>]
-<images/install/a04_env_check_versions.png, id=584, 1445.4pt x 903.375pt>
+[15 <./images/install/a02_nodejs_download.png (PNG copy)>]
+<images/install/a04_env_check_versions.png, id=706, 1445.4pt x 903.375pt>
 File: images/install/a04_env_check_versions.png Graphic file (type png)
 <use images/install/a04_env_check_versions.png>
 Package pdftex.def Info: images/install/a04_env_check_versions.png  used on inp
 ut line 159.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [14 <./images/install/a03_docker_download.png (PNG copy)>]
+ [16 <./images/install/a03_docker_download.png (PNG copy)>]
 Overfull \hbox (16.34634pt too wide) in paragraph at lines 165--166
 [][]\T1/ptm/b/n/12 [1][] \T1/ptm/m/n/12 Ex-e-cute \T1/cmtt/m/n/12 git --version
  $\OMS/ztmcm/m/n/12 !$ \T1/ptm/m/n/12 con-firms Git ver-sion (e.g., \T1/cmtt/m/
 n/12 git version 2.47.1.windows.1\T1/ptm/m/n/12 ). 
  []
 
-ignored error: Infinite glue shrinkage found in box being split [15 <./images/i
-nstall/a04_env_check_versions.png (PNG copy)>]
-<images/install/a05_clone_and_install.png, id=595, 1445.4pt x 903.375pt>
+[17 <./images/install/a04_env_check_versions.png (PNG copy)>]
+<images/install/a05_clone_and_install.png, id=717, 1445.4pt x 903.375pt>
 File: images/install/a05_clone_and_install.png Graphic file (type png)
 <use images/install/a05_clone_and_install.png>
 Package pdftex.def Info: images/install/a05_clone_and_install.png  used on inpu
 t line 198.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [16 <./images/install/a05_clone_and_install.png (PNG copy)>]
-<images/install/a06_env_configuration.png, id=601, 1445.4pt x 903.375pt>
+ [18 <./images/install/a05_clone_and_install.png (PNG copy)>]
+<images/install/a06_env_configuration.png, id=725, 1445.4pt x 903.375pt>
 File: images/install/a06_env_configuration.png Graphic file (type png)
 <use images/install/a06_env_configuration.png>
 Package pdftex.def Info: images/install/a06_env_configuration.png  used on inpu
 t line 211.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-<images/install/a07_prisma_migrate_seed.png, id=602, 1445.4pt x 903.375pt>
+<images/install/a07_prisma_migrate_seed.png, id=726, 1445.4pt x 903.375pt>
 File: images/install/a07_prisma_migrate_seed.png Graphic file (type png)
 <use images/install/a07_prisma_migrate_seed.png>
 Package pdftex.def Info: images/install/a07_prisma_migrate_seed.png  used on in
 put line 238.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [17 <./images/install/a06_env_configuration.png (PNG copy)>]
+ [19 <./images/install/a06_env_configuration.png (PNG copy)>]
 Underfull \hbox (badness 1442) in paragraph at lines 246--246
 [][]\T1/ptm/b/n/12 [3][] \T1/ptm/m/n/12 Ex-e-cute \T1/cmtt/m/n/12 pnpm --filter
  api seed \T1/ptm/m/n/12 (via In-fisi-cal or con-fig-ured \T1/cmtt/m/n/12 SEED_
 *_EMAIL \T1/ptm/m/n/12 /
  []
 
-) (sections/sec2_docker_ai.tex [18 <./images/install/a07_prisma_migrate_seed.pn
+) (sections/sec2_docker_ai.tex [20 <./images/install/a07_prisma_migrate_seed.pn
 g (PNG copy)>]
 Overfull \hbox (13.7236pt too wide) in paragraph at lines 35--36
 \T1/ptm/m/n/12 This work-flow pack-ages and or-ches-trates all 5 sys-tem ser-vi
@@ -818,26 +798,26 @@ ces (\T1/cmtt/m/n/12 id-verification\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 cv-matchin
 g\T1/ptm/m/n/12 ,
  []
 
-<images/install/a08_docker_compose_up.png, id=632, 1445.4pt x 903.375pt>
+<images/install/a08_docker_compose_up.png, id=754, 1445.4pt x 903.375pt>
 File: images/install/a08_docker_compose_up.png Graphic file (type png)
 <use images/install/a08_docker_compose_up.png>
 Package pdftex.def Info: images/install/a08_docker_compose_up.png  used on inpu
 t line 39.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-[19] [20 <./images/install/a08_docker_compose_up.png (PNG copy)>]
-<images/install/a09_verify_web_running.png, id=659, 1445.4pt x 903.375pt>
+[21] [22 <./images/install/a08_docker_compose_up.png (PNG copy)>]
+<images/install/a09_verify_web_running.png, id=781, 1445.4pt x 903.375pt>
 File: images/install/a09_verify_web_running.png Graphic file (type png)
 <use images/install/a09_verify_web_running.png>
 Package pdftex.def Info: images/install/a09_verify_web_running.png  used on inp
 ut line 83.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-<images/install/a10_verify_api_swagger.png, id=661, 1445.4pt x 903.375pt>
+<images/install/a10_verify_api_swagger.png, id=783, 1445.4pt x 903.375pt>
 File: images/install/a10_verify_api_swagger.png Graphic file (type png)
 <use images/install/a10_verify_api_swagger.png>
 Package pdftex.def Info: images/install/a10_verify_api_swagger.png  used on inp
 ut line 96.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [21 <./images/install/a09_verify_web_running.png (PNG copy)>]
+ [23 <./images/install/a09_verify_web_running.png (PNG copy)>]
 Overfull \hbox (0.32085pt too wide) in alignment at lines 119--123
  [] [] [] [] 
  []
@@ -852,65 +832,64 @@ Overfull \hbox (0.32085pt too wide) in alignment at lines 126--131
  [] [] [] [] 
  []
 
-ignored error: Infinite glue shrinkage found in box being split [22 <./images/i
-nstall/a10_verify_api_swagger.png (PNG copy)>])
+[24 <./images/install/a10_verify_api_swagger.png (PNG copy)>])
 (sections/sec3_m02_auth_session.tex
 Underfull \hbox (badness 1308) in paragraph at lines 13--14
 []\T1/ptm/b/n/12 Guest (Unau-then-ti-cated Vis-i-tor): \T1/ptm/m/n/12 Ex-plores
  pub-lic job post-ings, re-views top-rated
  []
 
-[23]
-<images/auth/m02_01_register.png, id=682, 1324.95pt x 1195.46625pt>
+[25]
+<images/auth/m02_01_register.png, id=805, 1324.95pt x 1195.46625pt>
 File: images/auth/m02_01_register.png Graphic file (type png)
 <use images/auth/m02_01_register.png>
 Package pdftex.def Info: images/auth/m02_01_register.png  used on input line 37
 .
 (pdftex.def)             Requested size: 327.7763pt x 295.72832pt.
- [24 <./images/auth/m02_01_register.png (PNG copy)>] [25]
-<images/auth/m02_02_login.png, id=704, 1445.4pt x 903.375pt>
+ [26 <./images/auth/m02_01_register.png (PNG copy)>] [27]
+<images/auth/m02_02_login.png, id=826, 1445.4pt x 903.375pt>
 File: images/auth/m02_02_login.png Graphic file (type png)
 <use images/auth/m02_02_login.png>
 Package pdftex.def Info: images/auth/m02_02_login.png  used on input line 81.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [26 <./images/auth/m02_02_login.png (PNG copy)>] [27]
-<images/auth/m02_03_google_oauth.png, id=721, 1445.4pt x 903.375pt>
+ [28 <./images/auth/m02_02_login.png (PNG copy)>] [29]
+<images/auth/m02_03_google_oauth.png, id=843, 1445.4pt x 903.375pt>
 File: images/auth/m02_03_google_oauth.png Graphic file (type png)
 <use images/auth/m02_03_google_oauth.png>
 Package pdftex.def Info: images/auth/m02_03_google_oauth.png  used on input lin
 e 120.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [28 <./images/auth/m02_03_google_oauth.png (PNG copy)>]
-<images/auth/m02_04_forgot_password.png, id=731, 1445.4pt x 903.375pt>
+ [30 <./images/auth/m02_03_google_oauth.png (PNG copy)>]
+<images/auth/m02_04_forgot_password.png, id=854, 1445.4pt x 903.375pt>
 File: images/auth/m02_04_forgot_password.png Graphic file (type png)
 <use images/auth/m02_04_forgot_password.png>
 Package pdftex.def Info: images/auth/m02_04_forgot_password.png  used on input 
 line 148.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [29 <./images/auth/m02_04_forgot_password.png (PNG copy)>]
-[30]
-<images/auth/m02_05_sessions_list.png, id=751, 1445.4pt x 903.375pt>
+ [31 <./images/auth/m02_04_forgot_password.png (PNG copy)>]
+[32]
+<images/auth/m02_05_sessions_list.png, id=873, 1445.4pt x 903.375pt>
 File: images/auth/m02_05_sessions_list.png Graphic file (type png)
 <use images/auth/m02_05_sessions_list.png>
 Package pdftex.def Info: images/auth/m02_05_sessions_list.png  used on input li
 ne 181.
 (pdftex.def)             Requested size: 391.51021pt x 244.68643pt.
-<images/auth/m02_05b_session_detail.png, id=752, 1445.4pt x 903.375pt>
+<images/auth/m02_05b_session_detail.png, id=874, 1445.4pt x 903.375pt>
 File: images/auth/m02_05b_session_detail.png Graphic file (type png)
 <use images/auth/m02_05b_session_detail.png>
 Package pdftex.def Info: images/auth/m02_05b_session_detail.png  used on input 
 line 195.
 (pdftex.def)             Requested size: 345.98302pt x 216.23549pt.
- [31 <./images/auth/m02_05_sessions_list.png (PNG copy)>] [32 <./images/auth/m0
+ [33 <./images/auth/m02_05_sessions_list.png (PNG copy)>] [34 <./images/auth/m0
 2_05b_session_detail.png (PNG copy)>]
-<images/auth/m02_06_revoke_session.png, id=768, 1445.4pt x 903.375pt>
+<images/auth/m02_06_revoke_session.png, id=890, 1445.4pt x 903.375pt>
 File: images/auth/m02_06_revoke_session.png Graphic file (type png)
 <use images/auth/m02_06_revoke_session.png>
 Package pdftex.def Info: images/auth/m02_06_revoke_session.png  used on input l
 ine 216.
 (pdftex.def)             Requested size: 391.51021pt x 244.68643pt.
- [33 <./images/auth/m02_06_revoke_session.png (PNG copy)>]
-<images/auth/m02_07_logout.png, id=779, 1445.4pt x 903.375pt>
+ [35 <./images/auth/m02_06_revoke_session.png (PNG copy)>]
+<images/auth/m02_07_logout.png, id=901, 1445.4pt x 903.375pt>
 File: images/auth/m02_07_logout.png Graphic file (type png)
 <use images/auth/m02_07_logout.png>
 Package pdftex.def Info: images/auth/m02_07_logout.png  used on input line 244.
@@ -922,9 +901,9 @@ Overfull \hbox (29.32721pt too wide) in paragraph at lines 256--257
 hes an HTTP POST re-quest to \T1/cmtt/m/n/12 /api/auth/logout\T1/ptm/m/n/12 ,
  []
 
-) [34 <./images/auth/m02_07_logout.png (PNG copy)>]
+) [36 <./images/auth/m02_07_logout.png (PNG copy)>]
 (sections/sec3_m03_account.tex
-<images/client/m1_07_view_client_profile_entry.png, id=789, 1927.2pt x 1084.05p
+<images/client/m1_07_view_client_profile_entry.png, id=912, 1927.2pt x 1084.05p
 t>
 File: images/client/m1_07_view_client_profile_entry.png Graphic file (type png)
 
@@ -932,327 +911,703 @@ File: images/client/m1_07_view_client_profile_entry.png Graphic file (type png)
 Package pdftex.def Info: images/client/m1_07_view_client_profile_entry.png  use
 d on input line 21.
 (pdftex.def)             Requested size: 450.0pt x 253.1142pt.
- [35
+ [37
 
- <./images/client/m1_07_view_client_profile_entry.png (PNG copy)>] [36]
-<images/client/m3_01_view_client_profile.png, id=812, 1857.94125pt x 933.4875pt
+ <./images/client/m1_07_view_client_profile_entry.png (PNG copy)>] [38]
+<images/client/m3_01_view_client_profile.png, id=934, 1857.94125pt x 933.4875pt
 >
 File: images/client/m3_01_view_client_profile.png Graphic file (type png)
 <use images/client/m3_01_view_client_profile.png>
 Package pdftex.def Info: images/client/m3_01_view_client_profile.png  used on i
 nput line 76.
 (pdftex.def)             Requested size: 450.0pt x 226.0927pt.
- [37 <./images/client/m3_01_view_client_profile.png (PNG copy)>]
-<images/client/m3_02_upload_avatar.png, id=824, 1897.0875pt x 919.435pt>
+ [39 <./images/client/m3_01_view_client_profile.png (PNG copy)>]
+<images/client/m3_02_upload_avatar.png, id=946, 1897.0875pt x 919.435pt>
 File: images/client/m3_02_upload_avatar.png Graphic file (type png)
 <use images/client/m3_02_upload_avatar.png>
 Package pdftex.def Info: images/client/m3_02_upload_avatar.png  used on input l
 ine 113.
 (pdftex.def)             Requested size: 450.0pt x 218.0875pt.
- [38 <./images/client/m3_02_upload_avatar.png (PNG copy)>]
-<images/client/m3_03_change_password.png, id=836, 1898.09125pt x 915.42pt>
+ [40 <./images/client/m3_02_upload_avatar.png (PNG copy)>]
+<images/client/m3_03_change_password.png, id=958, 1898.09125pt x 915.42pt>
 File: images/client/m3_03_change_password.png Graphic file (type png)
 <use images/client/m3_03_change_password.png>
 Package pdftex.def Info: images/client/m3_03_change_password.png  used on input
  line 149.
 (pdftex.def)             Requested size: 450.0pt x 217.02339pt.
- [39 <./images/client/m3_03_change_password.png (PNG copy)>]
-<images/client/m3_04_view_social_link_list.png, id=848, 1704.3675pt x 482.80376
+ [41 <./images/client/m3_03_change_password.png (PNG copy)>]
+<images/client/m3_04_view_social_link_list.png, id=970, 1704.3675pt x 482.80376
 pt>
 File: images/client/m3_04_view_social_link_list.png Graphic file (type png)
 <use images/client/m3_04_view_social_link_list.png>
 Package pdftex.def Info: images/client/m3_04_view_social_link_list.png  used on
  input line 185.
 (pdftex.def)             Requested size: 450.0pt x 127.4709pt.
- [40 <./images/client/m3_04_view_social_link_list.png (PNG copy)>]
-<images/client/m3_05_join_new_role.png, id=861, 294.09875pt x 857.2025pt>
+ [42 <./images/client/m3_04_view_social_link_list.png (PNG copy)>]
+<images/client/m3_05_join_new_role.png, id=984, 294.09875pt x 857.2025pt>
 File: images/client/m3_05_join_new_role.png Graphic file (type png)
 <use images/client/m3_05_join_new_role.png>
 Package pdftex.def Info: images/client/m3_05_join_new_role.png  used on input l
 ine 220.
 (pdftex.def)             Requested size: 450.0pt x 1311.62021pt.
- [41 <./images/client/m3_05_join_new_role.png (PNG copy)>]
-<images/client/m3_06_switch_role.png, id=873, 295.1025pt x 828.09375pt>
+ [43 <./images/client/m3_05_join_new_role.png (PNG copy)>]
+<images/client/m3_06_switch_role.png, id=996, 295.1025pt x 828.09375pt>
 File: images/client/m3_06_switch_role.png Graphic file (type png)
 <use images/client/m3_06_switch_role.png>
 Package pdftex.def Info: images/client/m3_06_switch_role.png  used on input lin
 e 254.
 (pdftex.def)             Requested size: 450.0pt x 1262.78429pt.
- [42 <./images/client/m3_06_switch_role.png (PNG copy)>]
-<images/client/m7_01_client_workspace.png, id=886, 1445.4pt x 903.375pt>
+ [44 <./images/client/m3_06_switch_role.png (PNG copy)>]
+<images/client/m7_01_client_workspace.png, id=1008, 1445.4pt x 903.375pt>
 File: images/client/m7_01_client_workspace.png Graphic file (type png)
 <use images/client/m7_01_client_workspace.png>
 Package pdftex.def Info: images/client/m7_01_client_workspace.png  used on inpu
 t line 292.
 (pdftex.def)             Requested size: 450.0pt x 281.2426pt.
 
-[43 <./images/client/m7_01_client_workspace.png (PNG copy)>]
-<images/client/m7_02_update_company_information.png, id=898, 1872.9975pt x 922.
-44624pt>
+[45 <./images/client/m7_01_client_workspace.png (PNG copy)>]
+<images/client/m7_02_update_company_information.png, id=1020, 1872.9975pt x 922
+.44624pt>
 File: images/client/m7_02_update_company_information.png Graphic file (type png
 )
 <use images/client/m7_02_update_company_information.png>
 Package pdftex.def Info: images/client/m7_02_update_company_information.png  us
 ed on input line 327.
 (pdftex.def)             Requested size: 450.0pt x 221.61682pt.
- [44 <./images/client/m7_02_update_company_information.png (PNG copy)>]
-<images/client/m7_03_add_freelancer_to_favorites.png, id=910, 1634.105pt x 915.
-42pt>
+ [46 <./images/client/m7_02_update_company_information.png (PNG copy)>]
+<images/client/m7_03_add_freelancer_to_favorites.png, id=1032, 1634.105pt x 915
+.42pt>
 File: images/client/m7_03_add_freelancer_to_favorites.png Graphic file (type pn
 g)
 <use images/client/m7_03_add_freelancer_to_favorites.png>
 Package pdftex.def Info: images/client/m7_03_add_freelancer_to_favorites.png  u
 sed on input line 362.
 (pdftex.def)             Requested size: 450.0pt x 252.0835pt.
-<images/client/m7_03_remove_freelancer_from_favorites.png, id=911, 1640.1275pt 
-x 916.42375pt>
+<images/client/m7_03_remove_freelancer_from_favorites.png, id=1033, 1640.1275pt
+ x 916.42375pt>
 File: images/client/m7_03_remove_freelancer_from_favorites.png Graphic file (ty
 pe png)
 <use images/client/m7_03_remove_freelancer_from_favorites.png>
 Package pdftex.def Info: images/client/m7_03_remove_freelancer_from_favorites.p
 ng  used on input line 372.
 (pdftex.def)             Requested size: 450.0pt x 251.437pt.
- [45 <./images/client/m7_03_add_freelancer_to_favorites.png (PNG copy)> <./imag
+ [47 <./images/client/m7_03_add_freelancer_to_favorites.png (PNG copy)> <./imag
 es/client/m7_03_remove_freelancer_from_favorites.png (PNG copy)>]
-<images/client/m7_04_view_following_list.png, id=923, 1619.04875pt x 923.45pt>
+<images/client/m7_04_view_following_list.png, id=1045, 1619.04875pt x 923.45pt>
+
 File: images/client/m7_04_view_following_list.png Graphic file (type png)
 <use images/client/m7_04_view_following_list.png>
 Package pdftex.def Info: images/client/m7_04_view_following_list.png  used on i
 nput line 410.
 (pdftex.def)             Requested size: 450.0pt x 256.66199pt.
-<images/client/m7_04_unfollow_freelancer.png, id=924, 1636.1125pt x 834.11626pt
->
+<images/client/m7_04_unfollow_freelancer.png, id=1046, 1636.1125pt x 834.11626p
+t>
 File: images/client/m7_04_unfollow_freelancer.png Graphic file (type png)
 <use images/client/m7_04_unfollow_freelancer.png>
 Package pdftex.def Info: images/client/m7_04_unfollow_freelancer.png  used on i
 nput line 420.
 (pdftex.def)             Requested size: 450.0pt x 229.41449pt.
-) (sections/sec3_m05_ekyc.tex [46 <./images/client/m7_04_view_following_list.pn
+) (sections/sec3_m05_ekyc.tex [48 <./images/client/m7_04_view_following_list.pn
 g (PNG copy)> <./images/client/m7_04_unfollow_freelancer.png (PNG copy)>]
-<images/freelancer/m5_01_upload_identity_documents.png, id=936, 1476.51625pt x 
-834.11626pt>
+<images/freelancer/m5_01_upload_identity_documents.png, id=1059, 1476.51625pt x
+ 834.11626pt>
 File: images/freelancer/m5_01_upload_identity_documents.png Graphic file (type 
 png)
 <use images/freelancer/m5_01_upload_identity_documents.png>
 Package pdftex.def Info: images/freelancer/m5_01_upload_identity_documents.png 
  used on input line 26.
 (pdftex.def)             Requested size: 450.0pt x 254.20781pt.
- [47 <./images/freelancer/m5_01_upload_identity_documents.png (PNG copy)>]
-<images/freelancer/m5_02_view_verification_status.png, id=950, 1688.3075pt x 73
-3.74126pt>
+ [49 <./images/freelancer/m5_01_upload_identity_documents.png (PNG copy)>]
+<images/freelancer/m5_02_view_verification_status.png, id=1073, 1688.3075pt x 7
+33.74126pt>
 File: images/freelancer/m5_02_view_verification_status.png Graphic file (type p
 ng)
 <use images/freelancer/m5_02_view_verification_status.png>
 Package pdftex.def Info: images/freelancer/m5_02_view_verification_status.png  
 used on input line 63.
 (pdftex.def)             Requested size: 450.0pt x 195.5713pt.
- [48 <./images/freelancer/m5_02_view_verification_status.png (PNG copy)>]
-<images/expert/m13_01_expert_user_management.png, id=963, 925.056pt x 491.436pt
->
+ [50 <./images/freelancer/m5_02_view_verification_status.png (PNG copy)>]
+<images/expert/m13_01_expert_user_management.png, id=1085, 925.056pt x 491.436p
+t>
 File: images/expert/m13_01_expert_user_management.png Graphic file (type png)
 <use images/expert/m13_01_expert_user_management.png>
 Package pdftex.def Info: images/expert/m13_01_expert_user_management.png  used 
 on input line 100.
 (pdftex.def)             Requested size: 450.0pt x 213.16423pt.
- [49 <./images/expert/m13_01_expert_user_management.png>]
-<images/expert/m13_02_expert_user_detail.png, id=977, 925.056pt x 491.436pt>
+ [51 <./images/expert/m13_01_expert_user_management.png>]
+<images/expert/m13_02_expert_user_detail.png, id=1099, 925.056pt x 491.436pt>
 File: images/expert/m13_02_expert_user_detail.png Graphic file (type png)
 <use images/expert/m13_02_expert_user_detail.png>
 Package pdftex.def Info: images/expert/m13_02_expert_user_detail.png  used on i
 nput line 135.
 (pdftex.def)             Requested size: 450.0pt x 213.16423pt.
-<images/expert/m13_02_edit_expert_profile.png, id=979, 925.056pt x 491.436pt>
+<images/expert/m13_02_edit_expert_profile.png, id=1101, 925.056pt x 491.436pt>
 File: images/expert/m13_02_edit_expert_profile.png Graphic file (type png)
 <use images/expert/m13_02_edit_expert_profile.png>
 Package pdftex.def Info: images/expert/m13_02_edit_expert_profile.png  used on 
 input line 147.
 (pdftex.def)             Requested size: 450.0pt x 213.16423pt.
 
-[50 <./images/expert/m13_02_expert_user_detail.png> <./images/expert/m13_02_edi
+[52 <./images/expert/m13_02_expert_user_detail.png> <./images/expert/m13_02_edi
 t_expert_profile.png>]
-<images/expert/m13_03_expert_credentials_status.png, id=996, 925.056pt x 491.43
-6pt>
+<images/expert/m13_03_expert_credentials_status.png, id=1118, 925.056pt x 491.4
+36pt>
 File: images/expert/m13_03_expert_credentials_status.png Graphic file (type png
 )
 <use images/expert/m13_03_expert_credentials_status.png>
 Package pdftex.def Info: images/expert/m13_03_expert_credentials_status.png  us
 ed on input line 186.
 (pdftex.def)             Requested size: 450.0pt x 213.16423pt.
-) (sections/sec3_m14_admin_rbac_users.tex [51 <./images/expert/m13_03_expert_cr
-edentials_status.png>]
+) (sections/sec3_m10_job_browsing_management.tex [53 <./images/expert/m13_03_ex
+pert_credentials_status.png>]
+<images/jobs_proposals/m10_01_view_job_list_freelancer_guide.png, id=1132, 1445
+.4pt x 903.375pt>
+File: images/jobs_proposals/m10_01_view_job_list_freelancer_guide.png Graphic f
+ile (type png)
+<use images/jobs_proposals/m10_01_view_job_list_freelancer_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m10_01_view_job_list_freelancer_
+guide.png  used on input line 21.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+<images/jobs_proposals/m10_01b_view_job_list_guest_guide.png, id=1133, 1445.4pt
+ x 903.375pt>
+File: images/jobs_proposals/m10_01b_view_job_list_guest_guide.png Graphic file 
+(type png)
+<use images/jobs_proposals/m10_01b_view_job_list_guest_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m10_01b_view_job_list_guest_guid
+e.png  used on input line 26.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [54 <./images/jobs_proposals/m10_01_view_job_list_freelancer_guide.png (PNG co
+py)>] [55 <./images/jobs_proposals/m10_01b_view_job_list_guest_guide.png (PNG c
+opy)>]
+<images/jobs_proposals/m10_02_view_job_detail_freelancer_guide.png, id=1150, 14
+45.4pt x 903.375pt>
+File: images/jobs_proposals/m10_02_view_job_detail_freelancer_guide.png Graphic
+ file (type png)
+<use images/jobs_proposals/m10_02_view_job_detail_freelancer_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m10_02_view_job_detail_freelance
+r_guide.png  used on input line 53.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+<images/jobs_proposals/m10_02b_view_job_detail_client_guide.png, id=1151, 1445.
+4pt x 903.375pt>
+File: images/jobs_proposals/m10_02b_view_job_detail_client_guide.png Graphic fi
+le (type png)
+<use images/jobs_proposals/m10_02b_view_job_detail_client_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m10_02b_view_job_detail_client_g
+uide.png  used on input line 58.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [56 <./images/jobs_proposals/m10_02_view_job_detail_freelancer_guide.png (PNG 
+copy)> <./images/jobs_proposals/m10_02b_view_job_detail_client_guide.png (PNG c
+opy)>] [57]
+<images/jobs_proposals/m11_01_view_my_jobs_guide.png, id=1166, 1445.4pt x 903.3
+75pt>
+File: images/jobs_proposals/m11_01_view_my_jobs_guide.png Graphic file (type pn
+g)
+<use images/jobs_proposals/m11_01_view_my_jobs_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m11_01_view_my_jobs_guide.png  u
+sed on input line 84.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [58 <./images/jobs_proposals/m11_01_view_my_jobs_guide.png (PNG copy)>]
+<images/jobs_proposals/m11_02_create_job_guide.png, id=1178, 1445.4pt x 903.375
+pt>
+File: images/jobs_proposals/m11_02_create_job_guide.png Graphic file (type png)
+
+<use images/jobs_proposals/m11_02_create_job_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m11_02_create_job_guide.png  use
+d on input line 111.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [59 <./images/jobs_proposals/m11_02_create_job_guide.png (PNG copy)>] [60]
+<images/jobs_proposals/m11_03_publish_job_guide.png, id=1195, 1445.4pt x 903.37
+5pt>
+File: images/jobs_proposals/m11_03_publish_job_guide.png Graphic file (type png
+)
+<use images/jobs_proposals/m11_03_publish_job_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m11_03_publish_job_guide.png  us
+ed on input line 138.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [61 <./images/jobs_proposals/m11_03_publish_job_guide.png (PNG copy)>]
+<images/jobs_proposals/m11_04_update_job_guide.png, id=1205, 1445.4pt x 903.375
+pt>
+File: images/jobs_proposals/m11_04_update_job_guide.png Graphic file (type png)
+
+<use images/jobs_proposals/m11_04_update_job_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m11_04_update_job_guide.png  use
+d on input line 163.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [62 <./images/jobs_proposals/m11_04_update_job_guide.png (PNG copy)>]
+<images/jobs_proposals/m11_05_delete_job_guide.png, id=1216, 1445.4pt x 903.375
+pt>
+File: images/jobs_proposals/m11_05_delete_job_guide.png Graphic file (type png)
+
+<use images/jobs_proposals/m11_05_delete_job_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m11_05_delete_job_guide.png  use
+d on input line 189.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [63 <./images/jobs_proposals/m11_05_delete_job_guide.png (PNG copy)>]
+<images/jobs_proposals/m11_06_close_job_guide.png, id=1226, 1445.4pt x 903.375p
+t>
+File: images/jobs_proposals/m11_06_close_job_guide.png Graphic file (type png)
+<use images/jobs_proposals/m11_06_close_job_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m11_06_close_job_guide.png  used
+ on input line 214.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [64 <./images/jobs_proposals/m11_06_close_job_guide.png (PNG copy)>]
+<images/jobs_proposals/m11_07_reopen_job_guide.png, id=1237, 1445.4pt x 903.375
+pt>
+File: images/jobs_proposals/m11_07_reopen_job_guide.png Graphic file (type png)
+
+<use images/jobs_proposals/m11_07_reopen_job_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m11_07_reopen_job_guide.png  use
+d on input line 240.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [65 <./images/jobs_proposals/m11_07_reopen_job_guide.png (PNG copy)>]
+<images/jobs_proposals/m12_01_view_bookmarked_jobs_guide.png, id=1248, 1445.4pt
+ x 903.375pt>
+File: images/jobs_proposals/m12_01_view_bookmarked_jobs_guide.png Graphic file 
+(type png)
+<use images/jobs_proposals/m12_01_view_bookmarked_jobs_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m12_01_view_bookmarked_jobs_guid
+e.png  used on input line 266.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [66 <./images/jobs_proposals/m12_01_view_bookmarked_jobs_guide.png (PNG copy)>
+]
+<images/jobs_proposals/m12_02_bookmark_job_guide.png, id=1260, 1445.4pt x 903.3
+75pt>
+File: images/jobs_proposals/m12_02_bookmark_job_guide.png Graphic file (type pn
+g)
+<use images/jobs_proposals/m12_02_bookmark_job_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m12_02_bookmark_job_guide.png  u
+sed on input line 292.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [67 <./images/jobs_proposals/m12_02_bookmark_job_guide.png (PNG copy)>]
+<images/jobs_proposals/m12_03_remove_bookmark_guide.png, id=1270, 1445.4pt x 90
+3.375pt>
+File: images/jobs_proposals/m12_03_remove_bookmark_guide.png Graphic file (type
+ png)
+<use images/jobs_proposals/m12_03_remove_bookmark_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m12_03_remove_bookmark_guide.png
+  used on input line 317.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+) (sections/sec3_m22_saved_search_alerts.tex [68 <./images/jobs_proposals/m12_0
+3_remove_bookmark_guide.png (PNG copy)>]
+Underfull \hbox (badness 1609) in paragraph at lines 16--17
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Saved Searches Tab --
+ \T1/cmtt/m/n/12 /freelancer/find-work/
+ []
+
+<images/jobs_proposals/m22_01_view_saved_searches_guide.png, id=1280, 1445.4pt 
+x 903.375pt>
+File: images/jobs_proposals/m22_01_view_saved_searches_guide.png Graphic file (
+type png)
+<use images/jobs_proposals/m22_01_view_saved_searches_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m22_01_view_saved_searches_guide
+.png  used on input line 21.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+[69 <./images/jobs_proposals/m22_01_view_saved_searches_guide.png (PNG copy)>]
+Underfull \hbox (badness 1057) in paragraph at lines 35--36
+[]\T1/ptm/b/n/12 Troubleshooting & Com-mon Mes-sages: \T1/ptm/m/n/12 If no pre-
+sets are saved yet, nav-i-gate to
+ []
+
+[70]
+<images/jobs_proposals/m22_02_view_saved_search_detail_guide.png, id=1296, 1445
+.4pt x 903.375pt>
+File: images/jobs_proposals/m22_02_view_saved_search_detail_guide.png Graphic f
+ile (type png)
+<use images/jobs_proposals/m22_02_view_saved_search_detail_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m22_02_view_saved_search_detail_
+guide.png  used on input line 48.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [71 <./images/jobs_proposals/m22_02_view_saved_search_detail_guide.png (PNG co
+py)>]
+Overfull \hbox (47.78737pt too wide) in paragraph at lines 70--71
+[]\T1/ptm/b/n/12 Before You Be-gin: \T1/ptm/m/n/12 En-ter at least one search k
+ey-word or side-bar fil-ter on \T1/cmtt/m/n/12 /freelancer/search/jobs
+ []
+
+<images/jobs_proposals/m22_03_create_saved_search_guide.png, id=1306, 1445.4pt 
+x 903.375pt>
+File: images/jobs_proposals/m22_03_create_saved_search_guide.png Graphic file (
+type png)
+<use images/jobs_proposals/m22_03_create_saved_search_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m22_03_create_saved_search_guide
+.png  used on input line 73.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+[72 <./images/jobs_proposals/m22_03_create_saved_search_guide.png (PNG copy)>]
+Underfull \hbox (badness 1609) in paragraph at lines 94--95
+[]\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Saved Searches Tab --
+ \T1/cmtt/m/n/12 /freelancer/find-work/
+ []
+
+<images/jobs_proposals/m22_04_delete_saved_search_guide.png, id=1318, 1445.4pt 
+x 903.375pt>
+File: images/jobs_proposals/m22_04_delete_saved_search_guide.png Graphic file (
+type png)
+<use images/jobs_proposals/m22_04_delete_saved_search_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m22_04_delete_saved_search_guide
+.png  used on input line 99.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+[73 <./images/jobs_proposals/m22_04_delete_saved_search_guide.png (PNG copy)>]
+<images/jobs_proposals/m23_01_view_job_alerts_guide.png, id=1328, 1445.4pt x 90
+3.375pt>
+File: images/jobs_proposals/m23_01_view_job_alerts_guide.png Graphic file (type
+ png)
+<use images/jobs_proposals/m23_01_view_job_alerts_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m23_01_view_job_alerts_guide.png
+  used on input line 124.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+
+[74 <./images/jobs_proposals/m23_01_view_job_alerts_guide.png (PNG copy)>]
+Overfull \hbox (71.76987pt too wide) in paragraph at lines 148--149
+[]\T1/ptm/b/n/12 Before You Be-gin: \T1/ptm/m/n/12 Click \T1/ptm/b/n/12 View ma
+tch-ing jobs \T1/ptm/m/n/12 on any con-fig-ured alert card in \T1/cmtt/m/n/12 /
+freelancer/job-alerts\T1/ptm/m/n/12 . 
+ []
+
+<images/jobs_proposals/m23_02_view_job_alert_detail_guide.png, id=1340, 1445.4p
+t x 903.375pt>
+File: images/jobs_proposals/m23_02_view_job_alert_detail_guide.png Graphic file
+ (type png)
+<use images/jobs_proposals/m23_02_view_job_alert_detail_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m23_02_view_job_alert_detail_gui
+de.png  used on input line 151.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+[75 <./images/jobs_proposals/m23_02_view_job_alert_detail_guide.png (PNG copy)>
+]
+<images/jobs_proposals/m23_03_create_job_alert_guide.png, id=1351, 1445.4pt x 9
+03.375pt>
+File: images/jobs_proposals/m23_03_create_job_alert_guide.png Graphic file (typ
+e png)
+<use images/jobs_proposals/m23_03_create_job_alert_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m23_03_create_job_alert_guide.pn
+g  used on input line 177.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [76 <./images/jobs_proposals/m23_03_create_job_alert_guide.png (PNG copy)>]
+Overfull \hbox (58.31755pt too wide) in paragraph at lines 201--202
+[]\T1/ptm/b/n/12 Before You Be-gin: \T1/ptm/m/n/12 Click the pen-cil (Edit) ico
+n on any ex-ist-ing alert card in \T1/cmtt/m/n/12 /freelancer/job-alerts\T1/ptm
+/m/n/12 . 
+ []
+
+<images/jobs_proposals/m23_04_update_job_alert_guide.png, id=1363, 1445.4pt x 9
+03.375pt>
+File: images/jobs_proposals/m23_04_update_job_alert_guide.png Graphic file (typ
+e png)
+<use images/jobs_proposals/m23_04_update_job_alert_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m23_04_update_job_alert_guide.pn
+g  used on input line 204.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+[77 <./images/jobs_proposals/m23_04_update_job_alert_guide.png (PNG copy)>]
+<images/jobs_proposals/m23_05_delete_job_alert_guide.png, id=1375, 1445.4pt x 9
+03.375pt>
+File: images/jobs_proposals/m23_05_delete_job_alert_guide.png Graphic file (typ
+e png)
+<use images/jobs_proposals/m23_05_delete_job_alert_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m23_05_delete_job_alert_guide.pn
+g  used on input line 231.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+
+[78 <./images/jobs_proposals/m23_05_delete_job_alert_guide.png (PNG copy)>]
+<images/jobs_proposals/m46_07_view_job_categories_guide.png, id=1386, 1445.4pt 
+x 903.375pt>
+File: images/jobs_proposals/m46_07_view_job_categories_guide.png Graphic file (
+type png)
+<use images/jobs_proposals/m46_07_view_job_categories_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m46_07_view_job_categories_guide
+.png  used on input line 256.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+
+[79 <./images/jobs_proposals/m46_07_view_job_categories_guide.png (PNG copy)>]
+<images/jobs_proposals/m46_08_view_job_category_detail_guide.png, id=1397, 1445
+.4pt x 903.375pt>
+File: images/jobs_proposals/m46_08_view_job_category_detail_guide.png Graphic f
+ile (type png)
+<use images/jobs_proposals/m46_08_view_job_category_detail_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m46_08_view_job_category_detail_
+guide.png  used on input line 282.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+) (sections/sec3_m32_proposals_ai_matching.tex [80 <./images/jobs_proposals/m46
+_08_view_job_category_detail_guide.png (PNG copy)>]
+<images/jobs_proposals/m32_01_view_my_proposals_guide.png, id=1408, 1445.4pt x 
+903.375pt>
+File: images/jobs_proposals/m32_01_view_my_proposals_guide.png Graphic file (ty
+pe png)
+<use images/jobs_proposals/m32_01_view_my_proposals_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m32_01_view_my_proposals_guide.p
+ng  used on input line 21.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [81 <./images/jobs_proposals/m32_01_view_my_proposals_guide.png (PNG copy)>] [
+82]
+<images/jobs_proposals/m32_02_view_my_proposal_detail_guide.png, id=1424, 1445.
+4pt x 903.375pt>
+File: images/jobs_proposals/m32_02_view_my_proposal_detail_guide.png Graphic fi
+le (type png)
+<use images/jobs_proposals/m32_02_view_my_proposal_detail_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m32_02_view_my_proposal_detail_g
+uide.png  used on input line 48.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [83 <./images/jobs_proposals/m32_02_view_my_proposal_detail_guide.png (PNG cop
+y)>]
+<images/jobs_proposals/m32_03_submit_proposal_guide.png, id=1435, 1445.4pt x 90
+3.375pt>
+File: images/jobs_proposals/m32_03_submit_proposal_guide.png Graphic file (type
+ png)
+<use images/jobs_proposals/m32_03_submit_proposal_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m32_03_submit_proposal_guide.png
+  used on input line 74.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [84 <./images/jobs_proposals/m32_03_submit_proposal_guide.png (PNG copy)>]
+<images/jobs_proposals/m32_04_update_proposal_guide.png, id=1448, 1445.4pt x 90
+3.375pt>
+File: images/jobs_proposals/m32_04_update_proposal_guide.png Graphic file (type
+ png)
+<use images/jobs_proposals/m32_04_update_proposal_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m32_04_update_proposal_guide.png
+  used on input line 101.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+
+Overfull \hbox (1.76218pt too wide) in paragraph at lines 114--115
+[]\T1/ptm/b/n/12 Troubleshooting & Com-mon Mes-sages: \T1/ptm/m/n/12 Pro-pos-al
+s al-ready \T1/cmtt/m/n/12 HIRED\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 REJECTED\T1/pt
+m/m/n/12 , \T1/cmtt/m/n/12 WITHDRAWN\T1/ptm/m/n/12 ,
+ []
+
+[85 <./images/jobs_proposals/m32_04_update_proposal_guide.png (PNG copy)>]
+<images/jobs_proposals/m32_05_withdraw_proposal_guide.png, id=1459, 1445.4pt x 
+903.375pt>
+File: images/jobs_proposals/m32_05_withdraw_proposal_guide.png Graphic file (ty
+pe png)
+<use images/jobs_proposals/m32_05_withdraw_proposal_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m32_05_withdraw_proposal_guide.p
+ng  used on input line 127.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+
+[86 <./images/jobs_proposals/m32_05_withdraw_proposal_guide.png (PNG copy)>]
+<images/jobs_proposals/m32_06_accept_proposal_guide.png, id=1469, 1445.4pt x 90
+3.375pt>
+File: images/jobs_proposals/m32_06_accept_proposal_guide.png Graphic file (type
+ png)
+<use images/jobs_proposals/m32_06_accept_proposal_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m32_06_accept_proposal_guide.png
+  used on input line 152.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+
+[87 <./images/jobs_proposals/m32_06_accept_proposal_guide.png (PNG copy)>]
+[88]
+<images/jobs_proposals/m32_07_reject_proposal_guide.png, id=1485, 1445.4pt x 90
+3.375pt>
+File: images/jobs_proposals/m32_07_reject_proposal_guide.png Graphic file (type
+ png)
+<use images/jobs_proposals/m32_07_reject_proposal_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m32_07_reject_proposal_guide.png
+  used on input line 179.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+ [89 <./images/jobs_proposals/m32_07_reject_proposal_guide.png (PNG copy)>]
+<images/jobs_proposals/m32_08_view_job_proposals_guide.png, id=1495, 1445.4pt x
+ 903.375pt>
+File: images/jobs_proposals/m32_08_view_job_proposals_guide.png Graphic file (t
+ype png)
+<use images/jobs_proposals/m32_08_view_job_proposals_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m32_08_view_job_proposals_guide.
+png  used on input line 204.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+[90 <./images/jobs_proposals/m32_08_view_job_proposals_guide.png (PNG copy)>]
+<images/jobs_proposals/m32_09_view_proposal_detail_guide.png, id=1507, 1445.4pt
+ x 903.375pt>
+File: images/jobs_proposals/m32_09_view_proposal_detail_guide.png Graphic file 
+(type png)
+<use images/jobs_proposals/m32_09_view_proposal_detail_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m32_09_view_proposal_detail_guid
+e.png  used on input line 230.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+
+[91 <./images/jobs_proposals/m32_09_view_proposal_detail_guide.png (PNG copy)>]
+
+Overfull \hbox (14.1638pt too wide) in paragraph at lines 251--252
+\T1/cmtt/m/n/12 find-work/best-matches\T1/ptm/m/n/12 ; Client Can-di-date Rank-
+ing API -- \T1/cmtt/m/n/12 GET /api/recommendations/
+ []
+
+<images/jobs_proposals/m42_01_ai_job_recommendations_guide.png, id=1518, 1445.4
+pt x 903.375pt>
+File: images/jobs_proposals/m42_01_ai_job_recommendations_guide.png Graphic fil
+e (type png)
+<use images/jobs_proposals/m42_01_ai_job_recommendations_guide.png>
+Package pdftex.def Info: images/jobs_proposals/m42_01_ai_job_recommendations_gu
+ide.png  used on input line 256.
+(pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
+[92 <./images/jobs_proposals/m42_01_ai_job_recommendations_guide.png (PNG copy)
+>]) (sections/sec3_m14_admin_rbac_users.tex [93]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/it' in size <12> not available
 (Font)              Font shape `T1/cmtt/m/it' tried instead on input line 12.
-<images/admin/m14_01_admin_dashboard.png, id=1010, 1445.4pt x 903.375pt>
+<images/admin/m14_01_admin_dashboard.png, id=1534, 1445.4pt x 903.375pt>
 File: images/admin/m14_01_admin_dashboard.png Graphic file (type png)
 <use images/admin/m14_01_admin_dashboard.png>
 Package pdftex.def Info: images/admin/m14_01_admin_dashboard.png  used on input
  line 22.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [52 <./images/admin/m14_01_admin_dashboard.png (PNG copy)>] [53]
-<images/admin/m14_02_admin_profile.png, id=1027, 1445.4pt x 903.375pt>
+ [94 <./images/admin/m14_01_admin_dashboard.png (PNG copy)>] [95]
+<images/admin/m14_02_admin_profile.png, id=1551, 1445.4pt x 903.375pt>
 File: images/admin/m14_02_admin_profile.png Graphic file (type png)
 <use images/admin/m14_02_admin_profile.png>
 Package pdftex.def Info: images/admin/m14_02_admin_profile.png  used on input l
 ine 52.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [54 <./images/admin/m14_02_admin_profile.png (PNG copy)>]
-<images/admin/m14_03_admin_roles.png, id=1041, 1445.4pt x 903.375pt>
+ [96 <./images/admin/m14_02_admin_profile.png (PNG copy)>]
+<images/admin/m14_03_admin_roles.png, id=1565, 1445.4pt x 903.375pt>
 File: images/admin/m14_03_admin_roles.png Graphic file (type png)
 <use images/admin/m14_03_admin_roles.png>
 Package pdftex.def Info: images/admin/m14_03_admin_roles.png  used on input lin
 e 81.
 (pdftex.def)             Requested size: 345.98302pt x 216.23549pt.
-<images/admin/m14_03b_admin_role_detail.png, id=1042, 1445.4pt x 903.375pt>
+<images/admin/m14_03b_admin_role_detail.png, id=1566, 1445.4pt x 903.375pt>
 File: images/admin/m14_03b_admin_role_detail.png Graphic file (type png)
 <use images/admin/m14_03b_admin_role_detail.png>
 Package pdftex.def Info: images/admin/m14_03b_admin_role_detail.png  used on in
 put line 100.
 (pdftex.def)             Requested size: 355.08984pt x 221.92844pt.
- [55 <./images/admin/m14_03_admin_roles.png (PNG copy)>] [56 <./images/admin/m1
+ [97 <./images/admin/m14_03_admin_roles.png (PNG copy)>] [98 <./images/admin/m1
 4_03b_admin_role_detail.png (PNG copy)>]
 Overfull \hbox (5.7237pt too wide) in paragraph at lines 115--116
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Role Per-mis-sion As-
 sign-ment Ma-trix -- \T1/cmtt/m/n/12 /admin/assign-role\T1/ptm/m/n/12 . 
  []
 
-<images/admin/m14_04_role_permissions_matrix.png, id=1058, 1445.4pt x 903.375pt
+<images/admin/m14_04_role_permissions_matrix.png, id=1582, 1445.4pt x 903.375pt
 >
 File: images/admin/m14_04_role_permissions_matrix.png Graphic file (type png)
 <use images/admin/m14_04_role_permissions_matrix.png>
 Package pdftex.def Info: images/admin/m14_04_role_permissions_matrix.png  used 
 on input line 122.
 (pdftex.def)             Requested size: 364.19667pt x 227.62138pt.
-[57 <./images/admin/m14_04_role_permissions_matrix.png (PNG copy)>]
-<images/admin/m14_05_admin_permissions.png, id=1072, 1445.4pt x 903.375pt>
+[99 <./images/admin/m14_04_role_permissions_matrix.png (PNG copy)>]
+<images/admin/m14_05_admin_permissions.png, id=1596, 1445.4pt x 903.375pt>
 File: images/admin/m14_05_admin_permissions.png Graphic file (type png)
 <use images/admin/m14_05_admin_permissions.png>
 Package pdftex.def Info: images/admin/m14_05_admin_permissions.png  used on inp
 ut line 153.
 (pdftex.def)             Requested size: 364.19667pt x 227.62138pt.
-<images/admin/m14_05b_admin_permission_detail.png, id=1073, 1445.4pt x 903.375p
+<images/admin/m14_05b_admin_permission_detail.png, id=1597, 1445.4pt x 903.375p
 t>
 File: images/admin/m14_05b_admin_permission_detail.png Graphic file (type png)
 <use images/admin/m14_05b_admin_permission_detail.png>
 Package pdftex.def Info: images/admin/m14_05b_admin_permission_detail.png  used
  on input line 168.
 (pdftex.def)             Requested size: 355.08984pt x 221.92844pt.
- [58 <./images/admin/m14_05_admin_permissions.png (PNG copy)>] [59 <./images/ad
-min/m14_05b_admin_permission_detail.png (PNG copy)>]
-<images/admin/m14_06_admin_users_list_create.png, id=1090, 1445.4pt x 903.375pt
+ [100 <./images/admin/m14_05_admin_permissions.png (PNG copy)>] [101 <./images/
+admin/m14_05b_admin_permission_detail.png (PNG copy)>]
+<images/admin/m14_06_admin_users_list_create.png, id=1614, 1445.4pt x 903.375pt
 >
 File: images/admin/m14_06_admin_users_list_create.png Graphic file (type png)
 <use images/admin/m14_06_admin_users_list_create.png>
 Package pdftex.def Info: images/admin/m14_06_admin_users_list_create.png  used 
 on input line 189.
 (pdftex.def)             Requested size: 373.3035pt x 233.31433pt.
- [60 <./images/admin/m14_06_admin_users_list_create.png (PNG copy)>]
-<images/admin/m14_07_admin_user_ban_unban.png, id=1104, 1445.4pt x 903.375pt>
+ [102 <./images/admin/m14_06_admin_users_list_create.png (PNG copy)>]
+<images/admin/m14_07_admin_user_ban_unban.png, id=1628, 1445.4pt x 903.375pt>
 File: images/admin/m14_07_admin_user_ban_unban.png Graphic file (type png)
 <use images/admin/m14_07_admin_user_ban_unban.png>
 Package pdftex.def Info: images/admin/m14_07_admin_user_ban_unban.png  used on 
 input line 219.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [61 <./images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>]
-<images/admin/m14_08_admin_user_profile_tabs.png, id=1117, 1445.4pt x 903.375pt
+ [103 <./images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>]
+<images/admin/m14_08_admin_user_profile_tabs.png, id=1641, 1445.4pt x 903.375pt
 >
 File: images/admin/m14_08_admin_user_profile_tabs.png Graphic file (type png)
 <use images/admin/m14_08_admin_user_profile_tabs.png>
 Package pdftex.def Info: images/admin/m14_08_admin_user_profile_tabs.png  used 
 on input line 249.
 (pdftex.def)             Requested size: 373.3035pt x 233.31433pt.
-<images/admin/m14_08b_freelancer_tab.png, id=1118, 1445.4pt x 903.375pt>
+<images/admin/m14_08b_freelancer_tab.png, id=1642, 1445.4pt x 903.375pt>
 File: images/admin/m14_08b_freelancer_tab.png Graphic file (type png)
 <use images/admin/m14_08b_freelancer_tab.png>
 Package pdftex.def Info: images/admin/m14_08b_freelancer_tab.png  used on input
  line 263.
 (pdftex.def)             Requested size: 336.88313pt x 210.54254pt.
- [62 <./images/admin/m14_08_admin_user_profile_tabs.png (PNG copy)>]
-<images/admin/m14_08c_expert_tab.png, id=1129, 1445.4pt x 903.375pt>
+ [104 <./images/admin/m14_08_admin_user_profile_tabs.png (PNG copy)>]
+<images/admin/m14_08c_expert_tab.png, id=1653, 1445.4pt x 903.375pt>
 File: images/admin/m14_08c_expert_tab.png Graphic file (type png)
 <use images/admin/m14_08c_expert_tab.png>
 Package pdftex.def Info: images/admin/m14_08c_expert_tab.png  used on input lin
 e 276.
 (pdftex.def)             Requested size: 336.88313pt x 210.54254pt.
-) (sections/sec3_m15_admin_catalogs.tex [63 <./images/admin/m14_08b_freelancer_
-tab.png (PNG copy)> <./images/admin/m14_08c_expert_tab.png (PNG copy)>]
-<images/admin/m15_01_admin_skills.png, id=1139, 1445.4pt x 903.375pt>
+) (sections/sec3_m15_admin_catalogs.tex [105 <./images/admin/m14_08b_freelancer
+_tab.png (PNG copy)> <./images/admin/m14_08c_expert_tab.png (PNG copy)>]
+<images/admin/m15_01_admin_skills.png, id=1663, 1445.4pt x 903.375pt>
 File: images/admin/m15_01_admin_skills.png Graphic file (type png)
 <use images/admin/m15_01_admin_skills.png>
 Package pdftex.def Info: images/admin/m15_01_admin_skills.png  used on input li
 ne 22.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-
-[64 <./images/admin/m15_01_admin_skills.png (PNG copy)>] [65]
+ [106 <./images/admin/m15_01_admin_skills.png (PNG copy)>] [107]
 Underfull \hbox (badness 10000) in paragraph at lines 51--52
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Job Cat-e-gory Man-ag
 e-ment Con-sole --
  []
 
-<images/admin/m15_02_admin_job_categories.png, id=1156, 1445.4pt x 903.375pt>
+<images/admin/m15_02_admin_job_categories.png, id=1680, 1445.4pt x 903.375pt>
 File: images/admin/m15_02_admin_job_categories.png Graphic file (type png)
 <use images/admin/m15_02_admin_job_categories.png>
 Package pdftex.def Info: images/admin/m15_02_admin_job_categories.png  used on 
 input line 58.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-[66 <./images/admin/m15_02_admin_job_categories.png (PNG copy)>]
+[108 <./images/admin/m15_02_admin_job_categories.png (PNG copy)>]
 Underfull \hbox (badness 10000) in paragraph at lines 81--82
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Fo-rum Cat-e-gory Man
 -age-ment Con-sole --
  []
 
-<images/admin/m15_03_admin_forum_categories.png, id=1170, 1445.4pt x 903.375pt>
+<images/admin/m15_03_admin_forum_categories.png, id=1694, 1445.4pt x 903.375pt>
 
 File: images/admin/m15_03_admin_forum_categories.png Graphic file (type png)
 <use images/admin/m15_03_admin_forum_categories.png>
 Package pdftex.def Info: images/admin/m15_03_admin_forum_categories.png  used o
 n input line 88.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-[67 <./images/admin/m15_03_admin_forum_categories.png (PNG copy)>]
-<images/admin/m15_04_admin_banners.png, id=1183, 1445.4pt x 903.375pt>
+[109 <./images/admin/m15_03_admin_forum_categories.png (PNG copy)>]
+<images/admin/m15_04_admin_banners.png, id=1707, 1445.4pt x 903.375pt>
 File: images/admin/m15_04_admin_banners.png Graphic file (type png)
 <use images/admin/m15_04_admin_banners.png>
 Package pdftex.def Info: images/admin/m15_04_admin_banners.png  used on input l
 ine 118.
 (pdftex.def)             Requested size: 382.40338pt x 238.99348pt.
-<images/admin/m15_04b_admin_banner_dialog.png, id=1184, 1445.4pt x 903.375pt>
+<images/admin/m15_04b_admin_banner_dialog.png, id=1708, 1445.4pt x 903.375pt>
 File: images/admin/m15_04b_admin_banner_dialog.png Graphic file (type png)
 <use images/admin/m15_04b_admin_banner_dialog.png>
 Package pdftex.def Info: images/admin/m15_04b_admin_banner_dialog.png  used on 
 input line 133.
 (pdftex.def)             Requested size: 364.19667pt x 227.62138pt.
- [68 <./images/admin/m15_04_admin_banners.png (PNG copy)>]) (sections/sec3_m16_
-reviews.tex
-[69 <./images/admin/m15_04b_admin_banner_dialog.png (PNG copy)>]
-<images/community/m11_05_write_review.png, id=1201, 834.11626pt x 889.3225pt>
+ [110 <./images/admin/m15_04_admin_banners.png (PNG copy)>]) (sections/sec3_m16
+_reviews.tex [111 <./images/admin/m15_04b_admin_banner_dialog.png (PNG copy)>]
+<images/community/m11_05_write_review.png, id=1725, 834.11626pt x 889.3225pt>
 File: images/community/m11_05_write_review.png Graphic file (type png)
 <use images/community/m11_05_write_review.png>
 Package pdftex.def Info: images/community/m11_05_write_review.png  used on inpu
 t line 24.
 (pdftex.def)             Requested size: 450.0pt x 479.79276pt.
- [70 <./images/community/m11_05_write_review.png (PNG copy)>]
-<images/community/m11_06_respond_to_review.png, id=1214, 1190.4475pt x 736.7525
+ [112 <./images/community/m11_05_write_review.png (PNG copy)>]
+<images/community/m11_06_respond_to_review.png, id=1738, 1190.4475pt x 736.7525
 pt>
 File: images/community/m11_06_respond_to_review.png Graphic file (type png)
 <use images/community/m11_06_respond_to_review.png>
 Package pdftex.def Info: images/community/m11_06_respond_to_review.png  used on
  input line 61.
 (pdftex.def)             Requested size: 450.0pt x 278.49617pt.
- [71 <./images/community/m11_06_respond_to_review.png (PNG copy)>]
-<images/admin/m15_04_viewbannerlist.png, id=1226, 1445.4pt x 903.375pt>
+ [113 <./images/community/m11_06_respond_to_review.png (PNG copy)>]
+<images/admin/m15_04_viewbannerlist.png, id=1750, 1445.4pt x 903.375pt>
 File: images/admin/m15_04_viewbannerlist.png Graphic file (type png)
 <use images/admin/m15_04_viewbannerlist.png>
 Package pdftex.def Info: images/admin/m15_04_viewbannerlist.png  used on input 
 line 98.
 (pdftex.def)             Requested size: 432.0pt x 269.99455pt.
-<images/admin/m15_04_createbanner.png, id=1227, 1445.4pt x 903.375pt>
+<images/admin/m15_04_createbanner.png, id=1751, 1445.4pt x 903.375pt>
 File: images/admin/m15_04_createbanner.png Graphic file (type png)
 <use images/admin/m15_04_createbanner.png>
 Package pdftex.def Info: images/admin/m15_04_createbanner.png  used on input li
 ne 110.
 (pdftex.def)             Requested size: 432.0pt x 269.99455pt.
- [72 <./images/admin/m15_04_viewbannerlist.png (PNG copy)> <./images/admin/m15_
-04_createbanner.png (PNG copy)>]
-<images/admin/m16_01_adminidentityverifications.png, id=1241, 1427.3325pt x 807
+ [114 <./images/admin/m15_04_viewbannerlist.png (PNG copy)> <./images/admin/m15
+_04_createbanner.png (PNG copy)>]
+<images/admin/m16_01_adminidentityverifications.png, id=1765, 1427.3325pt x 807
 .015pt>
 File: images/admin/m16_01_adminidentityverifications.png Graphic file (type png
 )
@@ -1260,8 +1615,8 @@ File: images/admin/m16_01_adminidentityverifications.png Graphic file (type png
 Package pdftex.def Info: images/admin/m16_01_adminidentityverifications.png  us
 ed on input line 148.
 (pdftex.def)             Requested size: 450.0pt x 254.43272pt.
- [73 <./images/admin/m16_01_adminidentityverifications.png (PNG copy)>]
-<images/admin/m16_02_view_pending_profile_update_request_list.png, id=1253, 190
+ [115 <./images/admin/m16_01_adminidentityverifications.png (PNG copy)>]
+<images/admin/m16_02_view_pending_profile_update_request_list.png, id=1777, 190
 9.1325pt x 912.40875pt>
 File: images/admin/m16_02_view_pending_profile_update_request_list.png Graphic 
 file (type png)
@@ -1269,7 +1624,7 @@ file (type png)
 Package pdftex.def Info: images/admin/m16_02_view_pending_profile_update_reques
 t_list.png  used on input line 185.
 (pdftex.def)             Requested size: 450.0pt x 215.0565pt.
-<images/admin/m16_02_view_profile_update_request_detail.png, id=1254, 1927.2pt 
+<images/admin/m16_02_view_profile_update_request_detail.png, id=1778, 1927.2pt 
 x 913.4125pt>
 File: images/admin/m16_02_view_profile_update_request_detail.png Graphic file (
 type png)
@@ -1278,41 +1633,41 @@ Package pdftex.def Info: images/admin/m16_02_view_profile_update_request_detail
 .png  used on input line 195.
 (pdftex.def)             Requested size: 450.0pt x 213.27216pt.
 )
-(sections/sec3_m14_forum_management.tex [74 <./images/admin/m16_02_view_pending
-_profile_update_request_list.png (PNG copy)> <./images/admin/m16_02_view_profil
-e_update_request_detail.png (PNG copy)>]
-<images/forum/f14_01_guide.png, id=1268, 1371.1225pt x 903.375pt>
+(sections/sec3_m14_forum_management.tex [116 <./images/admin/m16_02_view_pendin
+g_profile_update_request_list.png (PNG copy)> <./images/admin/m16_02_view_profi
+le_update_request_detail.png (PNG copy)>]
+<images/forum/f14_01_guide.png, id=1792, 1371.1225pt x 903.375pt>
 File: images/forum/f14_01_guide.png Graphic file (type png)
 <use images/forum/f14_01_guide.png>
 Package pdftex.def Info: images/forum/f14_01_guide.png  used on input line 14.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [75 <./images/forum/f14_01_guide.png (PNG copy)>]
-<images/forum/f14_02_guide.png, id=1280, 1371.1225pt x 903.375pt>
+ [117 <./images/forum/f14_01_guide.png (PNG copy)>]
+<images/forum/f14_02_guide.png, id=1804, 1371.1225pt x 903.375pt>
 File: images/forum/f14_02_guide.png Graphic file (type png)
 <use images/forum/f14_02_guide.png>
 Package pdftex.def Info: images/forum/f14_02_guide.png  used on input line 37.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [76 <./images/forum/f14_02_guide.png (PNG copy)>]
-<images/forum/f14_03_guide.png, id=1291, 1371.1225pt x 903.375pt>
+ [118 <./images/forum/f14_02_guide.png (PNG copy)>]
+<images/forum/f14_03_guide.png, id=1815, 1371.1225pt x 903.375pt>
 File: images/forum/f14_03_guide.png Graphic file (type png)
 <use images/forum/f14_03_guide.png>
 Package pdftex.def Info: images/forum/f14_03_guide.png  used on input line 59.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [77 <./images/forum/f14_03_guide.png (PNG copy)>]
-<images/forum/f14_04_guide.png, id=1302, 1371.1225pt x 903.375pt>
+ [119 <./images/forum/f14_03_guide.png (PNG copy)>]
+<images/forum/f14_04_guide.png, id=1826, 1371.1225pt x 903.375pt>
 File: images/forum/f14_04_guide.png Graphic file (type png)
 <use images/forum/f14_04_guide.png>
 Package pdftex.def Info: images/forum/f14_04_guide.png  used on input line 81.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [78 <./images/forum/f14_04_guide.png (PNG copy)>]
-<images/forum/f14_05_guide.png, id=1315, 1371.1225pt x 903.375pt>
+ [120 <./images/forum/f14_04_guide.png (PNG copy)>]
+<images/forum/f14_05_guide.png, id=1839, 1371.1225pt x 903.375pt>
 File: images/forum/f14_05_guide.png Graphic file (type png)
 <use images/forum/f14_05_guide.png>
 Package pdftex.def Info: images/forum/f14_05_guide.png  used on input line 104.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [79 <./images/forum/f14_05_guide.png (PNG copy)>]
-<images/forum/f14_06_guide.png, id=1326, 1371.1225pt x 903.375pt>
+ [121 <./images/forum/f14_05_guide.png (PNG copy)>]
+<images/forum/f14_06_guide.png, id=1850, 1371.1225pt x 903.375pt>
 File: images/forum/f14_06_guide.png Graphic file (type png)
 <use images/forum/f14_06_guide.png>
 Package pdftex.def Info: images/forum/f14_06_guide.png  used on input line 126.
@@ -1324,165 +1679,167 @@ Overfull \hbox (8.52568pt too wide) in paragraph at lines 143--144
 -- \T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
  []
 
-[80 <./images/forum/f14_06_guide.png (PNG copy)>]
-<images/forum/f14_07_guide.png, id=1337, 1371.1225pt x 903.375pt>
+[122 <./images/forum/f14_06_guide.png (PNG copy)>]
+<images/forum/f14_07_guide.png, id=1861, 1371.1225pt x 903.375pt>
 File: images/forum/f14_07_guide.png Graphic file (type png)
 <use images/forum/f14_07_guide.png>
 Package pdftex.def Info: images/forum/f14_07_guide.png  used on input line 148.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
-<images/forum/f14_08_guide.png, id=1338, 1371.1225pt x 903.375pt>
+<images/forum/f14_08_guide.png, id=1862, 1371.1225pt x 903.375pt>
 File: images/forum/f14_08_guide.png Graphic file (type png)
 <use images/forum/f14_08_guide.png>
 Package pdftex.def Info: images/forum/f14_08_guide.png  used on input line 169.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [81 <./images/forum/f14_07_guide.png (PNG copy)>]
-<images/forum/f14_09_guide.png, id=1348, 1371.1225pt x 903.375pt>
+ [123 <./images/forum/f14_07_guide.png (PNG copy)>]
+<images/forum/f14_09_guide.png, id=1872, 1371.1225pt x 903.375pt>
 File: images/forum/f14_09_guide.png Graphic file (type png)
 <use images/forum/f14_09_guide.png>
 Package pdftex.def Info: images/forum/f14_09_guide.png  used on input line 190.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [82 <./images/forum/f14_08_guide.png (PNG copy)>]
+ [124 <./images/forum/f14_08_guide.png (PNG copy)>]
 Overfull \hbox (2.41792pt too wide) in paragraph at lines 206--207
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Post Likes Modal -- \
 T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
  []
 
-<images/forum/f14_10_guide.png, id=1358, 1371.1225pt x 903.375pt>
+<images/forum/f14_10_guide.png, id=1882, 1371.1225pt x 903.375pt>
 File: images/forum/f14_10_guide.png Graphic file (type png)
 <use images/forum/f14_10_guide.png>
 Package pdftex.def Info: images/forum/f14_10_guide.png  used on input line 211.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
-[83 <./images/forum/f14_09_guide.png (PNG copy)>]
+[125 <./images/forum/f14_09_guide.png (PNG copy)>]
 Overfull \hbox (9.59372pt too wide) in paragraph at lines 227--228
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Com-ments Sec-tion --
  \T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
  []
 
-<images/forum/f14_11_guide.png, id=1368, 1371.1225pt x 903.375pt>
+<images/forum/f14_11_guide.png, id=1892, 1371.1225pt x 903.375pt>
 File: images/forum/f14_11_guide.png Graphic file (type png)
 <use images/forum/f14_11_guide.png>
 Package pdftex.def Info: images/forum/f14_11_guide.png  used on input line 232.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
-[84 <./images/forum/f14_10_guide.png (PNG copy)>]
+[126 <./images/forum/f14_10_guide.png (PNG copy)>]
 Overfull \hbox (18.25786pt too wide) in paragraph at lines 248--249
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Com-ment Com-poser --
  \T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
  []
 
-<images/forum/f14_12_guide.png, id=1379, 1371.1225pt x 903.375pt>
+<images/forum/f14_12_guide.png, id=1903, 1371.1225pt x 903.375pt>
 File: images/forum/f14_12_guide.png Graphic file (type png)
 <use images/forum/f14_12_guide.png>
 Package pdftex.def Info: images/forum/f14_12_guide.png  used on input line 253.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
-[85 <./images/forum/f14_11_guide.png (PNG copy)>]
-<images/forum/f14_13_guide.png, id=1389, 1371.1225pt x 903.375pt>
+[127 <./images/forum/f14_11_guide.png (PNG copy)>]
+<images/forum/f14_13_guide.png, id=1913, 1371.1225pt x 903.375pt>
 File: images/forum/f14_13_guide.png Graphic file (type png)
 <use images/forum/f14_13_guide.png>
 Package pdftex.def Info: images/forum/f14_13_guide.png  used on input line 274.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [86 <./images/forum/f14_12_guide.png (PNG copy)>]
+ [128 <./images/forum/f14_12_guide.png (PNG copy)>]
 Overfull \hbox (0.2458pt too wide) in paragraph at lines 290--291
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Delete Com-ment -- \T
 1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
  []
 
-<images/forum/f14_14_guide.png, id=1399, 1371.1225pt x 903.375pt>
+<images/forum/f14_14_guide.png, id=1923, 1371.1225pt x 903.375pt>
 File: images/forum/f14_14_guide.png Graphic file (type png)
 <use images/forum/f14_14_guide.png>
 Package pdftex.def Info: images/forum/f14_14_guide.png  used on input line 295.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
-[87 <./images/forum/f14_13_guide.png (PNG copy)>]
-<images/forum/f14_15_guide.png, id=1409, 1371.1225pt x 903.375pt>
+[129 <./images/forum/f14_13_guide.png (PNG copy)>]
+<images/forum/f14_15_guide.png, id=1933, 1371.1225pt x 903.375pt>
 File: images/forum/f14_15_guide.png Graphic file (type png)
 <use images/forum/f14_15_guide.png>
 Package pdftex.def Info: images/forum/f14_15_guide.png  used on input line 316.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [88 <./images/forum/f14_14_guide.png (PNG copy)>]
-<images/forum/f14_16_guide.png, id=1419, 1371.1225pt x 903.375pt>
+ [130 <./images/forum/f14_14_guide.png (PNG copy)>]
+<images/forum/f14_16_guide.png, id=1943, 1371.1225pt x 903.375pt>
 File: images/forum/f14_16_guide.png Graphic file (type png)
 <use images/forum/f14_16_guide.png>
 Package pdftex.def Info: images/forum/f14_16_guide.png  used on input line 336.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [89 <./images/forum/f14_15_guide.png (PNG copy)>]
-<images/forum/f14_17_guide.png, id=1428, 1371.1225pt x 903.375pt>
+ [131 <./images/forum/f14_15_guide.png (PNG copy)>]
+<images/forum/f14_17_guide.png, id=1952, 1371.1225pt x 903.375pt>
 File: images/forum/f14_17_guide.png Graphic file (type png)
 <use images/forum/f14_17_guide.png>
 Package pdftex.def Info: images/forum/f14_17_guide.png  used on input line 356.
 
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [90 <./images/forum/f14_16_guide.png (PNG copy)>])
+
+[132 <./images/forum/f14_16_guide.png (PNG copy)>])
 (sections/sec3_m27_conversation_management.tex
-<images/conversation/c27_01_guide.png, id=1438, 1371.1225pt x 903.375pt>
+<images/conversation/c27_01_guide.png, id=1962, 1371.1225pt x 903.375pt>
 File: images/conversation/c27_01_guide.png Graphic file (type png)
 <use images/conversation/c27_01_guide.png>
 Package pdftex.def Info: images/conversation/c27_01_guide.png  used on input li
 ne 14.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [91 <./images/forum/f14_17_guide.png (PNG copy)>]
-<images/conversation/c27_02_guide.png, id=1448, 1371.1225pt x 903.375pt>
+ [133 <./images/forum/f14_17_guide.png (PNG copy)>]
+<images/conversation/c27_02_guide.png, id=1972, 1371.1225pt x 903.375pt>
 File: images/conversation/c27_02_guide.png Graphic file (type png)
 <use images/conversation/c27_02_guide.png>
 Package pdftex.def Info: images/conversation/c27_02_guide.png  used on input li
 ne 36.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [92 <./images/conversation/c27_01_guide.png (PNG copy)>]
-<images/conversation/c27_03_guide.png, id=1459, 1371.1225pt x 903.375pt>
+ [134 <./images/conversation/c27_01_guide.png (PNG copy)>]
+<images/conversation/c27_03_guide.png, id=1983, 1371.1225pt x 903.375pt>
 File: images/conversation/c27_03_guide.png Graphic file (type png)
 <use images/conversation/c27_03_guide.png>
 Package pdftex.def Info: images/conversation/c27_03_guide.png  used on input li
 ne 58.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
 
-[93 <./images/conversation/c27_02_guide.png (PNG copy)>]
-<images/conversation/c27_04_guide.png, id=1470, 1371.1225pt x 903.375pt>
+[135 <./images/conversation/c27_02_guide.png (PNG copy)>]
+<images/conversation/c27_04_guide.png, id=1994, 1371.1225pt x 903.375pt>
 File: images/conversation/c27_04_guide.png Graphic file (type png)
 <use images/conversation/c27_04_guide.png>
 Package pdftex.def Info: images/conversation/c27_04_guide.png  used on input li
 ne 80.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [94 <./images/conversation/c27_03_guide.png (PNG copy)>]
-<images/conversation/c27_05_guide.png, id=1481, 1371.1225pt x 903.375pt>
+ [136 <./images/conversation/c27_03_guide.png (PNG copy)>]
+<images/conversation/c27_05_guide.png, id=2005, 1371.1225pt x 903.375pt>
 File: images/conversation/c27_05_guide.png Graphic file (type png)
 <use images/conversation/c27_05_guide.png>
 Package pdftex.def Info: images/conversation/c27_05_guide.png  used on input li
 ne 102.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [95 <./images/conversation/c27_04_guide.png (PNG copy)>]
-<images/conversation/c27_06_guide.png, id=1492, 1371.1225pt x 903.375pt>
+ [137 <./images/conversation/c27_04_guide.png (PNG copy)>]
+<images/conversation/c27_06_guide.png, id=2016, 1371.1225pt x 903.375pt>
 File: images/conversation/c27_06_guide.png Graphic file (type png)
 <use images/conversation/c27_06_guide.png>
 Package pdftex.def Info: images/conversation/c27_06_guide.png  used on input li
 ne 123.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [96 <./images/conversation/c27_05_guide.png (PNG copy)>]
-<images/conversation/c27_07_guide.png, id=1503, 1371.1225pt x 903.375pt>
+ [138 <./images/conversation/c27_05_guide.png (PNG copy)>]
+<images/conversation/c27_07_guide.png, id=2027, 1371.1225pt x 903.375pt>
 File: images/conversation/c27_07_guide.png Graphic file (type png)
 <use images/conversation/c27_07_guide.png>
 Package pdftex.def Info: images/conversation/c27_07_guide.png  used on input li
 ne 144.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [97 <./images/conversation/c27_06_guide.png (PNG copy)>]
-<images/conversation/c27_08_send_file_guide.png, id=1513, 1371.1225pt x 903.375
+
+[139 <./images/conversation/c27_06_guide.png (PNG copy)>]
+<images/conversation/c27_08_send_file_guide.png, id=2037, 1371.1225pt x 903.375
 pt>
 File: images/conversation/c27_08_send_file_guide.png Graphic file (type png)
 <use images/conversation/c27_08_send_file_guide.png>
 Package pdftex.def Info: images/conversation/c27_08_send_file_guide.png  used o
 n input line 165.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [98 <./images/conversation/c27_07_guide.png (PNG copy)>]) (sections/sec3_m34_m
-oderation_management.tex
-[99 <./images/conversation/c27_08_send_file_guide.png (PNG copy)>]
-<images/admin/moderation/m34_01_moderation_guide.png, id=1534, 1371.1225pt x 90
+ [140 <./images/conversation/c27_07_guide.png (PNG copy)>])
+(sections/sec3_m34_moderation_management.tex [141 <./images/conversation/c27_08
+_send_file_guide.png (PNG copy)>]
+<images/admin/moderation/m34_01_moderation_guide.png, id=2058, 1371.1225pt x 90
 3.375pt>
 File: images/admin/moderation/m34_01_moderation_guide.png Graphic file (type pn
 g)
@@ -1490,47 +1847,47 @@ g)
 Package pdftex.def Info: images/admin/moderation/m34_01_moderation_guide.png  u
 sed on input line 14.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [100 <./images/admin/moderation/m34_01_moderation_guide.png (PNG copy)>]
-<images/admin/moderation/m34_02_guide.png, id=1545, 1371.1225pt x 903.375pt>
+ [142 <./images/admin/moderation/m34_01_moderation_guide.png (PNG copy)>]
+<images/admin/moderation/m34_02_guide.png, id=2069, 1371.1225pt x 903.375pt>
 File: images/admin/moderation/m34_02_guide.png Graphic file (type png)
 <use images/admin/moderation/m34_02_guide.png>
 Package pdftex.def Info: images/admin/moderation/m34_02_guide.png  used on inpu
 t line 36.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [101 <./images/admin/moderation/m34_02_guide.png (PNG copy)>]
-<images/admin/moderation/m34_03_guide.png, id=1556, 1371.1225pt x 903.375pt>
+ [143 <./images/admin/moderation/m34_02_guide.png (PNG copy)>]
+<images/admin/moderation/m34_03_guide.png, id=2080, 1371.1225pt x 903.375pt>
 File: images/admin/moderation/m34_03_guide.png Graphic file (type png)
 <use images/admin/moderation/m34_03_guide.png>
 Package pdftex.def Info: images/admin/moderation/m34_03_guide.png  used on inpu
 t line 58.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
-<images/admin/identity/m35_01_guide.png, id=1557, 1371.1225pt x 903.375pt>
+<images/admin/identity/m35_01_guide.png, id=2081, 1371.1225pt x 903.375pt>
 File: images/admin/identity/m35_01_guide.png Graphic file (type png)
 <use images/admin/identity/m35_01_guide.png>
 Package pdftex.def Info: images/admin/identity/m35_01_guide.png  used on input 
 line 79.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [102 <./images/admin/moderation/m34_03_guide.png (PNG copy)>]
+ [144 <./images/admin/moderation/m34_03_guide.png (PNG copy)>]
 Overfull \hbox (5.32852pt too wide) in paragraph at lines 96--97
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 ID Ver-i-fi-ca-tion M
 odal -- \T1/cmtt/m/n/12 /admin/identity-verifications\T1/ptm/m/n/12 . 
  []
 
-<images/admin/identity/m35_02_id_review_guide.png, id=1568, 1371.1225pt x 903.3
+<images/admin/identity/m35_02_id_review_guide.png, id=2092, 1371.1225pt x 903.3
 75pt>
 File: images/admin/identity/m35_02_id_review_guide.png Graphic file (type png)
 <use images/admin/identity/m35_02_id_review_guide.png>
 Package pdftex.def Info: images/admin/identity/m35_02_id_review_guide.png  used
  on input line 101.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
-[103 <./images/admin/identity/m35_01_guide.png (PNG copy)>]
+[145 <./images/admin/identity/m35_01_guide.png (PNG copy)>]
 Overfull \hbox (5.32852pt too wide) in paragraph at lines 119--120
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 ID Ver-i-fi-ca-tion M
 odal -- \T1/cmtt/m/n/12 /admin/identity-verifications\T1/ptm/m/n/12 . 
  []
 
-[104 <./images/admin/identity/m35_02_id_review_guide.png (PNG copy)>]
-<images/admin/identity/m35_03_guide.png, id=1590, 1371.1225pt x 903.375pt>
+[146 <./images/admin/identity/m35_02_id_review_guide.png (PNG copy)>]
+<images/admin/identity/m35_03_guide.png, id=2114, 1371.1225pt x 903.375pt>
 File: images/admin/identity/m35_03_guide.png Graphic file (type png)
 <use images/admin/identity/m35_03_guide.png>
 Package pdftex.def Info: images/admin/identity/m35_03_guide.png  used on input 
@@ -1542,58 +1899,58 @@ Overfull \hbox (5.32852pt too wide) in paragraph at lines 141--142
 odal -- \T1/cmtt/m/n/12 /admin/identity-verifications\T1/ptm/m/n/12 . 
  []
 
-[105 <./images/admin/identity/m35_03_guide.png (PNG copy)>]
-<images/admin/identity/m35_04_guide.png, id=1601, 1371.1225pt x 903.375pt>
+[147 <./images/admin/identity/m35_03_guide.png (PNG copy)>]
+<images/admin/identity/m35_04_guide.png, id=2125, 1371.1225pt x 903.375pt>
 File: images/admin/identity/m35_04_guide.png Graphic file (type png)
 <use images/admin/identity/m35_04_guide.png>
 Package pdftex.def Info: images/admin/identity/m35_04_guide.png  used on input 
 line 146.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [106 <./images/admin/identity/m35_04_guide.png (PNG copy)>]
-<images/admin/trash/m36_01_trash_guide.png, id=1612, 1371.1225pt x 903.375pt>
+ [148 <./images/admin/identity/m35_04_guide.png (PNG copy)>]
+<images/admin/trash/m36_01_trash_guide.png, id=2136, 1371.1225pt x 903.375pt>
 File: images/admin/trash/m36_01_trash_guide.png Graphic file (type png)
 <use images/admin/trash/m36_01_trash_guide.png>
 Package pdftex.def Info: images/admin/trash/m36_01_trash_guide.png  used on inp
 ut line 168.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
-<images/admin/trash/m36_02_guide.png, id=1613, 1371.1225pt x 903.375pt>
+<images/admin/trash/m36_02_guide.png, id=2137, 1371.1225pt x 903.375pt>
 File: images/admin/trash/m36_02_guide.png Graphic file (type png)
 <use images/admin/trash/m36_02_guide.png>
 Package pdftex.def Info: images/admin/trash/m36_02_guide.png  used on input lin
 e 190.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [107 <./images/admin/trash/m36_01_trash_guide.png (PNG copy)>]
-<images/admin/trash/m36_03_guide.png, id=1624, 1371.1225pt x 903.375pt>
+ [149 <./images/admin/trash/m36_01_trash_guide.png (PNG copy)>]
+<images/admin/trash/m36_03_guide.png, id=2148, 1371.1225pt x 903.375pt>
 File: images/admin/trash/m36_03_guide.png Graphic file (type png)
 <use images/admin/trash/m36_03_guide.png>
 Package pdftex.def Info: images/admin/trash/m36_03_guide.png  used on input lin
 e 211.
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [108 <./images/admin/trash/m36_02_guide.png (PNG copy)>]) (sections/sec3_m44_a
+ [150 <./images/admin/trash/m36_02_guide.png (PNG copy)>]) (sections/sec3_m44_a
 i_features.tex
-<images/ai/ai_moderate_guide.png, id=1635, 1371.1225pt x 903.375pt>
+<images/ai/ai_moderate_guide.png, id=2159, 1371.1225pt x 903.375pt>
 File: images/ai/ai_moderate_guide.png Graphic file (type png)
 <use images/ai/ai_moderate_guide.png>
 Package pdftex.def Info: images/ai/ai_moderate_guide.png  used on input line 14
 .
 (pdftex.def)             Requested size: 409.71692pt x 269.9394pt.
- [109 <./images/admin/trash/m36_03_guide.png (PNG copy)>]
+ [151 <./images/admin/trash/m36_03_guide.png (PNG copy)>]
 Overfull \hbox (18.40152pt too wide) in paragraph at lines 32--33
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Pro-file & Trust Set-
 tings (Iden-tity Tab) -- \T1/cmtt/m/n/12 /freelancer/profile\T1/ptm/m/n/12 . 
  []
 
-[110 <./images/ai/ai_moderate_guide.png (PNG copy)>]
-<images/ai/ai_face_scan_guide.png, id=1656, 1427.3325pt x 1080.035pt>
+[152 <./images/ai/ai_moderate_guide.png (PNG copy)>]
+<images/ai/ai_face_scan_guide.png, id=2180, 1427.3325pt x 1080.035pt>
 File: images/ai/ai_face_scan_guide.png Graphic file (type png)
 <use images/ai/ai_face_scan_guide.png>
 Package pdftex.def Info: images/ai/ai_face_scan_guide.png  used on input line 3
 7.
 (pdftex.def)             Requested size: 409.71692pt x 310.0215pt.
 )
-(sections/sec3_m13_contract_management.tex [111 <./images/ai/ai_face_scan_guide
+(sections/sec3_m13_contract_management.tex [153 <./images/ai/ai_face_scan_guide
 .png (PNG copy)>]
-<images/contracts/m13_01_create_contract_guide.png, id=1667, 1445.4pt x 903.375
+<images/contracts/m13_01_create_contract_guide.png, id=2191, 1445.4pt x 903.375
 pt>
 File: images/contracts/m13_01_create_contract_guide.png Graphic file (type png)
 
@@ -1601,8 +1958,8 @@ File: images/contracts/m13_01_create_contract_guide.png Graphic file (type png)
 Package pdftex.def Info: images/contracts/m13_01_create_contract_guide.png  use
 d on input line 20.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [112 <./images/contracts/m13_01_create_contract_guide.png (PNG copy)>] [113]
-<images/contracts/m13_02_update_contract_guide.png, id=1683, 1445.4pt x 903.375
+ [154 <./images/contracts/m13_01_create_contract_guide.png (PNG copy)>] [155]
+<images/contracts/m13_02_update_contract_guide.png, id=2207, 1445.4pt x 903.375
 pt>
 File: images/contracts/m13_02_update_contract_guide.png Graphic file (type png)
 
@@ -1610,8 +1967,8 @@ File: images/contracts/m13_02_update_contract_guide.png Graphic file (type png)
 Package pdftex.def Info: images/contracts/m13_02_update_contract_guide.png  use
 d on input line 47.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [114 <./images/contracts/m13_02_update_contract_guide.png (PNG copy)>]
-<images/contracts/m13_03_view_contracts_list_guide.png, id=1696, 1445.4pt x 903
+ [156 <./images/contracts/m13_02_update_contract_guide.png (PNG copy)>]
+<images/contracts/m13_03_view_contracts_list_guide.png, id=2220, 1445.4pt x 903
 .375pt>
 File: images/contracts/m13_03_view_contracts_list_guide.png Graphic file (type 
 png)
@@ -1619,8 +1976,8 @@ png)
 Package pdftex.def Info: images/contracts/m13_03_view_contracts_list_guide.png 
  used on input line 74.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [115 <./images/contracts/m13_03_view_contracts_list_guide.png (PNG copy)>]
-<images/contracts/m13_04_view_contract_detail_guide.png, id=1708, 1445.4pt x 90
+ [157 <./images/contracts/m13_03_view_contracts_list_guide.png (PNG copy)>]
+<images/contracts/m13_04_view_contract_detail_guide.png, id=2232, 1445.4pt x 90
 3.375pt>
 File: images/contracts/m13_04_view_contract_detail_guide.png Graphic file (type
  png)
@@ -1628,16 +1985,16 @@ File: images/contracts/m13_04_view_contract_detail_guide.png Graphic file (type
 Package pdftex.def Info: images/contracts/m13_04_view_contract_detail_guide.png
   used on input line 101.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [116 <./images/contracts/m13_04_view_contract_detail_guide.png (PNG copy)>]
-<images/contracts/m13_05_sign_contract_guide.png, id=1720, 1445.4pt x 903.375pt
+ [158 <./images/contracts/m13_04_view_contract_detail_guide.png (PNG copy)>]
+<images/contracts/m13_05_sign_contract_guide.png, id=2244, 1445.4pt x 903.375pt
 >
 File: images/contracts/m13_05_sign_contract_guide.png Graphic file (type png)
 <use images/contracts/m13_05_sign_contract_guide.png>
 Package pdftex.def Info: images/contracts/m13_05_sign_contract_guide.png  used 
 on input line 128.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-[117 <./images/contracts/m13_05_sign_contract_guide.png (PNG copy)>]
-<images/contracts/m13_06_export_contract_pdf_guide.png, id=1730, 1445.4pt x 903
+[159 <./images/contracts/m13_05_sign_contract_guide.png (PNG copy)>]
+<images/contracts/m13_06_export_contract_pdf_guide.png, id=2254, 1445.4pt x 903
 .375pt>
 File: images/contracts/m13_06_export_contract_pdf_guide.png Graphic file (type 
 png)
@@ -1652,13 +2009,13 @@ Con-firm the Con-tract ID (e.g., \T1/cmtt/m/n/12 #CON-2026-0013\T1/ptm/m/n/12 )
 ,
  []
 
-[118 <./images/contracts/m13_06_export_contract_pdf_guide.png (PNG copy)>]
+[160 <./images/contracts/m13_06_export_contract_pdf_guide.png (PNG copy)>]
 Underfull \hbox (badness 1436) in paragraph at lines 173--174
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Can-cel Con-tract Con
 -fir-ma-tion Modal -- \T1/cmtt/m/n/12 /[role]/
  []
 
-<images/contracts/m13_07_cancel_contract_guide.png, id=1740, 1445.4pt x 903.375
+<images/contracts/m13_07_cancel_contract_guide.png, id=2264, 1445.4pt x 903.375
 pt>
 File: images/contracts/m13_07_cancel_contract_guide.png Graphic file (type png)
 
@@ -1666,8 +2023,8 @@ File: images/contracts/m13_07_cancel_contract_guide.png Graphic file (type png)
 Package pdftex.def Info: images/contracts/m13_07_cancel_contract_guide.png  use
 d on input line 178.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-[119 <./images/contracts/m13_07_cancel_contract_guide.png (PNG copy)>]
-<images/contracts/m13_08_complete_contract_guide.png, id=1750, 1445.4pt x 903.3
+[161 <./images/contracts/m13_07_cancel_contract_guide.png (PNG copy)>]
+<images/contracts/m13_08_complete_contract_guide.png, id=2274, 1445.4pt x 903.3
 75pt>
 File: images/contracts/m13_08_complete_contract_guide.png Graphic file (type pn
 g)
@@ -1675,8 +2032,8 @@ g)
 Package pdftex.def Info: images/contracts/m13_08_complete_contract_guide.png  u
 sed on input line 203.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [120 <./images/contracts/m13_08_complete_contract_guide.png (PNG copy)>]
-<images/contracts/m13_09_view_contract_files_guide.png, id=1761, 1445.4pt x 903
+ [162 <./images/contracts/m13_08_complete_contract_guide.png (PNG copy)>]
+<images/contracts/m13_09_view_contract_files_guide.png, id=2285, 1445.4pt x 903
 .375pt>
 File: images/contracts/m13_09_view_contract_files_guide.png Graphic file (type 
 png)
@@ -1684,8 +2041,8 @@ png)
 Package pdftex.def Info: images/contracts/m13_09_view_contract_files_guide.png 
  used on input line 228.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [121 <./images/contracts/m13_09_view_contract_files_guide.png (PNG copy)>]
-<images/contracts/m13_10_upload_contract_file_guide.png, id=1771, 1445.4pt x 83
+ [163 <./images/contracts/m13_09_view_contract_files_guide.png (PNG copy)>]
+<images/contracts/m13_10_upload_contract_file_guide.png, id=2295, 1445.4pt x 83
 6.12375pt>
 File: images/contracts/m13_10_upload_contract_file_guide.png Graphic file (type
  png)
@@ -1693,8 +2050,8 @@ File: images/contracts/m13_10_upload_contract_file_guide.png Graphic file (type
 Package pdftex.def Info: images/contracts/m13_10_upload_contract_file_guide.png
   used on input line 253.
 (pdftex.def)             Requested size: 409.71692pt x 237.00916pt.
- [122 <./images/contracts/m13_10_upload_contract_file_guide.png (PNG copy)>]
-<images/contracts/m13_11_delete_contract_file_guide.png, id=1782, 1445.4pt x 76
+ [164 <./images/contracts/m13_10_upload_contract_file_guide.png (PNG copy)>]
+<images/contracts/m13_11_delete_contract_file_guide.png, id=2306, 1445.4pt x 76
 8.8725pt>
 File: images/contracts/m13_11_delete_contract_file_guide.png Graphic file (type
  png)
@@ -1702,8 +2059,8 @@ File: images/contracts/m13_11_delete_contract_file_guide.png Graphic file (type
 Package pdftex.def Info: images/contracts/m13_11_delete_contract_file_guide.png
   used on input line 279.
 (pdftex.def)             Requested size: 409.71692pt x 217.946pt.
- [123 <./images/contracts/m13_11_delete_contract_file_guide.png (PNG copy)>]
-<images/contracts/m13_12_reject_contract_offer_guide.png, id=1792, 1445.4pt x 9
+ [165 <./images/contracts/m13_11_delete_contract_file_guide.png (PNG copy)>]
+<images/contracts/m13_12_reject_contract_offer_guide.png, id=2316, 1445.4pt x 9
 03.375pt>
 File: images/contracts/m13_12_reject_contract_offer_guide.png Graphic file (typ
 e png)
@@ -1712,9 +2069,9 @@ Package pdftex.def Info: images/contracts/m13_12_reject_contract_offer_guide.pn
 g  used on input line 304.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
 )
-(sections/sec3_m24_milestone_management.tex [124 <./images/contracts/m13_12_rej
+(sections/sec3_m24_milestone_management.tex [166 <./images/contracts/m13_12_rej
 ect_contract_offer_guide.png (PNG copy)>]
-<images/milestones/m24_01_view_milestone_list_guide.png, id=1803, 1445.4pt x 90
+<images/milestones/m24_01_view_milestone_list_guide.png, id=2327, 1445.4pt x 90
 3.375pt>
 File: images/milestones/m24_01_view_milestone_list_guide.png Graphic file (type
  png)
@@ -1722,9 +2079,9 @@ File: images/milestones/m24_01_view_milestone_list_guide.png Graphic file (type
 Package pdftex.def Info: images/milestones/m24_01_view_milestone_list_guide.png
   used on input line 21.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [125 <./images/milestones/m24_01_view_milestone_list_guide.png (PNG copy)>] [1
-26]
-<images/milestones/m24_02_view_milestone_detail_guide.png, id=1820, 1445.4pt x 
+ [167 <./images/milestones/m24_01_view_milestone_list_guide.png (PNG copy)>] [1
+68]
+<images/milestones/m24_02_view_milestone_detail_guide.png, id=2344, 1445.4pt x 
 903.375pt>
 File: images/milestones/m24_02_view_milestone_detail_guide.png Graphic file (ty
 pe png)
@@ -1732,8 +2089,8 @@ pe png)
 Package pdftex.def Info: images/milestones/m24_02_view_milestone_detail_guide.p
 ng  used on input line 48.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [127 <./images/milestones/m24_02_view_milestone_detail_guide.png (PNG copy)>]
-<images/milestones/m24_03_create_milestone_guide.png, id=1831, 1445.4pt x 903.3
+ [169 <./images/milestones/m24_02_view_milestone_detail_guide.png (PNG copy)>]
+<images/milestones/m24_03_create_milestone_guide.png, id=2355, 1445.4pt x 903.3
 75pt>
 File: images/milestones/m24_03_create_milestone_guide.png Graphic file (type pn
 g)
@@ -1741,8 +2098,8 @@ g)
 Package pdftex.def Info: images/milestones/m24_03_create_milestone_guide.png  u
 sed on input line 74.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [128 <./images/milestones/m24_03_create_milestone_guide.png (PNG copy)>]
-<images/milestones/m24_04_update_milestone_guide.png, id=1842, 1445.4pt x 903.3
+ [170 <./images/milestones/m24_03_create_milestone_guide.png (PNG copy)>]
+<images/milestones/m24_04_update_milestone_guide.png, id=2366, 1445.4pt x 903.3
 75pt>
 File: images/milestones/m24_04_update_milestone_guide.png Graphic file (type pn
 g)
@@ -1750,8 +2107,8 @@ g)
 Package pdftex.def Info: images/milestones/m24_04_update_milestone_guide.png  u
 sed on input line 100.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [129 <./images/milestones/m24_04_update_milestone_guide.png (PNG copy)>]
-<images/milestones/m24_05_delete_milestone_guide.png, id=1853, 1445.4pt x 903.3
+ [171 <./images/milestones/m24_04_update_milestone_guide.png (PNG copy)>]
+<images/milestones/m24_05_delete_milestone_guide.png, id=2377, 1445.4pt x 903.3
 75pt>
 File: images/milestones/m24_05_delete_milestone_guide.png Graphic file (type pn
 g)
@@ -1759,13 +2116,13 @@ g)
 Package pdftex.def Info: images/milestones/m24_05_delete_milestone_guide.png  u
 sed on input line 126.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [130 <./images/milestones/m24_05_delete_milestone_guide.png (PNG copy)>]
+ [172 <./images/milestones/m24_05_delete_milestone_guide.png (PNG copy)>]
 Underfull \hbox (badness 1107) in paragraph at lines 146--147
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Free-lancer Mile-ston
 es Workspace -- \T1/cmtt/m/n/12 /freelancer/
  []
 
-<images/milestones/m24_06_update_milestone_progress_guide.png, id=1863, 1445.4p
+<images/milestones/m24_06_update_milestone_progress_guide.png, id=2387, 1445.4p
 t x 903.375pt>
 File: images/milestones/m24_06_update_milestone_progress_guide.png Graphic file
  (type png)
@@ -1773,9 +2130,9 @@ File: images/milestones/m24_06_update_milestone_progress_guide.png Graphic file
 Package pdftex.def Info: images/milestones/m24_06_update_milestone_progress_gui
 de.png  used on input line 151.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
-[131 <./images/milestones/m24_06_update_milestone_progress_guide.png (PNG copy)
+[173 <./images/milestones/m24_06_update_milestone_progress_guide.png (PNG copy)
 >]
-<images/milestones/m25_01_view_milestone_files_guide.png, id=1873, 1445.4pt x 9
+<images/milestones/m25_01_view_milestone_files_guide.png, id=2397, 1445.4pt x 9
 03.375pt>
 File: images/milestones/m25_01_view_milestone_files_guide.png Graphic file (typ
 e png)
@@ -1783,8 +2140,8 @@ e png)
 Package pdftex.def Info: images/milestones/m25_01_view_milestone_files_guide.pn
 g  used on input line 176.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [132 <./images/milestones/m25_01_view_milestone_files_guide.png (PNG copy)>]
-<images/milestones/m25_02_upload_milestone_file_guide.png, id=1885, 1445.4pt x 
+ [174 <./images/milestones/m25_01_view_milestone_files_guide.png (PNG copy)>]
+<images/milestones/m25_02_upload_milestone_file_guide.png, id=2409, 1445.4pt x 
 835.12pt>
 File: images/milestones/m25_02_upload_milestone_file_guide.png Graphic file (ty
 pe png)
@@ -1792,8 +2149,8 @@ pe png)
 Package pdftex.def Info: images/milestones/m25_02_upload_milestone_file_guide.p
 ng  used on input line 202.
 (pdftex.def)             Requested size: 409.71692pt x 236.72464pt.
-[133 <./images/milestones/m25_02_upload_milestone_file_guide.png (PNG copy)>]
-<images/milestones/m25_03_delete_milestone_file_guide.png, id=1896, 1445.4pt x 
+[175 <./images/milestones/m25_02_upload_milestone_file_guide.png (PNG copy)>]
+<images/milestones/m25_03_delete_milestone_file_guide.png, id=2420, 1445.4pt x 
 769.87625pt>
 File: images/milestones/m25_03_delete_milestone_file_guide.png Graphic file (ty
 pe png)
@@ -1802,8 +2159,8 @@ Package pdftex.def Info: images/milestones/m25_03_delete_milestone_file_guide.p
 ng  used on input line 228.
 (pdftex.def)             Requested size: 409.71692pt x 218.23053pt.
 
-[134 <./images/milestones/m25_03_delete_milestone_file_guide.png (PNG copy)>]
-<images/milestones/m26_01_submit_milestone_guide.png, id=1906, 1445.4pt x 903.3
+[176 <./images/milestones/m25_03_delete_milestone_file_guide.png (PNG copy)>]
+<images/milestones/m26_01_submit_milestone_guide.png, id=2430, 1445.4pt x 903.3
 75pt>
 File: images/milestones/m26_01_submit_milestone_guide.png Graphic file (type pn
 g)
@@ -1812,8 +2169,8 @@ Package pdftex.def Info: images/milestones/m26_01_submit_milestone_guide.png  u
 sed on input line 253.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
 
-[135 <./images/milestones/m26_01_submit_milestone_guide.png (PNG copy)>]
-<images/milestones/m26_02_view_submission_list_guide.png, id=1918, 1445.4pt x 9
+[177 <./images/milestones/m26_01_submit_milestone_guide.png (PNG copy)>]
+<images/milestones/m26_02_view_submission_list_guide.png, id=2442, 1445.4pt x 9
 03.375pt>
 File: images/milestones/m26_02_view_submission_list_guide.png Graphic file (typ
 e png)
@@ -1822,8 +2179,8 @@ Package pdftex.def Info: images/milestones/m26_02_view_submission_list_guide.pn
 g  used on input line 280.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
 
-[136 <./images/milestones/m26_02_view_submission_list_guide.png (PNG copy)>]
-<images/milestones/m26_03_view_submission_detail_guide.png, id=1928, 1445.4pt x
+[178 <./images/milestones/m26_02_view_submission_list_guide.png (PNG copy)>]
+<images/milestones/m26_03_view_submission_detail_guide.png, id=2452, 1445.4pt x
  834.11626pt>
 File: images/milestones/m26_03_view_submission_detail_guide.png Graphic file (t
 ype png)
@@ -1832,8 +2189,8 @@ Package pdftex.def Info: images/milestones/m26_03_view_submission_detail_guide.
 png  used on input line 305.
 (pdftex.def)             Requested size: 409.71692pt x 236.44012pt.
 
-[137 <./images/milestones/m26_03_view_submission_detail_guide.png (PNG copy)>]
-<images/milestones/m26_04_request_milestone_changes_guide.png, id=1939, 1445.4p
+[179 <./images/milestones/m26_03_view_submission_detail_guide.png (PNG copy)>]
+<images/milestones/m26_04_request_milestone_changes_guide.png, id=2463, 1445.4p
 t x 772.8875pt>
 File: images/milestones/m26_04_request_milestone_changes_guide.png Graphic file
  (type png)
@@ -1842,9 +2199,9 @@ Package pdftex.def Info: images/milestones/m26_04_request_milestone_changes_gui
 de.png  used on input line 331.
 (pdftex.def)             Requested size: 409.71692pt x 219.08409pt.
 
-[138 <./images/milestones/m26_04_request_milestone_changes_guide.png (PNG copy)
+[180 <./images/milestones/m26_04_request_milestone_changes_guide.png (PNG copy)
 >]
-<images/milestones/m26_05_approve_milestone_guide.png, id=1952, 1445.4pt x 834.
+<images/milestones/m26_05_approve_milestone_guide.png, id=2476, 1445.4pt x 834.
 11626pt>
 File: images/milestones/m26_05_approve_milestone_guide.png Graphic file (type p
 ng)
@@ -1852,16 +2209,16 @@ ng)
 Package pdftex.def Info: images/milestones/m26_05_approve_milestone_guide.png  
 used on input line 358.
 (pdftex.def)             Requested size: 409.71692pt x 236.44012pt.
-) (sections/sec3_m33_dispute_management.tex [139 <./images/milestones/m26_05_ap
+) (sections/sec3_m33_dispute_management.tex [181 <./images/milestones/m26_05_ap
 prove_milestone_guide.png (PNG copy)>]
-<images/disputes/m33_01_open_dispute_guide.png, id=1963, 1445.4pt x 903.375pt>
+<images/disputes/m33_01_open_dispute_guide.png, id=2487, 1445.4pt x 903.375pt>
 File: images/disputes/m33_01_open_dispute_guide.png Graphic file (type png)
 <use images/disputes/m33_01_open_dispute_guide.png>
 Package pdftex.def Info: images/disputes/m33_01_open_dispute_guide.png  used on
  input line 20.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [140 <./images/disputes/m33_01_open_dispute_guide.png (PNG copy)>] [141]
-<images/disputes/m33_02_view_dispute_list_guide.png, id=1979, 1445.4pt x 903.37
+ [182 <./images/disputes/m33_01_open_dispute_guide.png (PNG copy)>] [183]
+<images/disputes/m33_02_view_dispute_list_guide.png, id=2503, 1445.4pt x 903.37
 5pt>
 File: images/disputes/m33_02_view_dispute_list_guide.png Graphic file (type png
 )
@@ -1869,8 +2226,8 @@ File: images/disputes/m33_02_view_dispute_list_guide.png Graphic file (type png
 Package pdftex.def Info: images/disputes/m33_02_view_dispute_list_guide.png  us
 ed on input line 47.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [142 <./images/disputes/m33_02_view_dispute_list_guide.png (PNG copy)>]
-<images/disputes/m33_03_view_dispute_detail_guide.png, id=1990, 1445.4pt x 903.
+ [184 <./images/disputes/m33_02_view_dispute_list_guide.png (PNG copy)>]
+<images/disputes/m33_03_view_dispute_detail_guide.png, id=2514, 1445.4pt x 903.
 375pt>
 File: images/disputes/m33_03_view_dispute_detail_guide.png Graphic file (type p
 ng)
@@ -1878,13 +2235,13 @@ ng)
 Package pdftex.def Info: images/disputes/m33_03_view_dispute_detail_guide.png  
 used on input line 73.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [143 <./images/disputes/m33_03_view_dispute_detail_guide.png (PNG copy)>]
+ [185 <./images/disputes/m33_03_view_dispute_detail_guide.png (PNG copy)>]
 Underfull \hbox (badness 1303) in paragraph at lines 94--95
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Mile-stone De-tail Di
 s-pute Lock View -- \T1/cmtt/m/n/12 /[role]/
  []
 
-<images/disputes/m33_04_view_dispute_by_milestone_guide.png, id=2001, 1445.4pt 
+<images/disputes/m33_04_view_dispute_by_milestone_guide.png, id=2525, 1445.4pt 
 x 771.88374pt>
 File: images/disputes/m33_04_view_dispute_by_milestone_guide.png Graphic file (
 type png)
@@ -1892,8 +2249,8 @@ type png)
 Package pdftex.def Info: images/disputes/m33_04_view_dispute_by_milestone_guide
 .png  used on input line 99.
 (pdftex.def)             Requested size: 409.71692pt x 218.79958pt.
-[144 <./images/disputes/m33_04_view_dispute_by_milestone_guide.png (PNG copy)>]
-<images/disputes/m33_05_respond_to_dispute_guide.png, id=2012, 1445.4pt x 768.8
+[186 <./images/disputes/m33_04_view_dispute_by_milestone_guide.png (PNG copy)>]
+<images/disputes/m33_05_respond_to_dispute_guide.png, id=2536, 1445.4pt x 768.8
 725pt>
 File: images/disputes/m33_05_respond_to_dispute_guide.png Graphic file (type pn
 g)
@@ -1901,8 +2258,8 @@ g)
 Package pdftex.def Info: images/disputes/m33_05_respond_to_dispute_guide.png  u
 sed on input line 124.
 (pdftex.def)             Requested size: 409.71692pt x 217.946pt.
-[145 <./images/disputes/m33_05_respond_to_dispute_guide.png (PNG copy)>]
-<images/disputes/m33_06_withdraw_dispute_guide.png, id=2023, 1445.4pt x 771.883
+[187 <./images/disputes/m33_05_respond_to_dispute_guide.png (PNG copy)>]
+<images/disputes/m33_06_withdraw_dispute_guide.png, id=2547, 1445.4pt x 771.883
 74pt>
 File: images/disputes/m33_06_withdraw_dispute_guide.png Graphic file (type png)
 
@@ -1911,8 +2268,8 @@ Package pdftex.def Info: images/disputes/m33_06_withdraw_dispute_guide.png  use
 d on input line 150.
 (pdftex.def)             Requested size: 409.71692pt x 218.79958pt.
 
-[146 <./images/disputes/m33_06_withdraw_dispute_guide.png (PNG copy)>]
-<images/disputes/m33_07_escalate_dispute_guide.png, id=2033, 1445.4pt x 773.891
+[188 <./images/disputes/m33_06_withdraw_dispute_guide.png (PNG copy)>]
+<images/disputes/m33_07_escalate_dispute_guide.png, id=2557, 1445.4pt x 773.891
 25pt>
 File: images/disputes/m33_07_escalate_dispute_guide.png Graphic file (type png)
 
@@ -1920,8 +2277,8 @@ File: images/disputes/m33_07_escalate_dispute_guide.png Graphic file (type png)
 Package pdftex.def Info: images/disputes/m33_07_escalate_dispute_guide.png  use
 d on input line 175.
 (pdftex.def)             Requested size: 409.71692pt x 219.36862pt.
- [147 <./images/disputes/m33_07_escalate_dispute_guide.png (PNG copy)>]
-<images/disputes/m33_08_view_expert_dispute_list_guide.png, id=2043, 1445.4pt x
+ [189 <./images/disputes/m33_07_escalate_dispute_guide.png (PNG copy)>]
+<images/disputes/m33_08_view_expert_dispute_list_guide.png, id=2567, 1445.4pt x
  903.375pt>
 File: images/disputes/m33_08_view_expert_dispute_list_guide.png Graphic file (t
 ype png)
@@ -1929,8 +2286,8 @@ ype png)
 Package pdftex.def Info: images/disputes/m33_08_view_expert_dispute_list_guide.
 png  used on input line 200.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [148 <./images/disputes/m33_08_view_expert_dispute_list_guide.png (PNG copy)>]
-<images/disputes/m33_09_view_expert_dispute_detail_guide.png, id=2054, 1445.4pt
+ [190 <./images/disputes/m33_08_view_expert_dispute_list_guide.png (PNG copy)>]
+<images/disputes/m33_09_view_expert_dispute_detail_guide.png, id=2578, 1445.4pt
  x 903.375pt>
 File: images/disputes/m33_09_view_expert_dispute_detail_guide.png Graphic file 
 (type png)
@@ -1938,9 +2295,9 @@ File: images/disputes/m33_09_view_expert_dispute_detail_guide.png Graphic file
 Package pdftex.def Info: images/disputes/m33_09_view_expert_dispute_detail_guid
 e.png  used on input line 226.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [149 <./images/disputes/m33_09_view_expert_dispute_detail_guide.png (PNG copy)
+ [191 <./images/disputes/m33_09_view_expert_dispute_detail_guide.png (PNG copy)
 >]
-<images/disputes/m33_10_expert_decision_guide.png, id=2065, 1445.4pt x 714.67pt
+<images/disputes/m33_10_expert_decision_guide.png, id=2589, 1445.4pt x 714.67pt
 >
 File: images/disputes/m33_10_expert_decision_guide.png Graphic file (type png)
 <use images/disputes/m33_10_expert_decision_guide.png>
@@ -1948,17 +2305,17 @@ Package pdftex.def Info: images/disputes/m33_10_expert_decision_guide.png  used
  on input line 252.
 (pdftex.def)             Requested size: 409.71692pt x 202.58165pt.
 )
-(sections/sec3_m43_payment_escrow.tex [150 <./images/disputes/m33_10_expert_dec
+(sections/sec3_m43_payment_escrow.tex [192 <./images/disputes/m33_10_expert_dec
 ision_guide.png (PNG copy)>]
-<images/payments/m43_01_connect_stripe_guide.png, id=2078, 1445.4pt x 903.375pt
+<images/payments/m43_01_connect_stripe_guide.png, id=2602, 1445.4pt x 903.375pt
 >
 File: images/payments/m43_01_connect_stripe_guide.png Graphic file (type png)
 <use images/payments/m43_01_connect_stripe_guide.png>
 Package pdftex.def Info: images/payments/m43_01_connect_stripe_guide.png  used 
 on input line 20.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [151 <./images/payments/m43_01_connect_stripe_guide.png (PNG copy)>] [152]
-<images/payments/m43_02_check_stripe_status_guide.png, id=2093, 1445.4pt x 903.
+ [193 <./images/payments/m43_01_connect_stripe_guide.png (PNG copy)>] [194]
+<images/payments/m43_02_check_stripe_status_guide.png, id=2617, 1445.4pt x 903.
 375pt>
 File: images/payments/m43_02_check_stripe_status_guide.png Graphic file (type p
 ng)
@@ -1972,8 +2329,8 @@ Overfull \hbox (46.55312pt too wide) in paragraph at lines 52--53
 sh icon to trig-ger \T1/cmtt/m/n/12 GET /api/payments/connect/status
  []
 
-[153 <./images/payments/m43_02_check_stripe_status_guide.png (PNG copy)>]
-<images/payments/m43_03_view_payment_methods_guide.png, id=2104, 1445.4pt x 903
+[195 <./images/payments/m43_02_check_stripe_status_guide.png (PNG copy)>]
+<images/payments/m43_03_view_payment_methods_guide.png, id=2628, 1445.4pt x 903
 .375pt>
 File: images/payments/m43_03_view_payment_methods_guide.png Graphic file (type 
 png)
@@ -1982,8 +2339,8 @@ Package pdftex.def Info: images/payments/m43_03_view_payment_methods_guide.png
  used on input line 72.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
 
-[154 <./images/payments/m43_03_view_payment_methods_guide.png (PNG copy)>]
-<images/payments/m43_04_set_default_payment_method_guide.png, id=2114, 1445.4pt
+[196 <./images/payments/m43_03_view_payment_methods_guide.png (PNG copy)>]
+<images/payments/m43_04_set_default_payment_method_guide.png, id=2638, 1445.4pt
  x 903.375pt>
 File: images/payments/m43_04_set_default_payment_method_guide.png Graphic file 
 (type png)
@@ -1992,9 +2349,9 @@ Package pdftex.def Info: images/payments/m43_04_set_default_payment_method_guid
 e.png  used on input line 97.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
 
-[155 <./images/payments/m43_04_set_default_payment_method_guide.png (PNG copy)>
+[197 <./images/payments/m43_04_set_default_payment_method_guide.png (PNG copy)>
 ]
-<images/payments/m43_05_remove_payment_method_guide.png, id=2124, 1445.4pt x 90
+<images/payments/m43_05_remove_payment_method_guide.png, id=2648, 1445.4pt x 90
 3.375pt>
 File: images/payments/m43_05_remove_payment_method_guide.png Graphic file (type
  png)
@@ -2002,8 +2359,8 @@ File: images/payments/m43_05_remove_payment_method_guide.png Graphic file (type
 Package pdftex.def Info: images/payments/m43_05_remove_payment_method_guide.png
   used on input line 122.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
- [156 <./images/payments/m43_05_remove_payment_method_guide.png (PNG copy)>]
-<images/payments/m43_06_contract_hold_deposit_guide.png, id=2135, 1445.4pt x 83
+ [198 <./images/payments/m43_05_remove_payment_method_guide.png (PNG copy)>]
+<images/payments/m43_06_contract_hold_deposit_guide.png, id=2659, 1445.4pt x 83
 4.11626pt>
 File: images/payments/m43_06_contract_hold_deposit_guide.png Graphic file (type
  png)
@@ -2012,8 +2369,8 @@ Package pdftex.def Info: images/payments/m43_06_contract_hold_deposit_guide.png
   used on input line 147.
 (pdftex.def)             Requested size: 409.71692pt x 236.44012pt.
 
-[157 <./images/payments/m43_06_contract_hold_deposit_guide.png (PNG copy)>]
-<images/payments/m43_07_fund_milestone_checkout_guide.png, id=2146, 1445.4pt x 
+[199 <./images/payments/m43_06_contract_hold_deposit_guide.png (PNG copy)>]
+<images/payments/m43_07_fund_milestone_checkout_guide.png, id=2670, 1445.4pt x 
 834.11626pt>
 File: images/payments/m43_07_fund_milestone_checkout_guide.png Graphic file (ty
 pe png)
@@ -2022,8 +2379,8 @@ Package pdftex.def Info: images/payments/m43_07_fund_milestone_checkout_guide.p
 ng  used on input line 173.
 (pdftex.def)             Requested size: 409.71692pt x 236.44012pt.
 
-[158 <./images/payments/m43_07_fund_milestone_checkout_guide.png (PNG copy)>]
-<images/payments/m43_08_fund_milestone_saved_card_guide.png, id=2157, 1445.4pt 
+[200 <./images/payments/m43_07_fund_milestone_checkout_guide.png (PNG copy)>]
+<images/payments/m43_08_fund_milestone_saved_card_guide.png, id=2681, 1445.4pt 
 x 903.375pt>
 File: images/payments/m43_08_fund_milestone_saved_card_guide.png Graphic file (
 type png)
@@ -2032,8 +2389,8 @@ Package pdftex.def Info: images/payments/m43_08_fund_milestone_saved_card_guide
 .png  used on input line 199.
 (pdftex.def)             Requested size: 409.71692pt x 256.07233pt.
 
-[159 <./images/payments/m43_08_fund_milestone_saved_card_guide.png (PNG copy)>]
-<images/payments/m43_09_release_milestone_escrow_guide.png, id=2168, 1445.4pt x
+[201 <./images/payments/m43_08_fund_milestone_saved_card_guide.png (PNG copy)>]
+<images/payments/m43_09_release_milestone_escrow_guide.png, id=2692, 1445.4pt x
  834.11626pt>
 File: images/payments/m43_09_release_milestone_escrow_guide.png Graphic file (t
 ype png)
@@ -2041,8 +2398,8 @@ ype png)
 Package pdftex.def Info: images/payments/m43_09_release_milestone_escrow_guide.
 png  used on input line 225.
 (pdftex.def)             Requested size: 409.71692pt x 236.44012pt.
-[160 <./images/payments/m43_09_release_milestone_escrow_guide.png (PNG copy)>]
-<images/payments/m43_10_view_payment_transactions_guide.png, id=2179, 1445.4pt 
+[202 <./images/payments/m43_09_release_milestone_escrow_guide.png (PNG copy)>]
+<images/payments/m43_10_view_payment_transactions_guide.png, id=2703, 1445.4pt 
 x 903.375pt>
 File: images/payments/m43_10_view_payment_transactions_guide.png Graphic file (
 type png)
@@ -2053,39 +2410,41 @@ Package pdftex.def Info: images/payments/m43_10_view_payment_transactions_guide
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
 (Font)              Font shape `T1/cmtt/m/n' tried instead on input line 264.
 
-[161 <./images/payments/m43_10_view_payment_transactions_guide.png (PNG copy)>]
-) [162] (Report6_Software_User_Guides.aux)
+[203 <./images/payments/m43_10_view_payment_transactions_guide.png (PNG copy)>]
+) [204] (Report6_Software_User_Guides.aux)
  ***********
-LaTeX2e <2025-11-01>
-L3 programming layer <2025-12-24>
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-09-09>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `Report6_Software_User_Guides.out' has not ch
 anged.
-(rerunfilecheck)             Checksum: 67E4AF081E60FFA548C883D5EB658F81;7179.
+(rerunfilecheck)             Checksum: CBF24D169A71BD41FF34F25B58792D35;8573.
  ) 
 Here is how much of TeX's memory you used:
- 17635 strings out of 467871
- 310889 string characters out of 5418860
- 1141094 words of memory out of 5000000
- 45052 multiletter control sequences out of 15000+600000
- 678767 words of font info for 97 fonts, out of 8000000 for 9000
+ 18290 strings out of 467392
+ 333161 string characters out of 5415751
+ 1159447 words of memory out of 5000000
+ 45895 multiletter control sequences out of 15000+600000
+ 682823 words of font info for 99 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,14n,83p,760b,1242s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 74i,14n,83p,760b,1316s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecit1
 200.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
 ectt1000.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
 i600\ectt0800.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/
-ec/dpi600\ectt1200.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/
-public/amsfonts/cm/cmmi10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/font
-s/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiK
-TeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKT
-eX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKT
-eX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTe
-X/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Report6_Software_User_Guides.pdf (163 pages, 21454272 bytes).
+ec/dpi600\ectt1200.pk><C:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/c
+mmi10.pfb><C:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C
+:/Program Files/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTe
+X/fonts/type1/urw/times/utmbi8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/ti
+mes/utmr8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Report6_Software_User_Guides.pdf (205 pages, 27394603 bytes).
 
 PDF statistics:
- 2695 PDF objects out of 2984 (max. 8388607)
- 1195 named destinations out of 1200 (max. 500000)
- 966 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 3276 PDF objects out of 3580 (max. 8388607)
+ 1475 named destinations out of 1728 (max. 500000)
+ 1165 words of extra memory for PDF output out of 10000 (max. 10000000)
 
