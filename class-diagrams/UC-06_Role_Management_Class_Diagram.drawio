@@ -4,89 +4,68 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="route" value="&lt;&lt;route&gt;&gt;&#10;RolesRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="40" y="160" width="300" height="284" as="geometry" />
-        </mxCell>
-        <mxCell id="route_r0" value="+GET /roles (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="route" vertex="1">
-          <mxGeometry y="56" width="300" height="38" as="geometry" />
-        </mxCell>
-        <mxCell id="route_r1" value="+GET /roles/:id (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="route" vertex="1">
-          <mxGeometry y="94" width="300" height="38" as="geometry" />
-        </mxCell>
-        <mxCell id="route_r2" value="+POST /roles (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="route" vertex="1">
-          <mxGeometry y="132" width="300" height="38" as="geometry" />
-        </mxCell>
-        <mxCell id="route_r3" value="+PATCH /roles/:id (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="route" vertex="1">
-          <mxGeometry y="170" width="300" height="38" as="geometry" />
-        </mxCell>
-        <mxCell id="route_r4" value="+PUT /roles/:id/permissions (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="route" vertex="1">
-          <mxGeometry y="208" width="300" height="38" as="geometry" />
-        </mxCell>
-        <mxCell id="route_r5" value="+DELETE /roles/:id (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="route" vertex="1">
-          <mxGeometry y="246" width="300" height="38" as="geometry" />
-        </mxCell>
-        <mxCell id="ctrl" value="RolesController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="440" y="160" width="360" height="250" as="geometry" />
+        <mxCell id="ctrl" value="&lt;&lt;controller&gt;&gt;&#10;RolesController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="340" y="160" width="460" height="262" as="geometry" />
         </mxCell>
         <mxCell id="ctrl_r0" value="-rolesService: RolesService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="ctrl" vertex="1">
-          <mxGeometry y="32" width="360" height="30" as="geometry" />
+          <mxGeometry y="44" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="ctrl_r1" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;" parent="ctrl" vertex="1">
-          <mxGeometry y="62" width="360" height="8" as="geometry" />
+          <mxGeometry y="74" width="460" height="8" as="geometry" />
         </mxCell>
         <mxCell id="ctrl_r2" value="+getRoles()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="ctrl" vertex="1">
-          <mxGeometry y="70" width="360" height="30" as="geometry" />
+          <mxGeometry y="82" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="ctrl_r3" value="+getRoleById(id: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="ctrl" vertex="1">
-          <mxGeometry y="100" width="360" height="30" as="geometry" />
+          <mxGeometry y="112" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="ctrl_r4" value="+createRole(body: CreateRoleBodyDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="ctrl" vertex="1">
-          <mxGeometry y="130" width="360" height="30" as="geometry" />
+          <mxGeometry y="142" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="ctrl_r5" value="+updateRole(id: number, body: UpdateRoleBodyDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="ctrl" vertex="1">
-          <mxGeometry y="160" width="360" height="30" as="geometry" />
+          <mxGeometry y="172" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="ctrl_r6" value="+setRolePermissions(id: number, body: SetRolePermissionsBodyDto)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="ctrl" vertex="1">
-          <mxGeometry y="190" width="360" height="30" as="geometry" />
+          <mxGeometry y="202" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="ctrl_r7" value="+deleteRole(id: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="ctrl" vertex="1">
-          <mxGeometry y="220" width="360" height="30" as="geometry" />
+          <mxGeometry y="232" width="460" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="gAuth" value="AuthGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="440" y="480" width="340" height="190" as="geometry" />
+        <mxCell id="gAuth" value="&lt;&lt;guard&gt;&gt;&#10;AuthGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="340" y="480" width="460" height="202" as="geometry" />
         </mxCell>
         <mxCell id="gAuth_r0" value="-tokenService: TokenService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="gAuth" vertex="1">
-          <mxGeometry y="32" width="340" height="30" as="geometry" />
+          <mxGeometry y="44" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="gAuth_r1" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="gAuth" vertex="1">
-          <mxGeometry y="62" width="340" height="30" as="geometry" />
+          <mxGeometry y="74" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="gAuth_r2" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="gAuth" vertex="1">
-          <mxGeometry y="92" width="340" height="30" as="geometry" />
+          <mxGeometry y="104" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="gAuth_r3" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;" parent="gAuth" vertex="1">
-          <mxGeometry y="122" width="340" height="8" as="geometry" />
+          <mxGeometry y="134" width="460" height="8" as="geometry" />
         </mxCell>
         <mxCell id="gAuth_r4" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="gAuth" vertex="1">
-          <mxGeometry y="130" width="340" height="30" as="geometry" />
+          <mxGeometry y="142" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="gAuth_r5" value="-extractTokenFromHeader(request: Request): string | undefined" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="gAuth" vertex="1">
-          <mxGeometry y="160" width="340" height="30" as="geometry" />
+          <mxGeometry y="172" width="460" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="gPerm" value="PermissionGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="440" y="740" width="340" height="130" as="geometry" />
+        <mxCell id="gPerm" value="&lt;&lt;guard&gt;&gt;&#10;PermissionGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="340" y="740" width="460" height="142" as="geometry" />
         </mxCell>
         <mxCell id="gPerm_r0" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="gPerm" vertex="1">
-          <mxGeometry y="32" width="340" height="30" as="geometry" />
+          <mxGeometry y="44" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="gPerm_r1" value="-sharedPermissionRepository: SharedPermissionRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="gPerm" vertex="1">
-          <mxGeometry y="62" width="340" height="30" as="geometry" />
+          <mxGeometry y="74" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="gPerm_r2" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;" parent="gPerm" vertex="1">
-          <mxGeometry y="92" width="340" height="8" as="geometry" />
+          <mxGeometry y="104" width="460" height="8" as="geometry" />
         </mxCell>
         <mxCell id="gPerm_r3" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="gPerm" vertex="1">
-          <mxGeometry y="100" width="340" height="30" as="geometry" />
+          <mxGeometry y="112" width="460" height="30" as="geometry" />
         </mxCell>
         <mxCell id="d1" value="&lt;&lt;dto&gt;&gt;&#10;CreateRoleBodyDto" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
           <mxGeometry x="900" y="160" width="320" height="112" as="geometry" />
@@ -139,68 +118,68 @@
         <mxCell id="t1_r4" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;" parent="t1" vertex="1">
           <mxGeometry y="204" width="320" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="svc" value="RolesService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="1320" y="160" width="430" height="250" as="geometry" />
+        <mxCell id="svc" value="&lt;&lt;service&gt;&gt;&#10;RolesService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="1320" y="160" width="430" height="262" as="geometry" />
         </mxCell>
         <mxCell id="svc_r0" value="-rolesRepository: RolesRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="svc" vertex="1">
-          <mxGeometry y="32" width="430" height="30" as="geometry" />
+          <mxGeometry y="44" width="430" height="30" as="geometry" />
         </mxCell>
         <mxCell id="svc_r1" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;" parent="svc" vertex="1">
-          <mxGeometry y="62" width="430" height="8" as="geometry" />
+          <mxGeometry y="74" width="430" height="8" as="geometry" />
         </mxCell>
         <mxCell id="svc_r2" value="+getRoles()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="svc" vertex="1">
-          <mxGeometry y="70" width="430" height="30" as="geometry" />
+          <mxGeometry y="82" width="430" height="30" as="geometry" />
         </mxCell>
         <mxCell id="svc_r3" value="+getRoleById(id: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="svc" vertex="1">
-          <mxGeometry y="100" width="430" height="30" as="geometry" />
+          <mxGeometry y="112" width="430" height="30" as="geometry" />
         </mxCell>
         <mxCell id="svc_r4" value="+createRole(body: CreateRoleBodyType)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="svc" vertex="1">
-          <mxGeometry y="130" width="430" height="30" as="geometry" />
+          <mxGeometry y="142" width="430" height="30" as="geometry" />
         </mxCell>
         <mxCell id="svc_r5" value="+updateRole(id: number, body: UpdateRoleBodyType)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="svc" vertex="1">
-          <mxGeometry y="160" width="430" height="30" as="geometry" />
+          <mxGeometry y="172" width="430" height="30" as="geometry" />
         </mxCell>
         <mxCell id="svc_r6" value="+setRolePermissions(id: number, body: SetRolePermissionsBodyType)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="svc" vertex="1">
-          <mxGeometry y="190" width="430" height="30" as="geometry" />
+          <mxGeometry y="202" width="430" height="30" as="geometry" />
         </mxCell>
         <mxCell id="svc_r7" value="+deleteRole(id: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="svc" vertex="1">
-          <mxGeometry y="220" width="430" height="30" as="geometry" />
+          <mxGeometry y="232" width="430" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="repo" value="RolesRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="1850" y="160" width="400" height="340" as="geometry" />
+        <mxCell id="repo" value="&lt;&lt;repository&gt;&gt;&#10;RolesRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="1850" y="160" width="400" height="352" as="geometry" />
         </mxCell>
         <mxCell id="repo_r0" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="repo" vertex="1">
-          <mxGeometry y="32" width="400" height="30" as="geometry" />
+          <mxGeometry y="44" width="400" height="30" as="geometry" />
         </mxCell>
         <mxCell id="repo_r1" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;" parent="repo" vertex="1">
-          <mxGeometry y="62" width="400" height="8" as="geometry" />
+          <mxGeometry y="74" width="400" height="8" as="geometry" />
         </mxCell>
         <mxCell id="repo_r2" value="+findAll()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="repo" vertex="1">
-          <mxGeometry y="70" width="400" height="30" as="geometry" />
+          <mxGeometry y="82" width="400" height="30" as="geometry" />
         </mxCell>
         <mxCell id="repo_r3" value="+findById(id: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="repo" vertex="1">
-          <mxGeometry y="100" width="400" height="30" as="geometry" />
+          <mxGeometry y="112" width="400" height="30" as="geometry" />
         </mxCell>
         <mxCell id="repo_r4" value="+findActiveByName(name: string)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="repo" vertex="1">
-          <mxGeometry y="130" width="400" height="30" as="geometry" />
+          <mxGeometry y="142" width="400" height="30" as="geometry" />
         </mxCell>
         <mxCell id="repo_r5" value="+createRole(body: CreateRoleBodyType)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="repo" vertex="1">
-          <mxGeometry y="160" width="400" height="30" as="geometry" />
+          <mxGeometry y="172" width="400" height="30" as="geometry" />
         </mxCell>
         <mxCell id="repo_r6" value="+updateRole(id, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="repo" vertex="1">
-          <mxGeometry y="190" width="400" height="30" as="geometry" />
+          <mxGeometry y="202" width="400" height="30" as="geometry" />
         </mxCell>
         <mxCell id="repo_r7" value="+softDeleteRole(id: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="repo" vertex="1">
-          <mxGeometry y="220" width="400" height="30" as="geometry" />
+          <mxGeometry y="232" width="400" height="30" as="geometry" />
         </mxCell>
         <mxCell id="repo_r8" value="+countAssignedUsers(roleId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="repo" vertex="1">
-          <mxGeometry y="250" width="400" height="30" as="geometry" />
+          <mxGeometry y="262" width="400" height="30" as="geometry" />
         </mxCell>
         <mxCell id="repo_r9" value="+findActivePermissionIds(ids: number[])" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="repo" vertex="1">
-          <mxGeometry y="280" width="400" height="30" as="geometry" />
+          <mxGeometry y="292" width="400" height="30" as="geometry" />
         </mxCell>
         <mxCell id="repo_r10" value="+replaceRolePermissions(roleId, ids)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;" parent="repo" vertex="1">
-          <mxGeometry y="310" width="400" height="30" as="geometry" />
+          <mxGeometry y="322" width="400" height="30" as="geometry" />
         </mxCell>
         <mxCell id="s1" value="&lt;&lt;schema&gt;&gt;&#10;Role" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;" parent="1" vertex="1">
           <mxGeometry x="2450" y="160" width="300" height="190" as="geometry" />
@@ -310,29 +289,18 @@
         <mxCell id="e1_r5" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;" parent="e1" vertex="1">
           <mxGeometry y="194" width="300" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="e_r_c" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=default;dashed=1;exitX=1;exitY=0.2465;exitDx=0;exitDy=0;entryX=0;entryY=0.28;entryDx=0;entryDy=0;" parent="1" source="route" target="ctrl" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e_r_a" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1;exitY=0.7746;exitDx=0;exitDy=0;entryX=0;entryY=0.3421;entryDx=0;entryDy=0;" parent="1" source="route" target="gAuth" edge="1">
+        <mxCell id="e_r_a" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="ctrl" target="gAuth" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="390" y="380" />
-              <mxPoint x="390" y="545" />
-            </Array>
-          </mxGeometry>
+            <Array as="points"><mxPoint x="295.0" y="343.4" /><mxPoint x="295.0" y="581.0" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="e_r_p" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1;exitY=0.9155;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="route" target="gPerm" edge="1">
+        <mxCell id="e_r_p" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0;exitY=0.35;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="ctrl" target="gPerm" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="365" y="420" />
-              <mxPoint x="365" y="805" />
-            </Array>
-          </mxGeometry>
+            <Array as="points"><mxPoint x="245.0" y="251.7" /><mxPoint x="245.0" y="811.0" /></Array></mxGeometry>
         </mxCell>
         <mxCell id="e_c_s" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=default;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="ctrl" target="svc" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="620" y="100" />
+              <mxPoint x="570" y="100" />
               <mxPoint x="1535" y="100" />
             </Array>
           </mxGeometry>
