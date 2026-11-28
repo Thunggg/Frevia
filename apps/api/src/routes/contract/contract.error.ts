@@ -177,6 +177,15 @@ export const ContractCannotCancelWithActiveSubmissionException = () =>
     },
   ]);
 
+export const ContractCannotCancelCompletedMilestonesException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'Contract cannot be cancelled after all milestones have been completed and settled. Please complete the contract instead.',
+      path: 'id',
+    },
+  ]);
+
 export const AlreadySignedException = () =>
   new ConflictException([
     { message: ManageContractMessage.ALREADY_SIGNED, path: 'id' },

@@ -40,9 +40,9 @@ The Business Logic Layer represents the core of the Frevia platform, encapsulati
     \item \textbf{User and Profile Management Module:} Handles administrator user accounts, account profiles, freelancer professional portfolios, CV uploads, and expert consultation profiles.
     \item \textbf{Job and Proposal Management Module:} Governs client job postings, faceted job browsing, bookmarking, freelancer proposal submissions, and proposal acceptance/rejection workflows.
     \item \textbf{Contract and Milestone Module:} Enforces contract lifecycle transitions (awaiting payment, pending signature, active, completion, cancellation, rejection) and sequential milestone workflows.
-    \item \textbf{Payment and Escrow Module:} Integrates Stripe Checkout for milestone escrow funding, platform fee collections, dispute fee handling, and automated Stripe Connect payouts to freelancer bank accounts.
+    \item \textbf{Payment and Escrow Module:} Integrates Stripe Checkout and off-session saved cards for contract hold deposits and milestone escrow funding, platform fee collections (3\% client / 5\% freelancer), and automated Stripe Connect payouts to freelancer bank accounts.
     \item \textbf{Communication and Community Module:} Facilitates real-time direct messaging, multi-category discussion forums, post interactions, and automated user notification feeds.
-    \item \textbf{Dispute Arbitration Module:} Provides formal dispute filing, evidence attachment, and administrator arbitration workflows.
+    \item \textbf{Dispute Arbitration Module:} Provides formal 2-tier milestone dispute filing, locked evidence attachment, counterparty response, expert escalation, and binding arbitration split rulings.
 \end{itemize}
 
 \subsubsection*{Data Access Layer}
@@ -511,7 +511,7 @@ The \textbf{Frevia} backend (\texttt{apps/api/src/routes/}) and frontend (\textt
 04 & Contracts \& Workspace & \texttt{contract}, \texttt{shared-file} & Contract issuance from accepted bids, bilateral digital signatures, PDF export, shared workspace files. \\ \hline
 05 & Milestones \& Deliverables & \texttt{milestone}, \texttt{milestone-file}, \texttt{milestone-submission} & Progressive deliverable schedules, progress updates, work submission, change requests, client approval. \\ \hline
 06 & Payments \& Escrow & \texttt{payments} & Stripe Connect Express onboarding, hold deposits, milestone Checkout/saved-card funding, payouts, webhooks. \\ \hline
-07 & Disputes & \texttt{disputes} & 5-stage milestone dispute filing, evidence attachments, fee settlement, expert arbitration rulings. \\ \hline
+07 & Disputes & \texttt{disputes} & 2-tier milestone dispute filing, locked evidence attachments, expert escalation, and binding split rulings. \\ \hline
 08 & Communication \& Forum & \texttt{conversations}, \texttt{notifications}, \texttt{forums}, \texttt{forums-admin}, \texttt{reviews} & Socket.IO real-time messaging, notification center, moderated forum discussions, post-contract reviews. \\ \hline
 09 & AI Microservices & \texttt{id-verification}, \texttt{cv-matching}, \texttt{ai-moderation} & FastAPI OCR/liveness detection, BGE-M3 + ChromaDB + Ollama CV semantic matching, content scoring. \\ \hline
 \end{longtable}

@@ -156,17 +156,29 @@ export function ContractActionsSidebar({
     Boolean(onOpenFundHold) &&
     canFundContractHold;
 
+  const milestones = Array.isArray(contract.milestones)
+    ? contract.milestones
+    : [];
+
   const hasUnsettledMilestones =
-    Array.isArray(contract.milestones) &&
-    contract.milestones.some(
+    milestones.length === 0 ||
+    milestones.some(
       (m) => m.paymentStatus !== "RELEASED" && m.paymentStatus !== "REFUNDED"
     );
 
+  const hasReleasedMilestone = milestones.some(
+    (m) => m.paymentStatus === "RELEASED"
+  );
+
+  const isReadyToComplete =
+    contract.status === "ACTIVE" &&
+    !hasUnsettledMilestones &&
+    hasReleasedMilestone;
+
   const canComplete =
     !isFreelancer &&
-    contract.status === "ACTIVE" &&
     canCompleteContract &&
-    !hasUnsettledMilestones;
+    isReadyToComplete;
 
   const canReject =
     isFreelancer &&
@@ -182,6 +194,7 @@ export function ContractActionsSidebar({
     contract.status !== "REJECTED" &&
     contract.status !== "EXPIRED" &&
     (!isFreelancer || contract.status === "ACTIVE") &&
+    !isReadyToComplete &&
     canCancelContract;
 
   const targetRoleName = isFreelancer ? tRole("CLIENT") : tRole("FREELANCER");
