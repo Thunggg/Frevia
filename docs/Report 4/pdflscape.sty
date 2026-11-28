@@ -2,9 +2,9 @@
 \ProvidesPackage{pdflscape}[2022-10-28 v0.13 Display of landscape pages in PDF]
 \RequirePackage{lscape}
 \g@addto@macro\landscape{%
-  \global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}%
+  \ifdefined\pdfpageattr\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}\fi%
 }
 \g@addto@macro\endlandscape{%
-  \global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}%
+  \ifdefined\pdfpageattr\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}\fi%
 }
 \endinput
