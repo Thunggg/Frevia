@@ -166,8 +166,9 @@ UTCID & Unit Test Case Identifier \\ \hline
 17/10/2026 & M & Tran Phat Tai & Updated integration and system test specifications for Sprint 2 (Permissions, Sessions, Identity Upload, Client Profile, Milestones, and Conversations). \\ \hline
 31/10/2026 & M & Nguyen Lu Nhat Huy & Added test specifications for Sprint 3 (User Management, Notifications, Proposals, Disputes \& Expert Arbitration, Moderation, and ID Review). \\ \hline
 14/11/2026 & M & Vo Nhut Tin & Added test specifications for Sprint 4 (Banners, Skills, Reviews, Stripe Escrow Payments, Webhooks, AI Recommend, AI Moderation, and AI Face Scan). \\ \hline
-23/11/2026 & M & Nguyen Tien Thuan & Added Sprint 5 test specifications (Job Category Management, Freelancer CV Management) and completed unit test sheets \texttt{UF-01} to \texttt{UF-84}. \\ \hline
-27/11/2026 & M & Pham Kha Vy & Consolidated final test execution summary (2,005 unit test cases and 935 system test cases across 44 modules), defect metrics, test analysis, and final conclusion. \\ \hline
+23/11/2026 & M & Nguyen Tien Thuan & Added Sprint 5 test specifications (Job Category Management, Freelancer CV Management) and completed unit test sheets \texttt{UF-01} to \texttt{UF-84} alongside Tran Phat Tai (\texttt{UF-85}--\texttt{UF-121}). \\ \hline
+24/11/2026 & M & Vo Nhut Tin & Aligned unit and system test workbooks (\texttt{Report5\_Unit Test.xls} v2.4 covering \texttt{UF-01}--\texttt{UF-246}; \texttt{Report5\_Test Report.xlsx} v2.1 across 44 modules), integrating Nguyen Lu Nhat Huy (\texttt{UF-122}--\texttt{UF-197}) and Vo Nhut Tin (\texttt{UF-198}--\texttt{UF-246}). \\ \hline
+27/11/2026 & M & Pham Kha Vy & Consolidated final test execution summary (2,005 unit test cases and 935 system test cases across 44 modules), synchronized workbook metadata/environment versions, defect metrics, test analysis, and final conclusion. \\ \hline
 \end{tabularx}
 \endgroup
 \end{center}
@@ -255,7 +256,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \item \textbf{Tools:} Jest \texttt{30.0.0}, \texttt{@nestjs/testing} \texttt{11.0.1}, \texttt{ts-jest} \texttt{29.2.5}, TypeScript \texttt{5.9.2}, ESLint \texttt{9.18.0}.
   \item \textbf{Acceptance Criteria:}
   \begin{itemize}
-    \item All 2,005 documented unit test cases across 246 service/schema functions (\texttt{UF-01} to \texttt{UF-246}) achieve zero failures (1,972 passed, 33 untested/pending, 98.35\% execution coverage), supported by the live backend Jest run (\texttt{Report5\_Unit\_Test\_Backend.html}: 39 suites, 1,536/1,536 passed).
+    \item All 2,005 documented unit test cases across 246 service/schema functions (\texttt{UF-01} to \texttt{UF-246}) achieve zero failures (1,972 passed, 33 untested/pending, 98.35\% execution coverage), supplemented by the live backend Jest run (\texttt{Report5\_Unit\_Test\_Backend.html}: 39 suites, 1,536/1,536 passed assertions).
     \item At least 80\% statement and branch coverage on critical domain services and guards.
     \item \texttt{pnpm lint}, \texttt{pnpm check-types}, and \texttt{pnpm --filter api test} pass without errors.
   \end{itemize}
@@ -509,6 +510,8 @@ Acceptance Testing & 42 & 42 & 0 & 0 & 100.00\% \\ \hline
 \end{tabularx}
 \end{table}
 
+\noindent\textit{Note: Unit and System Testing totals match \texttt{Report5\_Unit Test.xls} (v2.4) and \texttt{Report5\_Test Report.xlsx} (v2.1); Integration (84 cross-module API/DB/Stripe checks) and Acceptance (42 Sprint Review / UAT scenarios) metrics summarize sprint-level verification logs.}
+
 \subsection{Defect Summary}
 
 \begin{table}[H]
@@ -525,7 +528,7 @@ Minor & 0 open \newline (9 resolved) & Nine earlier UI/i18n/pagination minor def
 \subsection{Test Analysis}
 
 \begin{itemize}
-  \item \textbf{Unit Testing Coverage and Distribution:} Out of 2,005 unit test cases across 246 functions (\texttt{UF-01} to \texttt{UF-246}) in \texttt{Report5\_Unit Test.xls}, 1,972 cases passed with 0 failures and 33 remain untested (\texttt{98.35\%} execution coverage). Case distribution covers 664 normal scenarios (\texttt{33.12\%}), 979 abnormal/exception paths (\texttt{48.83\%}), and 362 boundary conditions (\texttt{18.05\%}). In addition, \texttt{Report5\_Unit\_Test\_Backend.html} verifies 1,536/1,536 passing Jest cases across all 39 backend suites (\texttt{UF-01}--\texttt{UF-181}).
+  \item \textbf{Unit Testing Coverage and Distribution:} Out of 2,005 unit test cases across 246 functions (\texttt{UF-01} to \texttt{UF-246}) in \texttt{Report5\_Unit Test.xls}, 1,972 cases passed with 0 failures and 33 remain untested (\texttt{98.35\%} execution coverage). Case distribution covers 664 normal scenarios (\texttt{33.12\%}), 979 abnormal/exception paths (\texttt{48.83\%}), and 362 boundary conditions (\texttt{18.05\%}). In addition, \texttt{Report5\_Unit\_Test\_Backend.html} verifies 1,536/1,536 passing automated Jest assertions across all 39 backend \texttt{*.unit-spec.ts} suites (tagged sequentially in code prior to the unified workbook renumbering \texttt{UF-01}--\texttt{UF-246}).
   \item \textbf{System and Integration Stability:} Across all 44 functional modules in \texttt{Report5\_Test Report.xlsx} (935 total system cases), 886 cases are recorded as Passed with 0 failures in the system workbook, and 49 cases remain Pending (49 offline AI cases assigned to Pham Kha Vy, giving \texttt{94.76\%} pass rate), alongside 84/84 passing integration workflow checks.
   \item \textbf{Defect Prevention via Shared Contracts:} Sharing Zod schemas (\texttt{@shared/types}) between the Next.js 16 frontend and NestJS 11 backend, combined with centralized RBAC enforcement in \texttt{AccessTokenGuard}, prevented client-server payload drift and eliminated unauthorized access regressions across all five sprints.
   \item \textbf{Defect Resolution Rate:} 100\% of tracked product defects (2 Critical, 6 Major, 9 Minor) were resolved prior to Sprint 5, and the 20 \texttt{MyZodValidationPipe} HTTP 422 specification mismatches from Round 1 were synchronized and verified passing on re-execution (0 open defects).
