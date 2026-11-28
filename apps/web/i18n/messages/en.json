@@ -4336,7 +4336,14 @@
       "emptyFreelancer": "No milestones matching this filter.",
       "addFirstMilestone": "Add First Milestone",
       "blockedPrevious": "Complete previous milestone first",
-      "blockedActive": "Finish the active milestone first"
+      "blockedActive": "Finish the active milestone first",
+      "activeDisputeBanner": "This contract has <strong>{count}</strong> active dispute currently in progress.",
+      "viewDisputesBtn": "View Disputes",
+      "contractDisputesTitle": "Contract Disputes ({count})",
+      "noContractDisputes": "No disputes found in this contract.",
+      "milestoneFallback": "Milestone #{id}",
+      "escrowLabel": "Escrow:",
+      "disputeDetailsBtn": "Details"
     },
     "toasts": {
       "escrowFunded": "Escrow payment funded successfully via Stripe!",
@@ -4740,7 +4747,8 @@
       "evidenceUploadBtn": "Upload",
       "evidenceSelectShared": "Select from contract shared files:",
       "evidenceRemoveTooltip": "Remove before submit",
-      "evidenceLockedNotice": "* Uploaded evidence files will be permanently locked and cannot be edited or deleted to ensure arbitration integrity."
+      "evidenceLockedNotice": "* Uploaded evidence files will be permanently locked and cannot be edited or deleted to ensure arbitration integrity.",
+      "evidenceUploadError": "Failed to upload evidence file."
     },
     "detailSheet": {
       "loading": "Loading resolution details...",
@@ -4794,7 +4802,11 @@
       "reviewReasonRequired": "Please explain why you are requesting a final review.",
       "reviewAcceptSuccess": "You accepted the expert decision.",
       "reviewRejectSuccess": "Final review requested from the expert.",
-      "reviewError": "Failed to submit decision review."
+      "reviewError": "Failed to submit decision review.",
+      "maxEvidenceToast": "You can attach up to 5 evidence files.",
+      "evidenceUploadError": "Failed to upload evidence file.",
+      "uploadingFile": "Uploading...",
+      "chooseFile": "Choose file"
     },
     "listView": {
       "breadcrumbDashboard": "Dashboard",

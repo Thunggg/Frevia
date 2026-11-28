@@ -34,7 +34,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \Needspace{6\baselineskip}
 \item[LI-04] \textbf{Single Currency Handling (USD Only)}
 \begin{itemize}[leftmargin=0.5cm, label=--]
-\item \textbf{Problem Statement:} Monetary transactions, contract pricing, platform fees, and dispute deposits are calculated and denominated exclusively in United States Dollars (USD). Real-time multi-currency display, automatic forex conversion, and jurisdiction-specific tax invoicing are excluded.
+\item \textbf{Problem Statement:} Monetary transactions, contract pricing, platform fees, and escrow settlements are calculated and denominated exclusively in United States Dollars (USD). Real-time multi-currency display, automatic forex conversion, and jurisdiction-specific tax invoicing are excluded.
 \item \textbf{Current Status:} Partially Mitigated.
 \item \textbf{Resolution / Mitigation Method:} Stripe automatically handles foreign exchange conversion at checkout and payout based on the user's local card or bank currency. Contracts store explicit currency ISO codes (\texttt{USD}), allowing multi-currency pricing and localized display rates to be activated in future versions when multi-currency bank accounts are configured.
 \end{itemize}

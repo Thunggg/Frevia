@@ -594,8 +594,8 @@ The Freelancer clicks the ``Start Work'' button on an assigned, funded milestone
 \subsubsection{ View Milestone Files}
 
 \fnhead{Function Trigger}
-A user clicks the ``Attachments'' accordion or tab inside a milestone detail panel.\newline
-\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestone Detail $\rightarrow$ Click ``Attachments''.
+A user selects the ``Files'' pill tab inside the Milestone Detail workspace.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestones $\rightarrow$ Milestone Detail (\texttt{/contracts/:slug/milestones/:id}) $\rightarrow$ Click ``Files'' Tab.
 
 \fnhead{Function Description}
 
@@ -606,13 +606,13 @@ A user clicks the ``Attachments'' accordion or tab inside a milestone detail pan
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Displays all files, reference documents, and deliverable attachments associated with a specific milestone stage.
+\noindent Displays all shared reference documents, assets, and project files uploaded to a specific milestone stage.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Milestone files list within the milestone card.
-      \item File cards rendering format icon, file name, uploader name, upload date, size, and download link.
-      \item Delete icon visible to file uploader and Admin.
+      \item ``Files'' tab within the Milestone Detail workspace pill bar (displaying attachment count badge).
+      \item ``Milestone Shared Files'' section header with ``Upload File'' pill button.
+      \item File list rows rendering file icon, filename, upload timestamp, ``Download'' action button, and delete trash icon (or locked badge once submitted).
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -624,10 +624,11 @@ A user clicks the ``Attachments'' accordion or tab inside a milestone detail pan
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ntin/ViewMilestoneFiles.png}{Milestone files attachment tray}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/ViewMilestoneFiles.png}{Milestone Shared Files tab screen}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Attachment section lists uploaded files with file type icons, name, file size badge, and download action.
-      \item An upload dropzone or button is available when editing or preparing submissions.
+      \item Top segmented pill tab bar highlights the active ``Files'' tab with item count alongside ``Overview'', ``Submissions'', and ``Activity''.
+      \item Header displays ``Milestone Shared Files'' with subtitle ``Documents, assets, and project files attached to this milestone'' and primary blue ``Upload File'' pill button on the right.
+      \item Each file row shows a document icon, file name, formatted ``Uploaded ...'' timestamp, ``Download'' action, and trash icon.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -651,10 +652,10 @@ A user clicks the ``Attachments'' accordion or tab inside a milestone detail pan
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item User expands milestone attachments.
+      \item User selects the ``Files'' tab on the Milestone Detail page.
       \item Client requests \texttt{GET /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}files}.
-      \item API returns files array, and client renders attachment cards.
-      \item User clicks download link to retrieve any file.
+      \item API returns non-deleted milestone files, and client renders each file row.
+      \item User clicks ``Download'' to retrieve any file.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
@@ -966,8 +967,8 @@ The Freelancer clicks the ``Submit Work'' button on an in-progress milestone car
 \subsubsection{ View Milestone Submissions List}
 
 \fnhead{Function Trigger}
-A contract participant opens the ``Submission History'' tab or accordion within a milestone detail panel.\newline
-\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestone Detail $\rightarrow$ Click ``Submission History''.
+A contract participant selects the ``Submissions'' tab inside the Milestone Detail workspace.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestones $\rightarrow$ Milestone Detail (\texttt{/contracts/:slug/milestones/:id}) $\rightarrow$ Click ``Submissions'' Tab.
 
 \fnhead{Function Description}
 
@@ -978,29 +979,29 @@ A contract participant opens the ``Submission History'' tab or accordion within 
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Renders the historical timeline of all deliverable submission and review cycles for a milestone, allowing participants to compare revisions and review comments.
+\noindent Renders the chronological history of all deliverable submission and review cycles for a milestone, allowing participants to compare deliveries, inspect attached files/links, and review revision feedback.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Submissions history list within the milestone card.
-      \item Cycle cards numbered chronologically (Cycle 1, Cycle 2, etc.).
-      \item Review status pills: ``Pending Review'', ``Changes Requested'', ``Approved''.
-      \item Submission timestamp, notes summary, external link, and attached files count.
+      \item ``Submissions'' pill tab inside Milestone Detail with delivery count badge and section header ``Deliverables \& Submissions History''.
+      \item Contextual top-right action pill (``Review Delivery'' for Client when \texttt{SUBMITTED}, or ``Deliver Work'' / ``Resubmit'' for Freelancer).
+      \item Reverse-chronological delivery cards numbered as ``Delivery \#N'' (with ``Latest'' tag on the newest entry) and status indicator (``In Review'', ``Revisions Requested'', or ``Approved'').
+      \item Inline delivery notes, clickable URL link chips, downloadable file chips, and amber-bordered ``Client Revision Feedback'' callout with target revision deadline.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Client requests \texttt{GET /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}submissions}.
       \item \texttt{Milestone\allowbreak{}Submission\allowbreak{}Service.\allowbreak{}getSubmission()} validates participant access (\texttt{clientId}, \texttt{freelancerId}, or \texttt{ADMIN}).
-      \item Queries milestone submission records including attached \texttt{files} relations and returns HTTP 200 with an unpaginated array of \texttt{MilestoneSubmission} objects.
+      \item Queries milestone submission records ordered newest first including attached \texttt{files} relations and returns HTTP 200 with an array of \texttt{MilestoneSubmission} objects.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ntin/ViewMilestoneSubmissionList.png}{Milestone submission history timeline}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/ViewMilestoneSubmissionList.png}{Deliverables \& Submissions History tab screen}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Vertical timeline tracks each submission round with cycle number and date.
-      \item Each entry shows freelancer submission notes and client revision comments.
-      \item Status tag indicates whether cycle was approved or requested for revisions.
+      \item Top pill navigation highlights ``Submissions 2'' above section heading ``Deliverables \& Submissions History'' and the blue ``Review Delivery'' action button.
+      \item Each delivery block lists ``Delivery \#2 (Latest)'' / ``Delivery \#1'' with timestamp, right-aligned status tag (``In Review'' or ``Revisions Requested''), ``Notes'', ``Links'', and downloadable ``Files'' pills.
+      \item Revised cycles display an amber-accented ``Client Revision Feedback'' block and ``Target revision deadline''; the latest pending cycle provides ``Review \& Approve Delivery''.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -1024,10 +1025,10 @@ A contract participant opens the ``Submission History'' tab or accordion within 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item User expands submission history in milestone card.
+      \item User selects the ``Submissions'' tab inside Milestone Detail.
       \item Client requests \texttt{GET /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}submissions}.
       \item API queries non-deleted submissions.
-      \item Client renders submission timeline cards.
+      \item Client renders the reverse-chronological list of delivery entries and feedback blocks.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
@@ -1053,8 +1054,8 @@ A contract participant opens the ``Submission History'' tab or accordion within 
 \subsubsection{ View Milestone Submission Details}
 
 \fnhead{Function Trigger}
-A user clicks on a specific submission entry in the submission history timeline to inspect full deliverable details.\newline
-\textbf{Navigation path:} Milestone Detail $\rightarrow$ Submission History $\rightarrow$ Click Submission Item (\texttt{.../submissions/:id}).
+A user inspects the latest deliverable submission summary in the Milestone Detail ``Overview'' tab or opens a specific submission entry via the submission detail endpoint.\newline
+\textbf{Navigation path:} Milestone Detail $\rightarrow$ Overview / Submissions Tab (\texttt{.../submissions/:id}).
 
 \fnhead{Function Description}
 
@@ -1065,16 +1066,14 @@ A user clicks on a specific submission entry in the submission history timeline 
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Renders granular details for a specific submission cycle, including full deliverable notes, external links, attached deliverable files, review feedback, and exact timestamps.
+\noindent Displays detailed deliverable information for a milestone submission, including freelancer delivery notes, attached deliverable files, external links, milestone financials, timeline metadata, and participant/review status.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Submission detail modal or dedicated expanded view.
-      \item Submission header: cycle number, submitter profile, and submission timestamp.
-      \item Full deliverable notes rendered in Markdown.
-      \item External demo hyperlink with external icon.
-      \item Attached deliverable files grid with download buttons.
-      \item Client review section with review status badge and comments (if reviewed).
+      \item Milestone Detail ``Overview'' workspace showing ``Latest Deliverable Submission'' panel alongside right-hand ``Milestone Financials'', ``Timeline'', and ``Participants'' cards.
+      \item Review status alert banner (``Work delivered and awaiting client review'' with 7-day auto-release countdown note).
+      \item Delivery notes block, clickable external links, downloadable deliverable file cards, and ``Scope of Deliverables'' section.
+      \item Action trigger: primary blue ``Review \& Approve Delivery'' button (and ``Open a dispute claim'' link for active funded milestones).
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -1086,12 +1085,11 @@ A user clicks on a specific submission entry in the submission history timeline 
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ntin/ViewMilestoneSubmissionDetail.png}{Milestone submission detail screen}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/ViewMilestoneSubmissionDetail.png}{Milestone deliverable submission detail overview screen}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Modal renders header with submission cycle number and review status pill.
-      \item Main area renders deliverable notes and external demo link.
-      \item Attachment tray displays all files included in this submission cycle with download links.
-      \item Review block displays client review comment and approval/changes-requested date.
+      \item Top blue-bordered status callout informs participants that work was delivered and awaits client review within the 7-day auto-release window.
+      \item Left main column displays ``Latest Deliverable Submission'' with submission timestamp, freelancer delivery notes, ``Deliverable Files'' download cards, ``Review \& Approve Delivery'' button, and ``Scope of Deliverables''.
+      \item Right column summarizes ``Milestone Financials'' (Budget, Payment Status, 5\% Freelancer Fee, 95\% Net), ``Timeline'' (Target Deadline, Time Status, Created), and ``Participants''.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -1145,8 +1143,8 @@ A user clicks on a specific submission entry in the submission history timeline 
 \subsubsection{ Request Milestone Changes}
 
 \fnhead{Function Trigger}
-The Client clicks the ``Request Changes'' button on a submitted milestone review panel after inspecting deliverables.\newline
-\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestones Tab $\rightarrow$ Submitted Milestone $\rightarrow$ Click ``Request Changes''.
+The Client clicks ``Review \& Approve Delivery'' / ``Review Delivery'' on a submitted milestone and then selects ``Request Changes'' inside the ``Review Work Submission'' drawer.\newline
+\textbf{Navigation path:} Milestone Detail $\rightarrow$ Click ``Review \& Approve Delivery'' $\rightarrow$ Click ``Request Changes''.
 
 \fnhead{Function Description}
 
@@ -1162,10 +1160,10 @@ The Client clicks the ``Request Changes'' button on a submitted milestone review
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item ``Request Changes'' button in the review toolbar of a submitted milestone.
-      \item Request Changes modal dialog with feedback textarea supporting rich formatting.
-      \item Revision guideline notes: prompts client to provide actionable, concrete feedback.
-      \item Action buttons: ``Send Revision Request'' and ``Cancel''.
+      \item ``Review Work Submission'' slide-over drawer displaying submitted timestamp, ``DELIVERABLE NOTES FROM FREELANCER'', ``PROJECT / VERIFICATION LINKS'', and ``ATTACHED DELIVERABLE FILES''.
+      \item ``Request Changes'' button that expands the inline revision request form inside the drawer.
+      \item Required ``Feedback \& Required Changes *'' textarea and optional ``Revision Target Due Date (Optional)'' date picker.
+      \item Action buttons: ``Back'' and amber-orange ``Submit Revision Request''.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -1178,11 +1176,11 @@ The Client clicks the ``Request Changes'' button on a submitted milestone review
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ntin/RequestMilestoneChanges.png}{Request Milestone Changes dialog}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/RequestMilestoneChanges.png}{Request Milestone Changes inside Review Work Submission sheet}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Modal displays title ``Request Deliverable Changes''.
-      \item Textarea for revision feedback (\texttt{changeRequestMessage}) and optional updated due date picker (\texttt{changeRequestDueDate}).
-      \item Footer renders secondary ``Cancel'' and primary orange ``Send Change Request'' buttons.
+      \item Right-hand slide-over sheet renders header ``Review Work Submission'' with milestone title and escrow value.
+      \item Upper cards display ``Submitted on'' timestamp, ``DELIVERABLE NOTES FROM FREELANCER'', clickable ``PROJECT / VERIFICATION LINKS'', and ``ATTACHED DELIVERABLE FILES'' with ``Download'' links.
+      \item Expanded revision form at bottom provides required ``Feedback \& Required Changes *'' textarea, ``Revision Target Due Date (Optional)'' date picker, ``Back'' button, and orange ``Submit Revision Request'' pill button.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -1211,9 +1209,9 @@ The Client clicks the ``Request Changes'' button on a submitted milestone review
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item Client inspects submitted deliverables and clicks ``Request Changes''.
-      \item System opens the Request Changes dialog.
-      \item Client enters \texttt{changeRequestMessage} (and optional revised due date) and clicks ``Send Revision Request''.
+      \item Client inspects submitted deliverables in the ``Review Work Submission'' drawer and clicks ``Request Changes''.
+      \item System expands the inline revision request form.
+      \item Client enters \texttt{changeRequestMessage} (and optional revised due date) and clicks ``Submit Revision Request''.
       \item System validates guards, updates submission and milestone status to \texttt{CHANGES\_REQUESTED}, and notifies Freelancer.
 \end{enumerate}
 

@@ -20,8 +20,8 @@
 \subsubsection{ Open Dispute}
 
 \fnhead{Function Trigger}
-A Client or Freelancer clicks the ``Open Dispute'' action button on a funded milestone in the contract workspace.\newline
-\textbf{Navigation path:} Contract Workspace $\rightarrow$ Milestones Tab $\rightarrow$ Milestone Card $\rightarrow$ Click ``Open Dispute''.
+A Client or Freelancer clicks the ``Open a dispute claim'' action button (or Dispute icon) on a funded milestone in the Milestone Detail Overview or Milestones list.\newline
+\textbf{Navigation path:} Contract Workspace $\rightarrow$ Milestones / Milestone Detail $\rightarrow$ Click ``Open a dispute claim''.
 
 \fnhead{Function Description}
 
@@ -32,17 +32,16 @@ A Client or Freelancer clicks the ``Open Dispute'' action button on a funded mil
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Initiates a formal dispute arbitration case when project counterparties cannot reach mutual consensus regarding milestone deliverables, non-responsive communication, or scope divergence. Filing a dispute immediately freezes the milestone's escrow balance from unilateral release, cancellation, or refund, ensuring financial security while evidence is gathered.
+\noindent Initiates a formal dispute resolution request when project counterparties cannot agree on milestone deliverables, deadlines, or scope. Filing a resolution request freezes the milestone's escrow balance from release, cancellation, or refund while parties exchange responses and escalate to a Frevia Expert if needed.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item ``Open Dispute'' action button rendered on active, funded milestone cards.
-      \item File Dispute modal dialog with arbitration policy explanation.
-      \item Dispute reason dropdown selector (e.g., Deliverables Unsatisfactory, Scope Discrepancy, Counterpart Unresponsive, Payment Disagreement).
-      \item Detailed explanation textarea supporting rich text and Markdown (10--5000 characters).
-      \item Resolution proposal fields: suggested split amounts for Client and Freelancer, proposed extension deadline.
-      \item Evidence files uploader supporting up to 5 attachments (images, PDFs, documents, communication screenshots).
-      \item Action buttons: ``Submit Dispute'' (red destructive) and ``Cancel''.
+      \item ``Resolution Center'' right-hand slide-over sheet displaying the milestone title and escrowed amount.
+      \item ``Escrow Split Proposal'' section with ``Total'' readout, ``Refund to Client (\$)'', ``Pay to Freelancer (\$)'', and ``Quick presets:'' buttons (``100\% Refund Client'', ``50\% - 50\%'', ``100\% Pay Freelancer'').
+      \item Required ``Reason *'' input field (with quick-fill common reason chips) and ``Explain the details (min 10 characters) *'' textarea with live character count.
+      \item ``Attach Contract Evidence (count/5)'' section with ``Upload'' button, contract shared-file selector, and locked-evidence integrity notice.
+      \item ``2-Tier Dispute Resolution Process'' summary card explaining Step 1 (48-hour counterparty response) and Step 2 (Frevia Expert binding ruling).
+      \item Footer buttons: ``Cancel'' and primary blue ``Submit Request''.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -62,12 +61,12 @@ A Client or Freelancer clicks the ``Open Dispute'' action button on a funded mil
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint3/ntin/OpenDispute.png}{Open Dispute modal dialog}
+\screenfigure[0.95]{image/screenshot/sprint3/ntin/OpenDispute.png}{Open Dispute (Resolution Center) slide-over drawer}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item The modal header displays an amber arbitration gavel icon and prominent heading ``Open Formal Dispute''.
-      \item A notice banner explains that filing a dispute freezes the milestone escrow funds and gives the respondent 48 hours to reply.
-      \item Form fields: Reason category dropdown, comprehensive explanation textarea, resolution type, and file attachment dropzone (max 5 files).
-      \item Bottom bar features policy consent checkbox, ``Cancel'' button, and red primary button ``Submit Formal Dispute''.
+      \item The right-hand ``Resolution Center'' drawer displays a balance scale icon, milestone title, and escrowed budget summary.
+      \item ``Escrow Split Proposal'' renders side-by-side ``Refund to Client (\$)'' and ``Pay to Freelancer (\$)'' inputs with ``Quick presets'' pill shortcuts.
+      \item Below are ``Reason *'', ``Explain the details (min 10 characters) *'' with counter, ``Attach Contract Evidence'' with ``Upload'' button and immutable-evidence warning, and the ``2-Tier Dispute Resolution Process'' info card.
+      \item Footer bar features ``Cancel'' and primary blue ``Submit Request'' button.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -101,13 +100,13 @@ A Client or Freelancer clicks the ``Open Dispute'' action button on a funded mil
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item The user expands the disputed milestone in the contract view and clicks ``Open Dispute''.
-      \item The system renders the Open Dispute modal outlining arbitration procedures and rules.
-      \item The user selects a dispute reason category and enters a comprehensive narrative description.
-      \item The user attaches up to 5 supporting evidence files (screenshots, contracts, or deliverable diffs).
-      \item The user specifies an optional proposed resolution and clicks ``Submit Dispute''.
-      \item The system validates inputs, creates the dispute record, freezes milestone escrow funds, and schedules the response timer.
-      \item The modal closes, a success toast is displayed, and the user is redirected to the Dispute Detail page.
+      \item The user opens a funded milestone and clicks ``Open a dispute claim'' (or the dispute icon).
+      \item The system opens the ``Resolution Center'' slide-over drawer.
+      \item The user configures the proposed escrow split, enters ``Reason *'' and detailed explanation ($\ge 10$ characters).
+      \item The user attaches up to 5 supporting evidence files (via ``Upload'' or contract shared files).
+      \item The user clicks ``Submit Request''.
+      \item The system validates inputs, creates the dispute record, freezes milestone escrow funds, and schedules the 48-hour response timer.
+      \item The drawer switches/opens the Resolution Detail sheet, and a success toast confirms the submission.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
@@ -401,8 +400,8 @@ A contract workspace view renders a milestone that has an active or historical d
 \subsubsection{ Respond to Dispute}
 
 \fnhead{Function Trigger}
-The designated respondent clicks ``Submit Response'' on an open dispute case.\newline
-\textbf{Navigation path:} Dispute Detail $\rightarrow$ Click ``Submit Response''.
+The designated respondent opens an open resolution case and clicks ``Accept Proposal'' or ``Decline'' inside the ``Respond to this proposal'' panel.\newline
+\textbf{Navigation path:} Dispute / Milestone Detail $\rightarrow$ Resolution Drawer $\rightarrow$ ``Respond to this proposal''.
 
 \fnhead{Function Description}
 
@@ -413,15 +412,13 @@ The designated respondent clicks ``Submit Response'' on an open dispute case.\ne
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Allows the respondent party to formally submit their rebuttal statement and counter-evidence within the 48-hour response window, ensuring equal hearing and fair arbitration before escalation or mediator rulings.
+\noindent Allows the respondent party to either accept the counterparty's proposed settlement or formally submit a written rebuttal and counter-evidence within the 48-hour response window before escalation to a Frevia Expert.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Response action panel or modal dialog on the Dispute Detail page.
-      \item Action choice selector: Accept Proposal (\texttt{ACCEPT}) or Decline Proposal (\texttt{DECLINE}).
-      \item Decline reason textarea (at least 5 characters when declining).
-      \item Optional counter-evidence attachment dropzone supporting up to 5 contract shared files when declining.
-      \item Remaining response deadline indicator and ``Confirm \& Submit Response'' / ``Cancel'' buttons.
+      \item ``Resolution \#ID'' slide-over drawer displaying status badge (``Waiting Response''), 48-hour countdown timer, and 4-step progress stepper (``Request'', ``Response'', ``Expert'', ``Resolved'').
+      \item Resolution summary rows: ``Proposed Resolution'', ``Proposed Split'', ``Milestone Escrow'', and opener's claim statement.
+      \item ``Respond to this proposal'' panel offering ``Accept Proposal'' and ``Decline'' actions; selecting ``Decline'' expands a required explanation textarea (min 5 characters), ``Attach evidence (up to 5 files)'' upload control (``Choose file''), ``Cancel'', and crimson ``Confirm Decline'' button.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -433,12 +430,11 @@ The designated respondent clicks ``Submit Response'' on an open dispute case.\ne
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint3/ntin/RespondToDispute.png}{Respond to dispute rebuttal form}
+\screenfigure[0.95]{image/screenshot/sprint3/ntin/RespondToDispute.png}{Respond to dispute rebuttal form inside Resolution Detail sheet}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Top banner displays the opener's claim summary and remaining response time badge.
-      \item Action selector allows choosing between accepting the proposal or declining with reason and counter-evidence.
-      \item Textarea prompts for explanation when declining; dropzone allows attaching up to 5 evidence files.
-      \item Primary blue button ``Submit Response''.
+      \item Header shows ``Resolution \#0012'', milestone title, ``Waiting Response'' status, 48-hour countdown timer, and 4-stage timeline stepper (``Request'', ``Response'', ``Expert'', ``Resolved'').
+      \item Summary block lists ``Proposed Resolution'', ``Proposed Split'', ``Milestone Escrow'', and the opener's reason/description.
+      \item ``Respond to this proposal'' box displays the decline explanation textarea, ``Attach evidence (up to 5 files)'' with ``Choose file'' button and uploaded attachment chips, ``Cancel'', and crimson ``Confirm Decline'' button.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -467,8 +463,8 @@ The designated respondent clicks ``Submit Response'' on an open dispute case.\ne
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item The respondent opens the Dispute Detail view and clicks ``Submit Response''.
-      \item The respondent selects \texttt{ACCEPT} or \texttt{DECLINE} (entering a reason and optional evidence files if declining).
+      \item The respondent opens the ``Resolution \#ID'' drawer and views the ``Respond to this proposal'' card.
+      \item The respondent clicks ``Accept Proposal'', or clicks ``Decline'', enters a rebuttal reason ($\ge 5$ chars) with optional counter-evidence files, and clicks ``Confirm Decline''.
       \item The backend validates status and saves either \texttt{FINALIZED} mutual settlement or \texttt{UNDER\_REVIEW} decline state.
       \item The opener receives a notification and the dispute view refreshes.
 \end{enumerate}
@@ -587,8 +583,8 @@ The user who opened the dispute clicks the ``Withdraw Dispute'' action button.\n
 \subsubsection{ Escalate Dispute to Expert}
 
 \fnhead{Function Trigger}
-A dispute participant clicks ``Escalate to Expert'' on an eligible dispute after decline or response-deadline expiry.\newline
-\textbf{Navigation path:} Dispute Detail $\rightarrow$ Click ``Escalate to Expert''.
+A dispute participant clicks ``Escalate to Expert'' in the Resolution Detail slide-over sheet after a counterparty declines or the 48-hour response window expires.\newline
+\textbf{Navigation path:} Dispute / Milestone Detail $\rightarrow$ Resolution Drawer $\rightarrow$ Click ``Escalate to Expert''.
 
 \fnhead{Function Description}
 
@@ -604,9 +600,8 @@ A dispute participant clicks ``Escalate to Expert'' on an eligible dispute after
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item ``Escalate to Domain Expert'' action button on the Dispute Detail view.
-      \item Escalation modal dialog explaining binding expert arbitration terms.
-      \item Action buttons: ``Confirm Escalation'' and ``Cancel''.
+      \item ``Resolution \#ID'' slide-over drawer displaying ``48h window expired'' notice (or ``Proposal Declined'' card), proposal summary, and opener claim text.
+      \item Action bar displaying primary blue ``Escalate to Expert'' button (with shield icon) alongside secondary ``Withdraw Request'' button (for the dispute opener when applicable).
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -619,12 +614,11 @@ A dispute participant clicks ``Escalate to Expert'' on an eligible dispute after
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint3/ntin/EscalateDisputeToExpert.png}{Escalate dispute to expert modal}
+\screenfigure[0.95]{image/screenshot/sprint3/ntin/EscalateDisputeToExpert.png}{Escalate to Expert action in Resolution Detail sheet}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Modal displays shield icon and title ``Escalate to Domain Expert Arbitrator''.
-      \item Explanation text clarifies that expert arbitration provides an impartial review and a binding fund distribution decision.
-      \item Summary displays disputed milestone escrow balance.
-      \item Primary purple button ``Confirm Escalation to Expert''.
+      \item Sheet header displays ``Resolution \#0012'', milestone title, ``Waiting Response'' pill, and ``48h window expired'' indicator above the 4-step progress stepper.
+      \item Middle section summarizes ``Proposed Resolution'', ``Proposed Split'', ``Milestone Escrow'', and ``Opened by You'' claim details.
+      \item Primary blue button ``Escalate to Expert'' sits beside the outline ``Withdraw Request'' button directly inside the drawer.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -648,11 +642,10 @@ A dispute participant clicks ``Escalate to Expert'' on an eligible dispute after
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item User clicks ``Escalate to Domain Expert''.
-      \item The system opens the escalation confirmation modal.
-      \item User confirms escalation.
+      \item User opens the ``Resolution \#ID'' drawer for an eligible dispute (declined or ``48h window expired'').
+      \item User clicks ``Escalate to Expert''.
       \item The system verifies participant role and decline/expiry eligibility, sets status to \texttt{UNDER\_REVIEW}, and notifies the counterparty.
-      \item The system displays a confirmation toast and updates the case view.
+      \item The system displays a confirmation toast and updates the stepper to the Expert stage.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
@@ -781,10 +774,9 @@ An Expert opens a specific dispute from the expert arbitration worklist.\newline
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Multi-panel evaluation workbench layout inside \texttt{/admin/disputes}.
-      \item Contract and Milestone Specifications panel: Agreed deliverables, timeline, and escrow amount.
-      \item Symmetric Evidence Viewer: Client and Freelancer claims, evidence files, and party conversation history.
-      \item Binding Decision Formulation Panel with split inputs and justification editor.
+      \item Full-page 2-column arbitration workbench inside \texttt{/admin/disputes} with ``Back to cases'' navigation, case header (\texttt{\#RES-ID}, milestone title, contract code, status dot), and top-right Escrow amount display.
+      \item Left column (7/12 width): sequential sections for ``PROJECT \& MILESTONE DETAILS'', ``PARTICIPANTS'', ``CLAIM \& COUNTERPARTY RESPONSE'', ``DISPUTE EVIDENCE'', ``SUBMISSIONS'', ``MILESTONE SPECIFICATION FILES'', and scrollable ``DIRECT MESSAGES BETWEEN PARTIES''.
+      \item Sticky right column (5/12 width): ``Issue Final Binding Decision'' panel with split inputs and reasoning textarea.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -798,9 +790,9 @@ An Expert opens a specific dispute from the expert arbitration worklist.\newline
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint3/ntin/ViewExpertDisputeDetail.png}{Expert dispute arbitration workbench}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Split-screen layout: Top section shows contract brief, milestone deliverables, and escrow financial summary.
-      \item Center tabs allow switching between Claim Evidence, Rebuttal Evidence, and Submitted Deliverables.
-      \item Right/Bottom panel embeds the Decision Drafting tool for specifying split percentages and findings.
+      \item Top bar shows ``Back to cases'', case code \texttt{\#RES-0012}, milestone title, contract reference, ``Under Expert Review'' status, Opened/Escalated timestamps, and Escrow total.
+      \item Left dossier column renders structured case sections: Project \& Milestone Details, Participants, Claim \& Counterparty Response, Dispute Evidence, numbered Submissions with client change requests, Milestone Specification Files, and color-coded Direct Messages Between Parties.
+      \item Sticky right column embeds the ``Issue Final Binding Decision'' form for Client/Freelancer payout allocation and decision reasoning.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -851,8 +843,8 @@ An Expert opens a specific dispute from the expert arbitration worklist.\newline
 \subsubsection{ Expert Make Dispute Decision}
 
 \fnhead{Function Trigger}
-An Expert arbitrator completes evaluation and clicks ``Issue Binding Decision''.\newline
-\textbf{Navigation path:} Expert Dispute Detail $\rightarrow$ Decision Panel $\rightarrow$ Click ``Issue Binding Decision''.
+An Expert arbitrator completes evaluation in the right-hand sticky decision panel and clicks ``Issue Final Binding Decision''.\newline
+\textbf{Navigation path:} Expert Dispute Detail $\rightarrow$ ``Issue Final Binding Decision'' Panel $\rightarrow$ Click ``Issue Final Binding Decision''.
 
 \fnhead{Function Description}
 
@@ -868,12 +860,11 @@ An Expert arbitrator completes evaluation and clicks ``Issue Binding Decision''.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Decision authoring panel on the expert console (\texttt{/admin/disputes}).
-      \item Amount input fields: Client Refund Amount (\$USD) and Freelancer Payout Amount (\$USD), with auto-balancing sliders.
-      \item Preset split shortcut buttons: ``100\% Client'', ``100\% Freelancer'', ``50/50 Equal Split''.
-      \item Written arbitration findings and legal rationale textarea (min 5 chars).
-      \item Final binding confirmation modal with fund distribution breakdown.
-      \item Primary action button: ``Issue Binding Decision'' (purple).
+      \item Sticky ``Issue Final Binding Decision'' panel on the right column of \texttt{/admin/disputes}.
+      \item Two auto-balancing numeric inputs: ``Refund to Client (\$)'' and ``Pay to Freelancer (\$)'', automatically adjusting the counterpart field to match total milestone escrow.
+      \item Live mismatch warning if amounts do not sum to milestone escrow.
+      \item Required ``Decision Reasoning *'' textarea (min 5 characters) explaining the arbitration ruling.
+      \item Full-width dark pill/rounded button ``Issue Final Binding Decision'' and final confirmation \texttt{AlertDialog}.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -886,12 +877,11 @@ An Expert arbitrator completes evaluation and clicks ``Issue Binding Decision''.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint3/ntin/ExpertMakeDisputeDecision.png}{Expert binding decision formulation modal}
+\screenfigure[0.95]{image/screenshot/sprint3/ntin/ExpertMakeDisputeDecision.png}{Expert Issue Final Binding Decision workbench}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Header displays balance validation banner: ``Disputed Escrow: \$X.00 (Total Allocated: \$X.00 / 100\%)''.
-      \item Interactive sliders allow adjusting the split percentage between Client and Freelancer.
-      \item Form requires comprehensive written justification explaining how specifications and evidence informed the ruling.
-      \item Confirmation dialog warns that the decision is permanent, irrevocable, and initiates immediate bank transfers.
+      \item Sticky right panel titled ``Issue Final Binding Decision'' explains that the decision immediately settles milestone escrow via Stripe and closes the dispute.
+      \item Linked numeric fields ``Refund to Client (\$)'' and ``Pay to Freelancer (\$)'' enforce a 100\% sum matching the top-right Escrow total.
+      \item Multi-line ``Decision Reasoning *'' textarea sits above the full-width black ``Issue Final Binding Decision'' button, which triggers a final confirmation dialog before execution.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -922,9 +912,9 @@ An Expert arbitrator completes evaluation and clicks ``Issue Binding Decision''.
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
       \item Expert reviews case file in the evaluation console.
-      \item Expert enters split allocation and written findings.
+      \item Expert enters split allocation in ``Refund to Client (\$)'' / ``Pay to Freelancer (\$)'' and writes ``Decision Reasoning *''.
       \item The system verifies that split amounts match milestone balance.
-      \item Expert clicks ``Issue Binding Decision'' and confirms in the confirmation dialog.
+      \item Expert clicks ``Issue Final Binding Decision'' and confirms in the confirmation dialog.
       \item The system executes Stripe settlement, updates dispute to \texttt{FINALIZED}, updates milestone payment status, and notifies parties.
 \end{enumerate}
 
@@ -953,8 +943,8 @@ An Expert arbitrator completes evaluation and clicks ``Issue Binding Decision''.
 \subsubsection{ Upload Dispute Evidence File}
 
 \fnhead{Function Trigger}
-A Client or Freelancer selects an evidence file in the evidence uploader inside the Open Dispute or Respond to Dispute dialog.\newline
-\textbf{Navigation path:} Open Dispute / Respond to Dispute Modal $\rightarrow$ Evidence Upload Control $\rightarrow$ Select File.
+A Client or Freelancer clicks ``Upload'' inside the Resolution Center drawer (when opening a dispute) or ``Choose file'' inside the ``Respond to this proposal'' section (when declining a dispute).\newline
+\textbf{Navigation path:} Resolution Center / Detail Drawer $\rightarrow$ Attach Evidence Control $\rightarrow$ Select File.
 
 \fnhead{Function Description}
 
@@ -970,8 +960,9 @@ A Client or Freelancer selects an evidence file in the evidence uploader inside 
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Embedded file dropzone and file picker inside \texttt{OpenDisputeDialog} and \texttt{RespondDisputeDialog}.
-      \item Uploaded attachment chips showing filename, file size, and remove control.
+      \item Embedded evidence upload controls inside \texttt{OpenResolutionDialog} (``Upload'' button) and \texttt{ResolutionDetailSheet} (``Choose file'' button next to ``Attach evidence (up to 5 files)'').
+      \item Native OS file picker for selecting proof documents or screenshots.
+      \item Uploaded attachment rows showing filename and remove control before form submission.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -983,7 +974,11 @@ A Client or Freelancer selects an evidence file in the evidence uploader inside 
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\noindent This function operates as an embedded attachment upload component within the Open Dispute and Respond to Dispute modals; it does not possess a standalone screen. Selected files are uploaded asynchronously and rendered as attached evidence badges before form submission.
+\screenfigure[0.95]{image/screenshot/sprint3/ntin/UploadDisputeEvidenceFile.png}{Uploading dispute evidence file via the Resolution Detail sheet}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Inside the ``Resolution \#0012'' right-hand drawer, clicking ``Choose file'' next to ``Attach evidence (up to 5 files)'' opens the operating system file selector.
+      \item Selected files upload asynchronously to \texttt{POST /api/disputes/files/upload} and render as removable attachment rows below the upload control prior to final submission.
+\end{itemize}
 
 \fnhead{Function Details}
 

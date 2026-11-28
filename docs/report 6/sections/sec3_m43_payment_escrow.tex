@@ -197,14 +197,14 @@ The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe 
 \end{itemize}
 \begin{figure}[H]\centering
   \includegraphics[width=0.90\textwidth]{images/payments/m43_08_fund_milestone_saved_card_guide.png}
-  \caption{Fund Milestone Escrow drawer with 0\% extra client fee summary and Stripe trigger}
+  \caption{Fund Milestone Escrow drawer with 1-Click Saved Card deposit and fallback Stripe Checkout option}
   \label{fig:m43_08_fund_milestone_saved_card}
 \end{figure}
 \Needspace{6\baselineskip}\paragraph{Step-by-Step User Guide:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
   \item \rbadge{1} \textbf{Verify Milestone Escrow Summary:} Review the milestone name, exact \textit{Deposit Amount}, and confirmation that \textit{Client Fee} is \texttt{\$0.00 (Covered in initial contract fee)}.
-  \item \rbadge{2} \textbf{Click Deposit via Stripe (Saved Card):} Choose your saved default card for instant off-session charging (when saved cards are attached) or click \textbf{Deposit via Stripe} to authorize via Stripe.
-  \item \rbadge{3} \textbf{Or Cancel Payment Drawer:} Click \textbf{Cancel} to exit without initiating any charge.
+  \item \rbadge{2} \textbf{Select Card \& Click 1-Click Deposit:} Confirm your saved card under \textit{QUICK PAY WITH SAVED CARD} and click \textbf{Pay \$X.00 (1-Click Escrow Deposit)} (then confirm in the modal) for instant off-session charging.
+  \item \rbadge{3} \textbf{Or Pay via Stripe Checkout:} Click \textbf{Pay with Another Card (Stripe Checkout)} to redirect to Stripe Checkout instead, or \textbf{Cancel} to exit without charging.
 \end{enumerate}
 \Needspace{6\baselineskip}\paragraph{After You Submit (Result \& Troubleshooting):}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]

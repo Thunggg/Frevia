@@ -123,7 +123,7 @@
 \contentsline {figure}{\numberline {123}{\ignorespaces Contextual dispute lock banner on milestone workspace synced via \texttt {GET /api/disputes/milestone/:milestoneId}}}{144}{figure.caption.914}%
 \contentsline {figure}{\numberline {124}{\ignorespaces Respondent reviewing the claim and submitting an acceptance or reasoned decline}}{145}{figure.caption.920}%
 \contentsline {figure}{\numberline {125}{\ignorespaces Initiator withdrawing an active dispute via Withdraw Request}}{146}{figure.caption.927}%
-\contentsline {figure}{\numberline {126}{\ignorespaces Escalating a declined Step 1 dispute to a Frevia Expert arbitrator}}{147}{figure.caption.933}%
+\contentsline {figure}{\numberline {126}{\ignorespaces Escalating an expired or declined Step 1 dispute to a Frevia Expert arbitrator}}{147}{figure.caption.933}%
 \contentsline {figure}{\numberline {127}{\ignorespaces Expert Arbitration Console listing escalated and resolved dispute dossiers}}{148}{figure.caption.939}%
 \contentsline {figure}{\numberline {128}{\ignorespaces Comprehensive Expert case file showing evidence, deliverables, and chat audit log}}{149}{figure.caption.946}%
 \contentsline {figure}{\numberline {129}{\ignorespaces Expert setting exact escrow split percentages and issuing a final binding decision}}{150}{figure.caption.953}%
@@ -134,6 +134,6 @@
 \contentsline {figure}{\numberline {134}{\ignorespaces Remove Payment Method confirmation dialog showing masked last 4 digits}}{156}{figure.caption.988}%
 \contentsline {figure}{\numberline {135}{\ignorespaces Authorize Contract Escrow Hold drawer calculating selected milestones plus 3\% client fee}}{157}{figure.caption.994}%
 \contentsline {figure}{\numberline {136}{\ignorespaces Hosted Stripe Checkout page for milestone escrow deposit}}{158}{figure.caption.1001}%
-\contentsline {figure}{\numberline {137}{\ignorespaces Fund Milestone Escrow drawer with 0\% extra client fee summary and Stripe trigger}}{159}{figure.caption.1008}%
-\contentsline {figure}{\numberline {138}{\ignorespaces Releasing 95\% milestone escrow funds to Freelancer via Stripe Connect}}{160}{figure.caption.1015}%
-\contentsline {figure}{\numberline {139}{\ignorespaces Billing \& Payments ledger with saved card preview, escrow spend metrics, and filters}}{161}{figure.caption.1022}%
+\contentsline {figure}{\numberline {137}{\ignorespaces Fund Milestone Escrow drawer with 1-Click Saved Card deposit and fallback Stripe Checkout option}}{159}{figure.caption.1008}%
+\contentsline {figure}{\numberline {138}{\ignorespaces Releasing 95\% milestone escrow funds to Freelancer via Stripe Connect}}{161}{figure.caption.1015}%
+\contentsline {figure}{\numberline {139}{\ignorespaces Billing \& Payments ledger with saved card preview, escrow spend metrics, and filters}}{162}{figure.caption.1022}%
