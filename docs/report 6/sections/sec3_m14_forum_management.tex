@@ -1,5 +1,5 @@
 % =============================================================================
-% PART B - MODULE 14: FORUM MANAGEMENT (UC-14.01 - UC-14.17)
+% PART B - MODULE 14: FORUM MANAGEMENT (UC-14.01 - UC-16.07)
 % In Charge: Pham Kha Vy
 % =============================================================================
 \subsection{Module 14: Forum Management}
@@ -49,7 +49,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} If the category slug is invalid or soft-deleted, a 404 Not Found message is shown.
 \end{itemize}
 
-\subsubsection{M14.03 -- View Post List (UC-14.03)}
+\subsubsection{M14.03 -- View Post List (UC-15.01)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Forum Post List -- \texttt{/forum/\{categorySlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer.
@@ -71,7 +71,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} If no posts match your search query, an empty search state is displayed.
 \end{itemize}
 
-\subsubsection{M14.04 -- View Post Detail (UC-14.04)}
+\subsubsection{M14.04 -- View Post Detail (UC-15.02)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Post Detail -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer.
@@ -94,7 +94,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} If the post was removed or rejected, an unavailable notice is shown.
 \end{itemize}
 
-\subsubsection{M14.05 -- Create Post (UC-14.05)}
+\subsubsection{M14.05 -- Create Post (UC-15.03)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Create Post Modal -- \texttt{/forum/\{categorySlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer.
@@ -116,7 +116,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} Empty required fields trigger validation warnings; severely toxic content is blocked.
 \end{itemize}
 
-\subsubsection{M14.06 -- Update Post (UC-14.06)}
+\subsubsection{M14.06 -- Update Post (UC-15.04)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Edit Post Modal -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer (Author only).
@@ -138,7 +138,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} Non-authors do not see the Edit action; invalid inputs are rejected.
 \end{itemize}
 
-\subsubsection{M14.07 -- Delete Post (UC-14.07)}
+\subsubsection{M14.07 -- Delete Post (UC-15.05)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Delete Post Dialog -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer (Author only).
@@ -159,7 +159,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} Unauthorized users cannot delete posts authored by others.
 \end{itemize}
 
-\subsubsection{M14.08 -- Like Post (UC-14.08)}
+\subsubsection{M14.08 -- Like Post (UC-15.06)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Post Detail -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer.
@@ -180,7 +180,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} Unauthenticated visitors are prompted to sign in before liking.
 \end{itemize}
 
-\subsubsection{M14.09 -- Unlike Post (UC-14.09)}
+\subsubsection{M14.09 -- Unlike Post (UC-15.07)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Post Detail -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer.
@@ -201,7 +201,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} If the post was deleted concurrently, a not-found toast is displayed.
 \end{itemize}
 
-\subsubsection{M14.10 -- View Post Likes (UC-14.10)}
+\subsubsection{M14.10 -- View Post Likes (UC-15.08)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Post Likes Modal -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer.
@@ -222,7 +222,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} If no likes exist, an empty list message is shown.
 \end{itemize}
 
-\subsubsection{M14.11 -- View Post Comments (UC-14.11)}
+\subsubsection{M14.11 -- View Post Comments (UC-16.01)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Comments Section -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer.
@@ -243,7 +243,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} Deleted comments are hidden from the public comment thread.
 \end{itemize}
 
-\subsubsection{M14.12 -- Create Comment (UC-14.12)}
+\subsubsection{M14.12 -- Create Comment (UC-16.02)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Comment Composer -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer.
@@ -264,7 +264,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} Blank comments cannot be submitted.
 \end{itemize}
 
-\subsubsection{M14.13 -- Update Comment (UC-14.13)}
+\subsubsection{M14.13 -- Update Comment (UC-16.03)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Edit Comment -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer (Owner only).
@@ -285,7 +285,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} Only the comment owner can edit the comment.
 \end{itemize}
 
-\subsubsection{M14.14 -- Delete Comment (UC-14.14)}
+\subsubsection{M14.14 -- Delete Comment (UC-16.04)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Delete Comment -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer (Owner only).
@@ -306,7 +306,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} Deleted comments remain recoverable by administrators in Forum Trash.
 \end{itemize}
 
-\subsubsection{M14.15 -- Like Comment (UC-14.15)}
+\subsubsection{M14.15 -- Like Comment (UC-16.05)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Comment Card -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer.
@@ -326,7 +326,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} Duplicate likes by the same user are prevented.
 \end{itemize}
 
-\subsubsection{M14.16 -- Unlike Comment (UC-14.16)}
+\subsubsection{M14.16 -- Unlike Comment (UC-16.06)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Comment Card -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer.
@@ -346,7 +346,7 @@
   \item \textbf{Troubleshooting \& Common Messages:} If the comment was deleted, a warning toast is shown.
 \end{itemize}
 
-\subsubsection{M14.17 -- Report Content (UC-14.17)}
+\subsubsection{M14.17 -- Report Content (UC-16.07)}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Report Dialog -- \texttt{/forum/\{categorySlug\}/\{postSlug\}}.
   \item \textbf{Who Can Use This:} Client, Freelancer.

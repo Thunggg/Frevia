@@ -1,6 +1,6 @@
 % =============================================================================
 % PART B - MODULES 32 & 42: PROPOSAL MANAGEMENT & AI RECOMMENDATION
-% (UC-32.01 - UC-32.09, UC-42.01)
+% (UC-34.01 - UC-34.09, UC-44.01)
 % In Charge: Tran Phat Tai (CE181632)
 % =============================================================================
 
@@ -10,7 +10,7 @@
 The Proposal Management module orchestrates competitive bidding between identity-verified Freelancers and Clients---covering draft authoring, submission with budget/deadline safeguards, editing, withdrawal, client pipeline review, rejection, and one-click contract creation upon hiring. Complementing this flow, the AI Recommendation engine ranks open jobs for Freelancers (\texttt{cv2jd}) and qualified candidates for Clients (\texttt{jd2cv}) using hybrid semantic, skill, experience, and budget scoring.
 
 % -----------------------------------------------------------------------------
-\subsubsection{M32.01 -- View My Proposals List (UC-32.01)}
+\subsubsection{M32.01 -- View My Proposals List (UC-34.01)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} My Proposals -- \texttt{/freelancer/\allowbreak{}proposals}.
@@ -37,7 +37,7 @@ The Proposal Management module orchestrates competitive bidding between identity
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M32.02 -- View My Proposal Details (UC-32.02)}
+\subsubsection{M32.02 -- View My Proposal Details (UC-34.02)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} My Proposal Detail -- \texttt{/freelancer/\allowbreak{}proposals/\allowbreak{}[id]}.
@@ -63,7 +63,7 @@ The Proposal Management module orchestrates competitive bidding between identity
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M32.03 -- Submit Proposal (UC-32.03)}
+\subsubsection{M32.03 -- Submit Proposal (UC-34.03)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Submit a Proposal Modal -- \texttt{/freelancer/\allowbreak{}jobs/\allowbreak{}[slug]}.
@@ -90,7 +90,7 @@ The Proposal Management module orchestrates competitive bidding between identity
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M32.04 -- Update Draft Proposal (UC-32.04)}
+\subsubsection{M32.04 -- Update Draft Proposal (UC-34.04)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Edit Draft Proposal -- \texttt{/freelancer/\allowbreak{}proposals/\allowbreak{}[id]}.
@@ -116,7 +116,7 @@ The Proposal Management module orchestrates competitive bidding between identity
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M32.05 -- Withdraw Proposal (UC-32.05)}
+\subsubsection{M32.05 -- Withdraw Proposal (UC-34.05)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Withdraw Proposal Confirmation Dialog -- \texttt{/freelancer/\allowbreak{}proposals/\allowbreak{}[id]}.
@@ -141,7 +141,7 @@ The Proposal Management module orchestrates competitive bidding between identity
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M32.06 -- Accept Proposal \& Hire Freelancer (UC-32.06)}
+\subsubsection{M32.06 -- Accept Proposal \& Hire Freelancer (UC-34.06)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Create Contract \& Hire Freelancer Drawer -- \texttt{/client/\allowbreak{}jobs/\allowbreak{}[jobId]/\allowbreak{}proposals}.
@@ -168,7 +168,7 @@ The Proposal Management module orchestrates competitive bidding between identity
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M32.07 -- Reject Proposal (UC-32.07)}
+\subsubsection{M32.07 -- Reject Proposal (UC-34.07)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Reject Proposal Dialog -- \texttt{/client/\allowbreak{}jobs/\allowbreak{}[jobId]/\allowbreak{}proposals}.
@@ -193,7 +193,7 @@ The Proposal Management module orchestrates competitive bidding between identity
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M32.08 -- View Job Proposals List (UC-32.08)}
+\subsubsection{M32.08 -- View Job Proposals List (UC-34.08)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Client Job Proposals Pipeline -- \texttt{/client/\allowbreak{}jobs/\allowbreak{}[jobId]/\allowbreak{}proposals}.
@@ -219,7 +219,7 @@ The Proposal Management module orchestrates competitive bidding between identity
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M32.09 -- View Proposal Details (Client Drawer) (UC-32.09)}
+\subsubsection{M32.09 -- View Proposal Details (Client Drawer) (UC-34.09)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Proposal Detail Slide-Over Drawer -- \texttt{/client/\allowbreak{}jobs/\allowbreak{}[jobId]/\allowbreak{}proposals}.
@@ -245,7 +245,7 @@ The Proposal Management module orchestrates competitive bidding between identity
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M42.01 -- AI Job \& Freelancer Recommendations (UC-42.01)}
+\subsubsection{M42.01 -- AI Job \& Freelancer Recommendations (UC-44.01)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Best Matches Recommendation Feed -- \texttt{/freelancer/\allowbreak{}find-work/\allowbreak{}best-matches}; Client Candidate Ranking API -- \texttt{GET /api/\allowbreak{}recommendations/\allowbreak{}freelancers}.

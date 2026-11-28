@@ -13,55 +13,55 @@
 \contentsline {section}{\numberline {1.}System Actors}{17}{section*.17}%
 \contentsline {section}{\numberline {2.}Use Case Diagram}{18}{section*.19}%
 \contentsline {section}{\numberline {3.}Main Use Cases}{35}{section*.39}%
-\contentsline {part}{IV.\hspace {1em}Software Design Description}{61}{part*.40}%
-\contentsline {section}{\numberline {1.}Architecture Diagram}{61}{section*.41}%
-\contentsline {subsection}{\numberline {1.1}System Architecture}{61}{subsection*.42}%
-\contentsline {subsection}{\numberline {1.2}Package Diagram}{65}{subsection*.44}%
-\contentsline {section}{\numberline {2.}Entity Relationship Diagram (ERD)}{70}{section*.50}%
-\contentsline {subsection}{\numberline {2.1}Table Relationships}{71}{subsection*.52}%
-\contentsline {section}{\numberline {3.}Module Overview}{82}{section*.53}%
-\contentsline {section}{\numberline {4.}Detailed Design}{83}{section*.54}%
-\contentsline {subsection}{\numberline {4.1}Authentication \& RBAC Management}{84}{subsection*.55}%
-\contentsline {subsection}{\numberline {4.2}Profile, CV \& eKYC Verification Management}{89}{subsection*.61}%
-\contentsline {subsection}{\numberline {4.3}Job Posting \& Proposal Management}{94}{subsection*.67}%
-\contentsline {subsection}{\numberline {4.4}Contract \& Shared Workspace Management}{98}{subsection*.73}%
-\contentsline {subsection}{\numberline {4.5}Milestone \& Deliverable Submission Management}{102}{subsection*.79}%
-\contentsline {subsection}{\numberline {4.6}Dispute Arbitration Management}{106}{subsection*.85}%
-\contentsline {subsection}{\numberline {4.7}Payment \& Stripe Escrow Management}{109}{subsection*.89}%
-\contentsline {subsection}{\numberline {4.8}Community Forum, Messaging \& AI Moderation}{112}{subsection*.93}%
-\contentsline {part}{V.\hspace {1em}Implementation \& Testing Summary}{118}{part*.101}%
-\contentsline {section}{\numberline {1.}Implementation Overview}{118}{section*.102}%
-\contentsline {section}{\numberline {2.}Testing Summary}{119}{section*.104}%
-\contentsline {subsection}{\numberline {2.1}Test Case Statistics}{119}{subsection*.105}%
-\contentsline {subsection}{\numberline {2.2}Test Results}{120}{subsection*.108}%
-\contentsline {part}{VI.\hspace {1em}Release Package \& User Guides}{122}{part*.110}%
-\contentsline {section}{\numberline {1.}Release Package}{122}{section*.111}%
-\contentsline {section}{\numberline {2.}Representative User Workflows}{124}{section*.116}%
-\contentsline {subsection}{\numberline {2.1}Authentication \& Role-Based Administration}{125}{subsection*.117}%
-\contentsline {subsubsection}{\numberline {2.1.1}Purpose}{125}{subsubsection*.118}%
-\contentsline {subsubsection}{\numberline {2.1.2}Step-by-Step User Guide}{125}{subsubsection*.119}%
-\contentsline {subsection}{\numberline {2.2}Profile Setup \& eKYC Identity Verification}{128}{subsection*.127}%
-\contentsline {subsubsection}{\numberline {2.2.1}Purpose}{128}{subsubsection*.128}%
-\contentsline {subsubsection}{\numberline {2.2.2}Step-by-Step User Guide}{129}{subsubsection*.129}%
-\contentsline {subsection}{\numberline {2.3}Contract Creation, Bilateral Signing \& Shared Files}{131}{subsection*.136}%
-\contentsline {subsubsection}{\numberline {2.3.1}Purpose}{132}{subsubsection*.137}%
-\contentsline {subsubsection}{\numberline {2.3.2}Step-by-Step User Guide}{132}{subsubsection*.138}%
-\contentsline {subsection}{\numberline {2.4}Milestone Deliverable Execution \& Review}{135}{subsection*.146}%
-\contentsline {subsubsection}{\numberline {2.4.1}Purpose}{135}{subsubsection*.147}%
-\contentsline {subsubsection}{\numberline {2.4.2}Step-by-Step User Guide}{136}{subsubsection*.148}%
-\contentsline {subsection}{\numberline {2.5}Stripe Connect Escrow \& Milestone Settlement}{138}{subsection*.154}%
-\contentsline {subsubsection}{\numberline {2.5.1}Purpose}{138}{subsubsection*.155}%
-\contentsline {subsubsection}{\numberline {2.5.2}Step-by-Step User Guide}{139}{subsubsection*.156}%
-\contentsline {subsection}{\numberline {2.6}Dispute Filing, Arbitration \& Bilateral Reviews}{142}{subsection*.163}%
-\contentsline {subsubsection}{\numberline {2.6.1}Purpose}{142}{subsubsection*.164}%
-\contentsline {subsubsection}{\numberline {2.6.2}Step-by-Step User Guide}{142}{subsubsection*.165}%
-\contentsline {subsection}{\numberline {2.7}Community Forum, Direct Messaging \& AI Moderation}{146}{subsection*.172}%
-\contentsline {subsubsection}{\numberline {2.7.1}Purpose}{146}{subsubsection*.173}%
-\contentsline {subsubsection}{\numberline {2.7.2}Step-by-Step User Guide}{146}{subsubsection*.174}%
-\contentsline {part}{VII.\hspace {1em}Conclusion \& Future Work}{151}{part*.182}%
-\contentsline {section}{\numberline {1.}Project Conclusion}{151}{section*.183}%
-\contentsline {section}{\numberline {2.}Project Limitations}{151}{section*.184}%
-\contentsline {subsection}{\numberline {2.1}Limitations}{151}{subsection*.185}%
-\contentsline {subsection}{\numberline {2.2}Exclusions}{156}{subsection*.186}%
-\contentsline {section}{\numberline {3.}Future Work}{157}{section*.187}%
-\contentsline {part}{VIII.\hspace {1em}References}{158}{part*.193}%
+\contentsline {part}{IV.\hspace {1em}Software Design Description}{60}{part*.40}%
+\contentsline {section}{\numberline {1.}Architecture Diagram}{60}{section*.41}%
+\contentsline {subsection}{\numberline {1.1}System Architecture}{60}{subsection*.42}%
+\contentsline {subsection}{\numberline {1.2}Package Diagram}{64}{subsection*.44}%
+\contentsline {section}{\numberline {2.}Entity Relationship Diagram (ERD)}{69}{section*.50}%
+\contentsline {subsection}{\numberline {2.1}Table Relationships}{70}{subsection*.52}%
+\contentsline {section}{\numberline {3.}Module Overview}{81}{section*.53}%
+\contentsline {section}{\numberline {4.}Detailed Design}{82}{section*.54}%
+\contentsline {subsection}{\numberline {4.1}Authentication \& RBAC Management}{83}{subsection*.55}%
+\contentsline {subsection}{\numberline {4.2}Profile, CV \& eKYC Verification Management}{88}{subsection*.61}%
+\contentsline {subsection}{\numberline {4.3}Job Posting \& Proposal Management}{93}{subsection*.67}%
+\contentsline {subsection}{\numberline {4.4}Contract \& Shared Workspace Management}{97}{subsection*.73}%
+\contentsline {subsection}{\numberline {4.5}Milestone \& Deliverable Submission Management}{101}{subsection*.79}%
+\contentsline {subsection}{\numberline {4.6}Dispute Arbitration Management}{105}{subsection*.85}%
+\contentsline {subsection}{\numberline {4.7}Payment \& Stripe Escrow Management}{108}{subsection*.89}%
+\contentsline {subsection}{\numberline {4.8}Community Forum, Messaging \& AI Moderation}{111}{subsection*.93}%
+\contentsline {part}{V.\hspace {1em}Implementation \& Testing Summary}{117}{part*.101}%
+\contentsline {section}{\numberline {1.}Implementation Overview}{117}{section*.102}%
+\contentsline {section}{\numberline {2.}Testing Summary}{118}{section*.104}%
+\contentsline {subsection}{\numberline {2.1}Test Case Statistics}{118}{subsection*.105}%
+\contentsline {subsection}{\numberline {2.2}Test Results}{119}{subsection*.108}%
+\contentsline {part}{VI.\hspace {1em}Release Package \& User Guides}{121}{part*.110}%
+\contentsline {section}{\numberline {1.}Release Package}{121}{section*.111}%
+\contentsline {section}{\numberline {2.}Representative User Workflows}{123}{section*.116}%
+\contentsline {subsection}{\numberline {2.1}Authentication \& Role-Based Administration}{124}{subsection*.117}%
+\contentsline {subsubsection}{\numberline {2.1.1}Purpose}{124}{subsubsection*.118}%
+\contentsline {subsubsection}{\numberline {2.1.2}Step-by-Step User Guide}{124}{subsubsection*.119}%
+\contentsline {subsection}{\numberline {2.2}Profile Setup \& eKYC Identity Verification}{127}{subsection*.127}%
+\contentsline {subsubsection}{\numberline {2.2.1}Purpose}{127}{subsubsection*.128}%
+\contentsline {subsubsection}{\numberline {2.2.2}Step-by-Step User Guide}{128}{subsubsection*.129}%
+\contentsline {subsection}{\numberline {2.3}Contract Creation, Bilateral Signing \& Shared Files}{130}{subsection*.136}%
+\contentsline {subsubsection}{\numberline {2.3.1}Purpose}{131}{subsubsection*.137}%
+\contentsline {subsubsection}{\numberline {2.3.2}Step-by-Step User Guide}{131}{subsubsection*.138}%
+\contentsline {subsection}{\numberline {2.4}Milestone Deliverable Execution \& Review}{134}{subsection*.146}%
+\contentsline {subsubsection}{\numberline {2.4.1}Purpose}{134}{subsubsection*.147}%
+\contentsline {subsubsection}{\numberline {2.4.2}Step-by-Step User Guide}{135}{subsubsection*.148}%
+\contentsline {subsection}{\numberline {2.5}Stripe Connect Escrow \& Milestone Settlement}{137}{subsection*.154}%
+\contentsline {subsubsection}{\numberline {2.5.1}Purpose}{137}{subsubsection*.155}%
+\contentsline {subsubsection}{\numberline {2.5.2}Step-by-Step User Guide}{138}{subsubsection*.156}%
+\contentsline {subsection}{\numberline {2.6}Dispute Filing, Arbitration \& Bilateral Reviews}{141}{subsection*.163}%
+\contentsline {subsubsection}{\numberline {2.6.1}Purpose}{141}{subsubsection*.164}%
+\contentsline {subsubsection}{\numberline {2.6.2}Step-by-Step User Guide}{141}{subsubsection*.165}%
+\contentsline {subsection}{\numberline {2.7}Community Forum, Direct Messaging \& AI Moderation}{145}{subsection*.172}%
+\contentsline {subsubsection}{\numberline {2.7.1}Purpose}{145}{subsubsection*.173}%
+\contentsline {subsubsection}{\numberline {2.7.2}Step-by-Step User Guide}{145}{subsubsection*.174}%
+\contentsline {part}{VII.\hspace {1em}Conclusion \& Future Work}{150}{part*.182}%
+\contentsline {section}{\numberline {1.}Project Conclusion}{150}{section*.183}%
+\contentsline {section}{\numberline {2.}Project Limitations}{150}{section*.184}%
+\contentsline {subsection}{\numberline {2.1}Limitations}{150}{subsection*.185}%
+\contentsline {subsection}{\numberline {2.2}Exclusions}{155}{subsection*.186}%
+\contentsline {section}{\numberline {3.}Future Work}{156}{section*.187}%
+\contentsline {part}{VIII.\hspace {1em}References}{157}{part*.193}%

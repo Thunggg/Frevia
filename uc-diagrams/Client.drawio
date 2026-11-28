@@ -47,6 +47,15 @@
         <mxCell id="e_gg01_cli" edge="1" parent="1" source="uc_01_cli" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" target="act_google_cli">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="5OLfVJBTuntfh244cAaZ-1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" value="Email Service" vertex="1">
+          <mxGeometry height="70" width="40" x="800" y="458" as="geometry" />
+        </mxCell>
+        <mxCell id="5OLfVJBTuntfh244cAaZ-2" edge="1" parent="1" source="uc_7" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" target="5OLfVJBTuntfh244cAaZ-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="335" y="160" as="sourcePoint" />
+            <mxPoint x="808" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

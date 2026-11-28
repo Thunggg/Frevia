@@ -1,5 +1,5 @@
 % =============================================================================
-% PART B - MODULE 43: PAYMENTS, STRIPE ESCROW & CONNECT PAYOUTS (UC-43.01 - 43.13)
+% PART B - MODULE 43: PAYMENTS, STRIPE ESCROW & CONNECT PAYOUTS (UC-45.01 - 45.13)
 % In Charge: Vo Nhut Tin (CE180619)
 % =============================================================================
 
@@ -9,7 +9,7 @@
 The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe Connect Express payouts onboarding for Freelancers, contract signature escrow hold pre-authorizations, milestone escrow deposits (Checkout and saved-card 1-click funding), automated 95\% milestone releases, and full transaction ledger tracking.
 
 % -----------------------------------------------------------------------------
-\subsubsection{M43.01 -- Connect Stripe Payout Account (UC-43.01)}
+\subsubsection{M43.01 -- Connect Stripe Payout Account (UC-45.01)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Billing \& Payments Dashboard -- \texttt{/freelancer/\allowbreak{}payments}.
@@ -35,7 +35,7 @@ The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe 
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M43.02 -- Check Stripe Connect Status (UC-43.02)}
+\subsubsection{M43.02 -- Check Stripe Connect Status (UC-45.02)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Stripe Payout Status Card -- \texttt{/freelancer/\allowbreak{}payments}.
@@ -61,7 +61,7 @@ The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe 
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M43.03 -- View Saved Payment Methods (UC-43.03)}
+\subsubsection{M43.03 -- View Saved Payment Methods (UC-45.03)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Saved Payment Methods Modal -- \texttt{/client/\allowbreak{}payments}.
@@ -86,7 +86,7 @@ The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe 
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M43.04 -- Set Default Payment Method (UC-43.04)}
+\subsubsection{M43.04 -- Set Default Payment Method (UC-45.04)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Saved Payment Methods Modal -- \texttt{/client/\allowbreak{}payments}.
@@ -111,7 +111,7 @@ The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe 
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M43.05 -- Remove Saved Payment Method (UC-43.05)}
+\subsubsection{M43.05 -- Remove Saved Payment Method (UC-45.05)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Remove Payment Method Modal -- \texttt{/client/\allowbreak{}payments}.
@@ -136,7 +136,7 @@ The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe 
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection[M43.06 -- Create Contract Hold Deposit (UC-43.06)]{M43.06 -- Authorize Contract Escrow Hold (UC-43.06)}
+\subsubsection[M43.06 -- Create Contract Hold Deposit (UC-45.06)]{M43.06 -- Authorize Contract Escrow Hold (UC-45.06)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Authorize Contract Escrow Hold Drawer -- \texttt{/client/\allowbreak{}contracts/\allowbreak{}[slug]}.
@@ -156,13 +156,13 @@ The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe 
 \end{enumerate}
 \Needspace{6\baselineskip}\paragraph{After You Submit (Result \& Troubleshooting):}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{What Happens Next:} Upon Checkout/Intent completion and automatic PaymentIntent sync (\texttt{UC-43.11}), the contract transitions to \texttt{PENDING\_SIGN}. If the Freelancer declines or the contract expires, the hold auto-releases with \$0 refund fee.
+  \item \textbf{What Happens Next:} Upon Checkout/Intent completion and automatic PaymentIntent sync (\texttt{UC-45.11}), the contract transitions to \texttt{PENDING\_SIGN}. If the Freelancer declines or the contract expires, the hold auto-releases with \$0 refund fee.
   \item \textbf{Troubleshooting \& Common Messages:} At least one milestone must remain selected before Checkout initiation is permitted.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M43.07 -- Fund Milestone via Stripe Checkout (UC-43.07)}
+\subsubsection{M43.07 -- Fund Milestone via Stripe Checkout (UC-45.07)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Hosted Stripe Checkout Portal -- \texttt{checkout.stripe.com}.
@@ -182,13 +182,13 @@ The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe 
 \end{enumerate}
 \Needspace{6\baselineskip}\paragraph{After You Submit (Result \& Troubleshooting):}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{What Happens Next:} Both return-URL Checkout Session Sync (\texttt{UC-43.12}) and Stripe Webhook verification (\texttt{UC-43.13}) reconcile payment state immediately, transitioning the milestone to \texttt{FUNDED} (\textit{Escrow Funded}).
+  \item \textbf{What Happens Next:} Both return-URL Checkout Session Sync (\texttt{UC-45.12}) and Stripe Webhook verification (\texttt{UC-45.13}) reconcile payment state immediately, transitioning the milestone to \texttt{FUNDED} (\textit{Escrow Funded}).
   \item \textbf{Troubleshooting \& Common Messages:} In sandbox testing, use Stripe test cards (e.g., \texttt{4242~4242...}); declined cards stay on Checkout for retry without altering escrow balances.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M43.08 -- Fund Milestone with Saved Card (UC-43.08)}
+\subsubsection{M43.08 -- Fund Milestone with Saved Card (UC-45.08)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Fund Milestone Escrow Drawer -- \texttt{/client/\allowbreak{}contracts/\allowbreak{}[slug]/\allowbreak{}milestones}.
@@ -209,12 +209,12 @@ The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe 
 \Needspace{6\baselineskip}\paragraph{After You Submit (Result \& Troubleshooting):}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{What Happens Next:} Funds lock safely inside platform Escrow, unlocking \textbf{Start Work} for the Freelancer and recording a \textit{DEPOSIT} ledger entry.
-  \item \textbf{Troubleshooting \& Common Messages:} If 3D Secure authentication is required by the card issuer, PaymentIntent Sync (\texttt{UC-43.11}) reconciles completion immediately upon modal dismissal.
+  \item \textbf{Troubleshooting \& Common Messages:} If 3D Secure authentication is required by the card issuer, PaymentIntent Sync (\texttt{UC-45.11}) reconciles completion immediately upon modal dismissal.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection[M43.09 -- Release Milestone Escrow (UC-43.09)]{M43.09 -- Release Milestone Escrow Payment (UC-43.09)}
+\subsubsection[M43.09 -- Release Milestone Escrow (UC-45.09)]{M43.09 -- Release Milestone Escrow Payment (UC-45.09)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Review Work Submission Drawer -- \texttt{/client/\allowbreak{}contracts/\allowbreak{}[slug]/\allowbreak{}milestones/\allowbreak{}[milestoneId]}.
@@ -240,7 +240,7 @@ The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe 
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection[M43.10 -- Payment History & Sync (UC-43.10--43.13)]{M43.10 -- View Payment Transactions History \& Automated Sync (UC-43.10 to UC-43.13)}
+\subsubsection[M43.10 -- Payment History & Sync (UC-45.10--45.13)]{M43.10 -- View Payment Transactions History \& Automated Sync (UC-45.10 to UC-45.13)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Billing \& Payments Ledger -- \texttt{/client/\allowbreak{}payments} or \texttt{/freelancer/\allowbreak{}payments}.
@@ -261,6 +261,6 @@ The Payments \& Stripe Escrow module manages PCI-compliant card storage, Stripe 
 \end{enumerate}
 \Needspace{6\baselineskip}\paragraph{After You Submit (Result \& Troubleshooting):}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{What Happens Next:} All ledger movements synchronize reliably via three automated backend safeguards: \textbf{Sync Payment Intent Status (\texttt{UC-43.11})} after 3DS verification, \textbf{Sync Checkout Session Status (\texttt{UC-43.12})} on Stripe return redirects, and \textbf{Stripe Webhook Events (\texttt{UC-43.13})} verifying \texttt{stripe-signature} HMAC SHA-256 events server-to-server.
+  \item \textbf{What Happens Next:} All ledger movements synchronize reliably via three automated backend safeguards: \textbf{Sync Payment Intent Status (\texttt{UC-45.11})} after 3DS verification, \textbf{Sync Checkout Session Status (\texttt{UC-45.12})} on Stripe return redirects, and \textbf{Stripe Webhook Events (\texttt{UC-45.13})} verifying \texttt{stripe-signature} HMAC SHA-256 events server-to-server.
   \item \textbf{Troubleshooting \& Common Messages:} If a payment appears briefly pending immediately after returning from Stripe Checkout, wait a few seconds or reload the Billing/Contract view to trigger fallback session reconciliation automatically.
 \end{itemize}
