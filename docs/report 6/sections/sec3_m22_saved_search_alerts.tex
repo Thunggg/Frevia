@@ -76,7 +76,7 @@ These modules equip Freelancers with automated discovery tools to persist reusab
 \end{figure}
 \Needspace{6\baselineskip}\paragraph{Step-by-Step User Guide:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item \rbadge{1} \textbf{Enter Saved Search Name:} Type a descriptive label (e.g., \textit{Full-Stack TypeScript Roles}) into the \textit{Saved search name} field.
+  \item \rbadge{1} \textbf{Enter Saved Search Name:} Type a descriptive label (e.g., \textit{Full-Stack Web Roles (\$500-\$5000)}) into the \textit{Saved search name} field.
   \item \rbadge{2} \textbf{Verify Active Filters:} Confirm the summarized search keywords, category, and budget parameters listed in the \textbf{Search filters} preview card.
   \item \rbadge{3} \textbf{Click Save Search:} Click the blue \textbf{Save search} button to persist the preset to your account.
 \end{enumerate}
@@ -91,23 +91,23 @@ These modules equip Freelancers with automated discovery tools to persist reusab
 \subsubsection{M22.04 -- Delete Saved Search (UC-22.04)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Screen Name \& Route Path:} Saved Searches Tab -- \texttt{/freelancer/\allowbreak{}find-work/\allowbreak{}saved-searches}.
+  \item \textbf{Screen Name \& Route Path:} Delete Saved Search Confirmation Dialog -- \texttt{/freelancer/\allowbreak{}find-work/\allowbreak{}saved-searches}.
   \item \textbf{Target Actor:} Freelancer (Owner).
-  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Have at least one saved search preset in your Saved Searches list.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Open \textbf{Find Work} $\rightarrow$ \textbf{Saved Searches} and click the trash icon on the saved search card you want to remove.
 \end{itemize}
 \begin{figure}[H]\centering
   \includegraphics[width=0.90\textwidth]{images/jobs_proposals/m22_04_delete_saved_search_guide.png}
-  \caption{Deleting a saved search preset with live confirmation toast notification}
+  \caption{Delete saved search confirmation dialog to permanently remove a saved filter preset}
   \label{fig:m22_04_delete_saved_search}
 \end{figure}
 \Needspace{6\baselineskip}\paragraph{Step-by-Step User Guide:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item \rbadge{1} \textbf{Click Delete Icon:} Click the trash icon at the far right of the saved search card you want to remove.
-  \item \rbadge{2} \textbf{Verify Confirmation Toast:} Confirm the green \textit{Saved search deleted} toast appears in the top-right corner and the counter decrements.
+  \item \rbadge{1} \textbf{Review Delete Confirmation Dialog:} Inspect the \textbf{Delete saved search?} prompt naming the preset to be permanently removed while keeping your jobs and search results unaffected.
+  \item \rbadge{2} \textbf{Click Delete to Confirm:} Click the red \textbf{Delete} button to remove the preset (or \textbf{Cancel} to keep it).
 \end{enumerate}
 \Needspace{6\baselineskip}\paragraph{After You Submit (Result \& Troubleshooting):}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{What Happens Next:} The saved search record is permanently deleted from PostgreSQL and removed from your workspace list.
+  \item \textbf{What Happens Next:} The saved search record is permanently deleted from PostgreSQL, a green \textit{Saved search deleted} toast appears, and the Saved Searches tab counter decrements automatically.
   \item \textbf{Troubleshooting \& Common Messages:} Deleting a non-existent or non-owned ID returns HTTP 404 \textit{SavedSearchNotFound}.
 \end{itemize}
 
