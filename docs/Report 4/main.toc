@@ -83,230 +83,230 @@
 \contentsline {subsubsection}{\numberline {3.8.1}Class Diagram}{142}{subsubsection.192}%
 \contentsline {subsubsection}{\numberline {3.8.2}UC-07.01 -- View Freelancer Profile}{143}{subsubsection.194}%
 \contentsline {subsubsection}{\numberline {3.8.3}UC-07.02 -- Update Freelancer Profile}{144}{subsubsection.196}%
-\contentsline {subsection}{\numberline {3.9}Freelancer Skill Management}{145}{subsection.198}%
+\contentsline {subsection}{\numberline {3.9}Freelancer Skill Management}{144}{subsection.198}%
 \contentsline {subsubsection}{\numberline {3.9.1}Class Diagram}{145}{subsubsection.199}%
-\contentsline {subsubsection}{\numberline {3.9.2}UC-08.01 -- View Freelancer Skills List}{146}{subsubsection.201}%
-\contentsline {subsubsection}{\numberline {3.9.3}UC-08.02 -- Add Freelancer Skill}{147}{subsubsection.203}%
-\contentsline {subsubsection}{\numberline {3.9.4}UC-08.03 -- Delete Freelancer Skill}{148}{subsubsection.205}%
-\contentsline {subsection}{\numberline {3.10}Portfolio Management}{149}{subsection.207}%
-\contentsline {subsubsection}{\numberline {3.10.1}Class Diagram}{149}{subsubsection.208}%
-\contentsline {subsubsection}{\numberline {3.10.2}UC-09.01 -- View Portfolios List}{150}{subsubsection.210}%
-\contentsline {subsubsection}{\numberline {3.10.3}UC-09.02 -- Add Portfolio}{151}{subsubsection.212}%
-\contentsline {subsubsection}{\numberline {3.10.4}UC-09.03 -- View Portfolio Details}{152}{subsubsection.214}%
-\contentsline {subsubsection}{\numberline {3.10.5}UC-09.04 -- Update Portfolio}{153}{subsubsection.216}%
-\contentsline {subsubsection}{\numberline {3.10.6}UC-09.05 -- Delete Portfolio}{154}{subsubsection.218}%
-\contentsline {subsection}{\numberline {3.11}Contract Management}{155}{subsection.220}%
-\contentsline {subsubsection}{\numberline {3.11.1}UC-13.01 -- Create Contract}{155}{subsubsection.221}%
-\contentsline {subsubsection}{\numberline {3.11.2}UC-13.02 -- Update Contract}{157}{subsubsection.224}%
-\contentsline {subsubsection}{\numberline {3.11.3}UC-13.03 -- Complete Contract}{159}{subsubsection.227}%
-\contentsline {subsubsection}{\numberline {3.11.4}UC-13.04 -- View Contracts List}{161}{subsubsection.230}%
-\contentsline {subsubsection}{\numberline {3.11.5}UC-13.05 -- View Contract Details}{162}{subsubsection.233}%
-\contentsline {subsubsection}{\numberline {3.11.6}UC-13.06 -- Sign Contract}{164}{subsubsection.236}%
-\contentsline {subsubsection}{\numberline {3.11.7}UC-13.08 -- Cancel Contract}{166}{subsubsection.239}%
-\contentsline {subsubsection}{\numberline {3.11.8}UC-13.09 -- View Contract Files}{168}{subsubsection.242}%
-\contentsline {subsubsection}{\numberline {3.11.9}UC-13.10 -- Upload Contract File}{170}{subsubsection.245}%
-\contentsline {subsubsection}{\numberline {3.11.10}UC-13.11 -- Delete Contract File}{172}{subsubsection.248}%
-\contentsline {subsubsection}{\numberline {3.11.11}UC-13.12 -- Reject Contract Offer}{174}{subsubsection.251}%
-\contentsline {subsection}{\numberline {3.12}Manage Conversation}{175}{subsection.254}%
-\contentsline {subsubsection}{\numberline {3.12.1}UC-27.01 -- View Conversations List}{176}{subsubsection.255}%
-\contentsline {subsubsection}{\numberline {3.12.2}UC-27.02 -- Start Conversation}{178}{subsubsection.258}%
-\contentsline {subsubsection}{\numberline {3.12.3}UC-27.03 -- View Conversation Details}{180}{subsubsection.261}%
-\contentsline {subsubsection}{\numberline {3.12.4}UC-27.04 -- Send Message}{182}{subsubsection.264}%
-\contentsline {subsubsection}{\numberline {3.12.5}UC-27.05 -- Mark Message as Read}{184}{subsubsection.267}%
-\contentsline {subsubsection}{\numberline {3.12.6}UC-27.06 -- Delete/Recall Message}{186}{subsubsection.270}%
-\contentsline {subsubsection}{\numberline {3.12.7}UC-27.07 -- Pin/Unpin Conversation}{188}{subsubsection.273}%
-\contentsline {subsubsection}{\numberline {3.12.8}UC-27.08 -- Send File}{190}{subsubsection.276}%
-\contentsline {subsection}{\numberline {3.13}Identity Verification}{191}{subsection.279}%
-\contentsline {subsubsection}{\numberline {3.13.1}Class Diagram}{192}{subsubsection.280}%
-\contentsline {subsubsection}{\numberline {3.13.2}UC-18.01 -- Upload Identity Documents}{193}{subsubsection.282}%
-\contentsline {subsubsection}{\numberline {3.13.3}UC-18.02 -- View Verification Status}{194}{subsubsection.284}%
-\contentsline {subsection}{\numberline {3.14}Client Profile Management}{195}{subsection.286}%
-\contentsline {subsubsection}{\numberline {3.14.1}Class Diagram}{195}{subsubsection.287}%
-\contentsline {subsubsection}{\numberline {3.14.2}UC-19.01 -- View Client Profile}{196}{subsubsection.289}%
-\contentsline {subsubsection}{\numberline {3.14.3}UC-19.02 -- Update Company Information}{197}{subsubsection.291}%
-\contentsline {subsection}{\numberline {3.15}Social Link Management}{198}{subsection.293}%
-\contentsline {subsubsection}{\numberline {3.15.1}Class Diagram}{198}{subsubsection.294}%
-\contentsline {subsubsection}{\numberline {3.15.2}UC-20.01 -- View Social Links List}{199}{subsubsection.296}%
-\contentsline {subsubsection}{\numberline {3.15.3}UC-20.02 -- Add Social Link}{200}{subsubsection.298}%
-\contentsline {subsubsection}{\numberline {3.15.4}UC-20.03 -- Delete Social Link}{201}{subsubsection.300}%
-\contentsline {subsection}{\numberline {3.16}Favorite Freelancer Management}{202}{subsection.302}%
-\contentsline {subsubsection}{\numberline {3.16.1}Class Diagram}{202}{subsubsection.303}%
-\contentsline {subsubsection}{\numberline {3.16.2}UC-21.01 -- View Favorite Freelancers List}{203}{subsubsection.305}%
-\contentsline {subsubsection}{\numberline {3.16.3}UC-21.02 -- Add Freelancer to Favorites}{204}{subsubsection.307}%
-\contentsline {subsubsection}{\numberline {3.16.4}UC-21.03 -- Remove Freelancer from Favorites}{205}{subsubsection.309}%
-\contentsline {subsection}{\numberline {3.17}Milestone Management}{206}{subsection.311}%
-\contentsline {subsubsection}{\numberline {3.17.1}UC-24.01 -- View Milestones List}{206}{subsubsection.312}%
-\contentsline {subsubsection}{\numberline {3.17.2}UC-24.02 -- View Milestone Details}{208}{subsubsection.315}%
-\contentsline {subsubsection}{\numberline {3.17.3}UC-24.03 -- Create Milestone}{210}{subsubsection.318}%
-\contentsline {subsubsection}{\numberline {3.17.4}UC-24.04 -- Update Milestone}{212}{subsubsection.321}%
-\contentsline {subsubsection}{\numberline {3.17.5}UC-24.05 -- Delete Milestone}{214}{subsubsection.324}%
-\contentsline {subsubsection}{\numberline {3.17.6}UC-24.06 -- Update Milestone Progress}{216}{subsubsection.327}%
-\contentsline {subsection}{\numberline {3.18}Milestone File Management}{218}{subsection.330}%
-\contentsline {subsubsection}{\numberline {3.18.1}UC-25.01 -- View Milestone Files}{218}{subsubsection.331}%
-\contentsline {subsubsection}{\numberline {3.18.2}UC-25.02 -- Upload Milestone File}{220}{subsubsection.334}%
-\contentsline {subsubsection}{\numberline {3.18.3}UC-25.03 -- Delete Milestone File}{222}{subsubsection.337}%
-\contentsline {subsection}{\numberline {3.19}Milestone Submission Management}{224}{subsection.340}%
-\contentsline {subsubsection}{\numberline {3.19.1}UC-26.01 -- Submit Milestone}{224}{subsubsection.341}%
-\contentsline {subsubsection}{\numberline {3.19.2}UC-26.02 -- View Milestone Submissions List}{226}{subsubsection.344}%
-\contentsline {subsubsection}{\numberline {3.19.3}UC-26.03 -- View Milestone Submission Details}{228}{subsubsection.347}%
-\contentsline {subsubsection}{\numberline {3.19.4}UC-26.04 -- Request Milestone Changes}{230}{subsubsection.350}%
-\contentsline {subsubsection}{\numberline {3.19.5}UC-26.05 -- Approve Milestone}{232}{subsubsection.353}%
-\contentsline {subsection}{\numberline {3.20}Saved Search Management}{233}{subsection.356}%
-\contentsline {subsubsection}{\numberline {3.20.1}UC-22.01 -- View Saved Searches List}{234}{subsubsection.357}%
-\contentsline {subsubsection}{\numberline {3.20.2}UC-22.02 -- View Saved Search Details}{235}{subsubsection.360}%
-\contentsline {subsubsection}{\numberline {3.20.3}UC-22.03 -- Create Saved Search}{237}{subsubsection.363}%
-\contentsline {subsubsection}{\numberline {3.20.4}UC-22.04 -- Delete Saved Search}{239}{subsubsection.366}%
-\contentsline {subsection}{\numberline {3.21}Job Alert Management}{241}{subsection.369}%
-\contentsline {subsubsection}{\numberline {3.21.1}UC-23.01 -- View Job Alerts List}{241}{subsubsection.370}%
-\contentsline {subsubsection}{\numberline {3.21.2}UC-23.02 -- View Job Alert Details}{243}{subsubsection.373}%
-\contentsline {subsubsection}{\numberline {3.21.3}UC-23.03 -- Create Job Alert}{245}{subsubsection.376}%
-\contentsline {subsubsection}{\numberline {3.21.4}UC-23.04 -- Update Job Alert}{247}{subsubsection.379}%
-\contentsline {subsubsection}{\numberline {3.21.5}UC-23.05 -- Delete Job Alert}{249}{subsubsection.382}%
-\contentsline {subsection}{\numberline {3.22}Job Category Browsing}{251}{subsection.385}%
-\contentsline {subsubsection}{\numberline {3.22.1}UC-46.07 -- View Job Categories List}{251}{subsubsection.386}%
-\contentsline {subsubsection}{\numberline {3.22.2}UC-46.08 -- View Job Category Details}{253}{subsubsection.389}%
-\contentsline {subsection}{\numberline {3.23}Permission Management}{254}{subsection.392}%
-\contentsline {subsubsection}{\numberline {3.23.1}UC-15.01 -- View Permissions List}{255}{subsubsection.393}%
-\contentsline {subsubsection}{\numberline {3.23.2}UC-15.02 -- View Permission Details}{256}{subsubsection.396}%
-\contentsline {subsection}{\numberline {3.24}Session Management}{256}{subsection.399}%
-\contentsline {subsubsection}{\numberline {3.24.1}UC-16.01 -- View Sessions List}{257}{subsubsection.400}%
-\contentsline {subsubsection}{\numberline {3.24.2}UC-16.02 -- View Session Details}{258}{subsubsection.403}%
-\contentsline {subsubsection}{\numberline {3.24.3}UC-16.03 -- Revoke Session}{259}{subsubsection.406}%
-\contentsline {subsection}{\numberline {3.25}Forum Category Management}{260}{subsection.409}%
-\contentsline {subsubsection}{\numberline {3.25.1}UC-17.01 -- Create Forum Category}{261}{subsubsection.410}%
-\contentsline {subsubsection}{\numberline {3.25.2}UC-17.02 -- Update Forum Category}{263}{subsubsection.413}%
-\contentsline {subsubsection}{\numberline {3.25.3}UC-17.03 -- Delete Forum Category}{265}{subsubsection.416}%
-\contentsline {subsubsection}{\numberline {3.25.4}UC-17.04 -- View Forum Categories List}{267}{subsubsection.419}%
-\contentsline {subsubsection}{\numberline {3.25.5}UC-17.05 -- View Forum Category Details}{268}{subsubsection.422}%
-\contentsline {subsubsection}{\numberline {3.25.6}UC-17.06 -- Restore Forum Category}{269}{subsubsection.425}%
-\contentsline {subsection}{\numberline {3.26}Manage Moderation}{270}{subsection.428}%
-\contentsline {subsubsection}{\numberline {3.26.1}UC-34.01 -- View Moderation Queue}{271}{subsubsection.429}%
-\contentsline {subsubsection}{\numberline {3.26.2}UC-34.02 -- View Moderation Item Details}{272}{subsubsection.432}%
-\contentsline {subsubsection}{\numberline {3.26.3}UC-34.03 -- Resolve Moderation Item}{273}{subsubsection.435}%
-\contentsline {subsection}{\numberline {3.27}Manage ID Verification}{275}{subsection.438}%
-\contentsline {subsubsection}{\numberline {3.27.1}UC-35.01 -- View ID Verification Requests List}{275}{subsubsection.439}%
-\contentsline {subsubsection}{\numberline {3.27.2}UC-35.02 -- View ID Verification Request Details}{276}{subsubsection.442}%
-\contentsline {subsubsection}{\numberline {3.27.3}UC-35.03 -- Approve ID Verification}{277}{subsubsection.445}%
-\contentsline {subsubsection}{\numberline {3.27.4}UC-35.04 -- Reject ID Verification}{279}{subsubsection.448}%
-\contentsline {subsection}{\numberline {3.28}Manage Forum Trash}{281}{subsection.451}%
-\contentsline {subsubsection}{\numberline {3.28.1}UC-36.01 -- View Deleted Posts/Comments List}{281}{subsubsection.452}%
-\contentsline {subsubsection}{\numberline {3.28.2}UC-36.02 -- View Deleted Posts/Comments Details}{283}{subsubsection.455}%
-\contentsline {subsubsection}{\numberline {3.28.3}UC-36.03 -- Restore Deleted Posts/Comments}{284}{subsubsection.458}%
-\contentsline {subsection}{\numberline {3.29}Following Management}{286}{subsection.461}%
-\contentsline {subsubsection}{\numberline {3.29.1}Class Diagram}{286}{subsubsection.462}%
-\contentsline {subsubsection}{\numberline {3.29.2}UC-29.01 -- View Following List}{287}{subsubsection.464}%
-\contentsline {subsubsection}{\numberline {3.29.3}UC-29.02 -- Follow Freelancer}{288}{subsubsection.466}%
-\contentsline {subsubsection}{\numberline {3.29.4}UC-29.03 -- Unfollow Freelancer}{289}{subsubsection.468}%
-\contentsline {subsection}{\numberline {3.30}Notification Management}{290}{subsection.470}%
-\contentsline {subsubsection}{\numberline {3.30.1}Class Diagram}{290}{subsubsection.471}%
-\contentsline {subsubsection}{\numberline {3.30.2}UC-30.01 -- View Notifications List}{291}{subsubsection.473}%
-\contentsline {subsubsection}{\numberline {3.30.3}UC-30.02 -- Mark Notification as Read}{292}{subsubsection.475}%
-\contentsline {subsubsection}{\numberline {3.30.4}UC-30.03 -- Mark All Notifications as Read}{293}{subsubsection.477}%
-\contentsline {subsubsection}{\numberline {3.30.5}UC-30.04 -- Delete Notification}{294}{subsubsection.479}%
-\contentsline {subsection}{\numberline {3.31}Role Switching}{295}{subsection.481}%
-\contentsline {subsubsection}{\numberline {3.31.1}Class Diagram}{295}{subsubsection.482}%
-\contentsline {subsubsection}{\numberline {3.31.2}UC-31.01 -- Switch Role}{296}{subsubsection.484}%
-\contentsline {subsubsection}{\numberline {3.31.3}UC-31.02 -- Join New Role}{297}{subsubsection.486}%
-\contentsline {subsection}{\numberline {3.32}Dispute Management}{298}{subsection.488}%
-\contentsline {subsubsection}{\numberline {3.32.1}UC-33.01 -- Open Dispute}{298}{subsubsection.489}%
-\contentsline {subsubsection}{\numberline {3.32.2}UC-33.02 -- View Disputes List}{300}{subsubsection.492}%
-\contentsline {subsubsection}{\numberline {3.32.3}UC-33.03 -- View Dispute Details}{301}{subsubsection.495}%
-\contentsline {subsubsection}{\numberline {3.32.4}UC-33.04 -- View Dispute by Milestone}{303}{subsubsection.498}%
-\contentsline {subsubsection}{\numberline {3.32.5}UC-33.05 -- Respond to Dispute}{305}{subsubsection.501}%
-\contentsline {subsubsection}{\numberline {3.32.6}UC-33.06 -- Withdraw Dispute}{307}{subsubsection.504}%
-\contentsline {subsubsection}{\numberline {3.32.7}UC-33.07 -- Escalate Dispute to Expert}{309}{subsubsection.507}%
-\contentsline {subsubsection}{\numberline {3.32.8}UC-33.08 -- View Expert Disputes List}{311}{subsubsection.510}%
-\contentsline {subsubsection}{\numberline {3.32.9}UC-33.09 -- View Expert Dispute Details}{313}{subsubsection.513}%
-\contentsline {subsubsection}{\numberline {3.32.10}UC-33.10 -- Expert Make Dispute Decision}{315}{subsubsection.516}%
-\contentsline {subsubsection}{\numberline {3.32.11}UC-35.11 -- Upload Dispute Evidence File}{317}{subsubsection.519}%
-\contentsline {subsection}{\numberline {3.33}Proposal Management}{318}{subsection.522}%
-\contentsline {subsubsection}{\numberline {3.33.1}UC-32.01 -- View My Proposals List}{319}{subsubsection.523}%
-\contentsline {subsubsection}{\numberline {3.33.2}UC-32.02 -- View My Proposal Details}{321}{subsubsection.526}%
-\contentsline {subsubsection}{\numberline {3.33.3}UC-32.03 -- Submit Proposal}{323}{subsubsection.529}%
-\contentsline {subsubsection}{\numberline {3.33.4}UC-32.04 -- Update Proposal}{325}{subsubsection.532}%
-\contentsline {subsubsection}{\numberline {3.33.5}UC-32.05 -- Withdraw Proposal}{327}{subsubsection.535}%
-\contentsline {subsubsection}{\numberline {3.33.6}UC-32.06 -- Accept Proposal}{329}{subsubsection.538}%
-\contentsline {subsubsection}{\numberline {3.33.7}UC-32.07 -- Reject Proposal}{331}{subsubsection.541}%
-\contentsline {subsubsection}{\numberline {3.33.8}UC-32.08 -- View Job Proposals List}{333}{subsubsection.544}%
-\contentsline {subsubsection}{\numberline {3.33.9}UC-32.09 -- View Proposal Details}{335}{subsubsection.547}%
-\contentsline {subsection}{\numberline {3.34}User Management}{337}{subsection.550}%
-\contentsline {subsubsection}{\numberline {3.34.1}UC-28.01 -- View Users List}{337}{subsubsection.551}%
-\contentsline {subsubsection}{\numberline {3.34.2}UC-28.02 -- View User Details}{339}{subsubsection.554}%
-\contentsline {subsubsection}{\numberline {3.34.3}UC-28.03 -- Create User}{341}{subsubsection.557}%
-\contentsline {subsubsection}{\numberline {3.34.4}UC-28.04 -- Update User}{343}{subsubsection.560}%
-\contentsline {subsubsection}{\numberline {3.34.5}UC-28.05 -- Update Client Profile}{345}{subsubsection.563}%
-\contentsline {subsubsection}{\numberline {3.34.6}UC-28.06 -- Update Freelancer Basic Info}{347}{subsubsection.566}%
-\contentsline {subsubsection}{\numberline {3.34.7}UC-28.07 -- Update Freelancer Skills}{349}{subsubsection.569}%
-\contentsline {subsubsection}{\numberline {3.34.8}UC-28.08 -- Update Freelancer Portfolio}{351}{subsubsection.572}%
-\contentsline {subsection}{\numberline {3.35}AI Content Moderation}{353}{subsection.575}%
-\contentsline {subsubsection}{\numberline {3.35.1}UC-44.01 -- Moderate Content by AI}{353}{subsubsection.576}%
-\contentsline {subsection}{\numberline {3.36}AI Face Scan \& Identity Extraction with Duplicate Check}{354}{subsection.579}%
-\contentsline {subsubsection}{\numberline {3.36.1}UC-45.01 -- Scan Face and Detect Duplicate Identity}{354}{subsubsection.580}%
-\contentsline {subsection}{\numberline {3.37}Review Management}{355}{subsection.583}%
-\contentsline {subsubsection}{\numberline {3.37.1}Class Diagram}{356}{subsubsection.584}%
-\contentsline {subsubsection}{\numberline {3.37.2}UC-39.01 -- View Reviews List}{357}{subsubsection.586}%
-\contentsline {subsubsection}{\numberline {3.37.3}UC-39.02 -- View Review Details}{358}{subsubsection.588}%
-\contentsline {subsubsection}{\numberline {3.37.4}UC-39.03 -- Write Review}{359}{subsubsection.590}%
-\contentsline {subsubsection}{\numberline {3.37.5}UC-39.04 -- Update Review}{360}{subsubsection.592}%
-\contentsline {subsubsection}{\numberline {3.37.6}UC-39.05 -- Delete Review}{361}{subsubsection.594}%
-\contentsline {subsection}{\numberline {3.38}Review Response Management}{362}{subsection.596}%
-\contentsline {subsubsection}{\numberline {3.38.1}Class Diagram}{362}{subsubsection.597}%
-\contentsline {subsubsection}{\numberline {3.38.2}UC-40.01 -- Respond to Review}{363}{subsubsection.599}%
-\contentsline {subsubsection}{\numberline {3.38.3}UC-40.02 -- Update Review Response}{364}{subsubsection.601}%
-\contentsline {subsubsection}{\numberline {3.38.4}UC-40.03 -- Delete Review Response}{365}{subsubsection.603}%
-\contentsline {subsection}{\numberline {3.39}Account Profile Management}{366}{subsection.605}%
-\contentsline {subsubsection}{\numberline {3.39.1}Class Diagram}{366}{subsubsection.606}%
-\contentsline {subsubsection}{\numberline {3.39.2}UC-41.01 -- View Profile}{367}{subsubsection.608}%
-\contentsline {subsubsection}{\numberline {3.39.3}UC-41.02 -- Update Profile}{368}{subsubsection.610}%
-\contentsline {subsubsection}{\numberline {3.39.4}UC-41.03 -- Change Password}{369}{subsubsection.612}%
-\contentsline {subsubsection}{\numberline {3.39.5}UC-41.04 -- Upload Avatar}{370}{subsubsection.614}%
-\contentsline {subsection}{\numberline {3.40}Payment Management}{371}{subsection.616}%
-\contentsline {subsubsection}{\numberline {3.40.1}UC-43.01 -- Connect Stripe Account}{371}{subsubsection.617}%
-\contentsline {subsubsection}{\numberline {3.40.2}UC-43.02 -- Check Stripe Connect Status}{373}{subsubsection.620}%
-\contentsline {subsubsection}{\numberline {3.40.3}UC-43.03 -- View Saved Payment Methods}{375}{subsubsection.623}%
-\contentsline {subsubsection}{\numberline {3.40.4}UC-43.04 -- Set Default Payment Method}{376}{subsubsection.626}%
-\contentsline {subsubsection}{\numberline {3.40.5}UC-43.05 -- Remove Saved Payment Method}{378}{subsubsection.629}%
-\contentsline {subsubsection}{\numberline {3.40.6}UC-43.06 -- Create Contract Hold Deposit Intent}{380}{subsubsection.632}%
-\contentsline {subsubsection}{\numberline {3.40.7}UC-43.07 -- Fund Milestone via Stripe Checkout}{382}{subsubsection.635}%
-\contentsline {subsubsection}{\numberline {3.40.8}UC-43.08 -- Fund Milestone with Saved Card}{384}{subsubsection.638}%
-\contentsline {subsubsection}{\numberline {3.40.9}UC-43.09 -- Release Milestone Escrow Payment}{386}{subsubsection.641}%
-\contentsline {subsubsection}{\numberline {3.40.10}UC-43.10 -- View Payment Transactions History}{388}{subsubsection.644}%
-\contentsline {subsection}{\numberline {3.41}Banner Management}{389}{subsection.647}%
-\contentsline {subsubsection}{\numberline {3.41.1}UC-37.01 -- View Banners List}{389}{subsubsection.648}%
-\contentsline {subsubsection}{\numberline {3.41.2}UC-37.02 -- View Banner Details}{391}{subsubsection.651}%
-\contentsline {subsubsection}{\numberline {3.41.3}UC-37.03 -- Create Banner}{393}{subsubsection.654}%
-\contentsline {subsubsection}{\numberline {3.41.4}UC-37.04 -- Update Banner}{395}{subsubsection.657}%
-\contentsline {subsubsection}{\numberline {3.41.5}UC-37.05 -- Delete Banner}{397}{subsubsection.660}%
-\contentsline {subsection}{\numberline {3.42}Skill Management}{398}{subsection.663}%
-\contentsline {subsubsection}{\numberline {3.42.1}UC-38.01 -- View Skills List}{399}{subsubsection.664}%
-\contentsline {subsubsection}{\numberline {3.42.2}UC-38.02 -- View Skill Details}{401}{subsubsection.667}%
-\contentsline {subsubsection}{\numberline {3.42.3}UC-38.03 -- Create Skill}{403}{subsubsection.670}%
-\contentsline {subsubsection}{\numberline {3.42.4}UC-38.04 -- Update Skill}{405}{subsubsection.673}%
-\contentsline {subsubsection}{\numberline {3.42.5}UC-38.05 -- Delete Skill}{407}{subsubsection.676}%
-\contentsline {subsubsection}{\numberline {3.42.6}UC-38.06 -- Restore Skill}{409}{subsubsection.679}%
-\contentsline {subsection}{\numberline {3.43}Profile Update Review}{410}{subsection.682}%
-\contentsline {subsubsection}{\numberline {3.43.1}Class Diagram}{411}{subsubsection.683}%
-\contentsline {subsubsection}{\numberline {3.43.2}UC-47.01 -- View Pending Profile Update Requests List}{412}{subsubsection.685}%
-\contentsline {subsubsection}{\numberline {3.43.3}UC-47.02 -- View Profile Update Request Details}{413}{subsubsection.687}%
-\contentsline {subsubsection}{\numberline {3.43.4}UC-47.03 -- Approve Profile Update Request}{414}{subsubsection.689}%
-\contentsline {subsubsection}{\numberline {3.43.5}UC-47.04 -- Reject Profile Update Request}{415}{subsubsection.691}%
-\contentsline {subsubsection}{\numberline {3.43.6}UC-47.05 -- View Profile Update Request History}{416}{subsubsection.693}%
-\contentsline {subsection}{\numberline {3.44}Expert Profile Update}{417}{subsection.695}%
-\contentsline {subsubsection}{\numberline {3.44.1}Class Diagram}{417}{subsubsection.696}%
-\contentsline {subsubsection}{\numberline {3.44.2}UC-47.06 -- Update Profile Expert}{418}{subsubsection.698}%
-\contentsline {subsection}{\numberline {3.45}Freelancer CV Management}{419}{subsection.700}%
-\contentsline {subsubsection}{\numberline {3.45.1}Class Diagram}{419}{subsubsection.701}%
-\contentsline {subsubsection}{\numberline {3.45.2}UC-07.03 -- Upload CV}{420}{subsubsection.703}%
-\contentsline {subsubsection}{\numberline {3.45.3}UC-07.04 -- View CV}{421}{subsubsection.705}%
-\contentsline {subsubsection}{\numberline {3.45.4}UC-07.05 -- Replace CV}{422}{subsubsection.707}%
-\contentsline {subsubsection}{\numberline {3.45.5}UC-07.06 -- Delete CV}{423}{subsubsection.709}%
-\contentsline {subsection}{\numberline {3.46}Expert Profile Management}{424}{subsection.711}%
-\contentsline {subsubsection}{\numberline {3.46.1}UC-28.09 -- Update Expert Profile}{424}{subsubsection.712}%
-\contentsline {subsection}{\numberline {3.47}Job Category Management}{425}{subsection.715}%
-\contentsline {subsubsection}{\numberline {3.47.1}UC-46.01 -- View Job Categories List}{426}{subsubsection.716}%
-\contentsline {subsubsection}{\numberline {3.47.2}UC-46.02 -- View Job Category Details}{427}{subsubsection.719}%
-\contentsline {subsubsection}{\numberline {3.47.3}UC-46.03 -- Create Job Category}{428}{subsubsection.722}%
-\contentsline {subsubsection}{\numberline {3.47.4}UC-46.04 -- Update Job Category}{430}{subsubsection.725}%
-\contentsline {subsubsection}{\numberline {3.47.5}UC-46.05 -- Delete Job Category}{432}{subsubsection.728}%
-\contentsline {subsubsection}{\numberline {3.47.6}UC-46.06 -- Restore Job Category}{434}{subsubsection.731}%
-\contentsline {section}{\numberline {4.}Reference}{436}{section.734}%
+\contentsline {subsubsection}{\numberline {3.9.2}UC-08.01 -- View Freelancer Skills List}{145}{subsubsection.201}%
+\contentsline {subsubsection}{\numberline {3.9.3}UC-08.02 -- Add Freelancer Skill}{146}{subsubsection.203}%
+\contentsline {subsubsection}{\numberline {3.9.4}UC-08.03 -- Delete Freelancer Skill}{147}{subsubsection.205}%
+\contentsline {subsection}{\numberline {3.10}Portfolio Management}{147}{subsection.207}%
+\contentsline {subsubsection}{\numberline {3.10.1}Class Diagram}{148}{subsubsection.208}%
+\contentsline {subsubsection}{\numberline {3.10.2}UC-09.01 -- View Portfolios List}{149}{subsubsection.210}%
+\contentsline {subsubsection}{\numberline {3.10.3}UC-09.02 -- Add Portfolio}{150}{subsubsection.212}%
+\contentsline {subsubsection}{\numberline {3.10.4}UC-09.03 -- View Portfolio Details}{151}{subsubsection.214}%
+\contentsline {subsubsection}{\numberline {3.10.5}UC-09.04 -- Update Portfolio}{152}{subsubsection.216}%
+\contentsline {subsubsection}{\numberline {3.10.6}UC-09.05 -- Delete Portfolio}{153}{subsubsection.218}%
+\contentsline {subsection}{\numberline {3.11}Contract Management}{153}{subsection.220}%
+\contentsline {subsubsection}{\numberline {3.11.1}UC-13.01 -- Create Contract}{154}{subsubsection.221}%
+\contentsline {subsubsection}{\numberline {3.11.2}UC-13.02 -- Update Contract}{156}{subsubsection.224}%
+\contentsline {subsubsection}{\numberline {3.11.3}UC-13.03 -- Complete Contract}{158}{subsubsection.227}%
+\contentsline {subsubsection}{\numberline {3.11.4}UC-13.04 -- View Contracts List}{160}{subsubsection.230}%
+\contentsline {subsubsection}{\numberline {3.11.5}UC-13.05 -- View Contract Details}{161}{subsubsection.233}%
+\contentsline {subsubsection}{\numberline {3.11.6}UC-13.06 -- Sign Contract}{163}{subsubsection.236}%
+\contentsline {subsubsection}{\numberline {3.11.7}UC-13.08 -- Cancel Contract}{165}{subsubsection.239}%
+\contentsline {subsubsection}{\numberline {3.11.8}UC-13.09 -- View Contract Files}{167}{subsubsection.242}%
+\contentsline {subsubsection}{\numberline {3.11.9}UC-13.10 -- Upload Contract File}{169}{subsubsection.245}%
+\contentsline {subsubsection}{\numberline {3.11.10}UC-13.11 -- Delete Contract File}{171}{subsubsection.248}%
+\contentsline {subsubsection}{\numberline {3.11.11}UC-13.12 -- Reject Contract Offer}{173}{subsubsection.251}%
+\contentsline {subsection}{\numberline {3.12}Manage Conversation}{174}{subsection.254}%
+\contentsline {subsubsection}{\numberline {3.12.1}UC-27.01 -- View Conversations List}{175}{subsubsection.255}%
+\contentsline {subsubsection}{\numberline {3.12.2}UC-27.02 -- Start Conversation}{177}{subsubsection.258}%
+\contentsline {subsubsection}{\numberline {3.12.3}UC-27.03 -- View Conversation Details}{179}{subsubsection.261}%
+\contentsline {subsubsection}{\numberline {3.12.4}UC-27.04 -- Send Message}{181}{subsubsection.264}%
+\contentsline {subsubsection}{\numberline {3.12.5}UC-27.05 -- Mark Message as Read}{183}{subsubsection.267}%
+\contentsline {subsubsection}{\numberline {3.12.6}UC-27.06 -- Delete/Recall Message}{185}{subsubsection.270}%
+\contentsline {subsubsection}{\numberline {3.12.7}UC-27.07 -- Pin/Unpin Conversation}{187}{subsubsection.273}%
+\contentsline {subsubsection}{\numberline {3.12.8}UC-27.08 -- Send File}{189}{subsubsection.276}%
+\contentsline {subsection}{\numberline {3.13}Identity Verification}{190}{subsection.279}%
+\contentsline {subsubsection}{\numberline {3.13.1}Class Diagram}{191}{subsubsection.280}%
+\contentsline {subsubsection}{\numberline {3.13.2}UC-18.01 -- Upload Identity Documents}{192}{subsubsection.282}%
+\contentsline {subsubsection}{\numberline {3.13.3}UC-18.02 -- View Verification Status}{193}{subsubsection.284}%
+\contentsline {subsection}{\numberline {3.14}Client Profile Management}{193}{subsection.286}%
+\contentsline {subsubsection}{\numberline {3.14.1}Class Diagram}{194}{subsubsection.287}%
+\contentsline {subsubsection}{\numberline {3.14.2}UC-19.01 -- View Client Profile}{195}{subsubsection.289}%
+\contentsline {subsubsection}{\numberline {3.14.3}UC-19.02 -- Update Company Information}{196}{subsubsection.291}%
+\contentsline {subsection}{\numberline {3.15}Social Link Management}{196}{subsection.293}%
+\contentsline {subsubsection}{\numberline {3.15.1}Class Diagram}{197}{subsubsection.294}%
+\contentsline {subsubsection}{\numberline {3.15.2}UC-20.01 -- View Social Links List}{198}{subsubsection.296}%
+\contentsline {subsubsection}{\numberline {3.15.3}UC-20.02 -- Add Social Link}{199}{subsubsection.298}%
+\contentsline {subsubsection}{\numberline {3.15.4}UC-20.03 -- Delete Social Link}{200}{subsubsection.300}%
+\contentsline {subsection}{\numberline {3.16}Favorite Freelancer Management}{200}{subsection.302}%
+\contentsline {subsubsection}{\numberline {3.16.1}Class Diagram}{201}{subsubsection.303}%
+\contentsline {subsubsection}{\numberline {3.16.2}UC-21.01 -- View Favorite Freelancers List}{202}{subsubsection.305}%
+\contentsline {subsubsection}{\numberline {3.16.3}UC-21.02 -- Add Freelancer to Favorites}{203}{subsubsection.307}%
+\contentsline {subsubsection}{\numberline {3.16.4}UC-21.03 -- Remove Freelancer from Favorites}{204}{subsubsection.309}%
+\contentsline {subsection}{\numberline {3.17}Milestone Management}{204}{subsection.311}%
+\contentsline {subsubsection}{\numberline {3.17.1}UC-24.01 -- View Milestones List}{205}{subsubsection.312}%
+\contentsline {subsubsection}{\numberline {3.17.2}UC-24.02 -- View Milestone Details}{207}{subsubsection.315}%
+\contentsline {subsubsection}{\numberline {3.17.3}UC-24.03 -- Create Milestone}{209}{subsubsection.318}%
+\contentsline {subsubsection}{\numberline {3.17.4}UC-24.04 -- Update Milestone}{211}{subsubsection.321}%
+\contentsline {subsubsection}{\numberline {3.17.5}UC-24.05 -- Delete Milestone}{213}{subsubsection.324}%
+\contentsline {subsubsection}{\numberline {3.17.6}UC-24.06 -- Update Milestone Progress}{215}{subsubsection.327}%
+\contentsline {subsection}{\numberline {3.18}Milestone File Management}{217}{subsection.330}%
+\contentsline {subsubsection}{\numberline {3.18.1}UC-25.01 -- View Milestone Files}{217}{subsubsection.331}%
+\contentsline {subsubsection}{\numberline {3.18.2}UC-25.02 -- Upload Milestone File}{219}{subsubsection.334}%
+\contentsline {subsubsection}{\numberline {3.18.3}UC-25.03 -- Delete Milestone File}{221}{subsubsection.337}%
+\contentsline {subsection}{\numberline {3.19}Milestone Submission Management}{223}{subsection.340}%
+\contentsline {subsubsection}{\numberline {3.19.1}UC-26.01 -- Submit Milestone}{223}{subsubsection.341}%
+\contentsline {subsubsection}{\numberline {3.19.2}UC-26.02 -- View Milestone Submissions List}{225}{subsubsection.344}%
+\contentsline {subsubsection}{\numberline {3.19.3}UC-26.03 -- View Milestone Submission Details}{227}{subsubsection.347}%
+\contentsline {subsubsection}{\numberline {3.19.4}UC-26.04 -- Request Milestone Changes}{229}{subsubsection.350}%
+\contentsline {subsubsection}{\numberline {3.19.5}UC-26.05 -- Approve Milestone}{231}{subsubsection.353}%
+\contentsline {subsection}{\numberline {3.20}Saved Search Management}{232}{subsection.356}%
+\contentsline {subsubsection}{\numberline {3.20.1}UC-22.01 -- View Saved Searches List}{233}{subsubsection.357}%
+\contentsline {subsubsection}{\numberline {3.20.2}UC-22.02 -- View Saved Search Details}{234}{subsubsection.360}%
+\contentsline {subsubsection}{\numberline {3.20.3}UC-22.03 -- Create Saved Search}{236}{subsubsection.363}%
+\contentsline {subsubsection}{\numberline {3.20.4}UC-22.04 -- Delete Saved Search}{238}{subsubsection.366}%
+\contentsline {subsection}{\numberline {3.21}Job Alert Management}{240}{subsection.369}%
+\contentsline {subsubsection}{\numberline {3.21.1}UC-23.01 -- View Job Alerts List}{240}{subsubsection.370}%
+\contentsline {subsubsection}{\numberline {3.21.2}UC-23.02 -- View Job Alert Details}{242}{subsubsection.373}%
+\contentsline {subsubsection}{\numberline {3.21.3}UC-23.03 -- Create Job Alert}{244}{subsubsection.376}%
+\contentsline {subsubsection}{\numberline {3.21.4}UC-23.04 -- Update Job Alert}{246}{subsubsection.379}%
+\contentsline {subsubsection}{\numberline {3.21.5}UC-23.05 -- Delete Job Alert}{248}{subsubsection.382}%
+\contentsline {subsection}{\numberline {3.22}Job Category Browsing}{250}{subsection.385}%
+\contentsline {subsubsection}{\numberline {3.22.1}UC-46.07 -- View Job Categories List}{250}{subsubsection.386}%
+\contentsline {subsubsection}{\numberline {3.22.2}UC-46.08 -- View Job Category Details}{252}{subsubsection.389}%
+\contentsline {subsection}{\numberline {3.23}Permission Management}{253}{subsection.392}%
+\contentsline {subsubsection}{\numberline {3.23.1}UC-15.01 -- View Permissions List}{254}{subsubsection.393}%
+\contentsline {subsubsection}{\numberline {3.23.2}UC-15.02 -- View Permission Details}{255}{subsubsection.396}%
+\contentsline {subsection}{\numberline {3.24}Session Management}{255}{subsection.399}%
+\contentsline {subsubsection}{\numberline {3.24.1}UC-16.01 -- View Sessions List}{256}{subsubsection.400}%
+\contentsline {subsubsection}{\numberline {3.24.2}UC-16.02 -- View Session Details}{257}{subsubsection.403}%
+\contentsline {subsubsection}{\numberline {3.24.3}UC-16.03 -- Revoke Session}{258}{subsubsection.406}%
+\contentsline {subsection}{\numberline {3.25}Forum Category Management}{259}{subsection.409}%
+\contentsline {subsubsection}{\numberline {3.25.1}UC-17.01 -- Create Forum Category}{260}{subsubsection.410}%
+\contentsline {subsubsection}{\numberline {3.25.2}UC-17.02 -- Update Forum Category}{262}{subsubsection.413}%
+\contentsline {subsubsection}{\numberline {3.25.3}UC-17.03 -- Delete Forum Category}{264}{subsubsection.416}%
+\contentsline {subsubsection}{\numberline {3.25.4}UC-17.04 -- View Forum Categories List}{266}{subsubsection.419}%
+\contentsline {subsubsection}{\numberline {3.25.5}UC-17.05 -- View Forum Category Details}{267}{subsubsection.422}%
+\contentsline {subsubsection}{\numberline {3.25.6}UC-17.06 -- Restore Forum Category}{268}{subsubsection.425}%
+\contentsline {subsection}{\numberline {3.26}Manage Moderation}{269}{subsection.428}%
+\contentsline {subsubsection}{\numberline {3.26.1}UC-34.01 -- View Moderation Queue}{270}{subsubsection.429}%
+\contentsline {subsubsection}{\numberline {3.26.2}UC-34.02 -- View Moderation Item Details}{271}{subsubsection.432}%
+\contentsline {subsubsection}{\numberline {3.26.3}UC-34.03 -- Resolve Moderation Item}{272}{subsubsection.435}%
+\contentsline {subsection}{\numberline {3.27}Manage ID Verification}{274}{subsection.438}%
+\contentsline {subsubsection}{\numberline {3.27.1}UC-35.01 -- View ID Verification Requests List}{274}{subsubsection.439}%
+\contentsline {subsubsection}{\numberline {3.27.2}UC-35.02 -- View ID Verification Request Details}{275}{subsubsection.442}%
+\contentsline {subsubsection}{\numberline {3.27.3}UC-35.03 -- Approve ID Verification}{276}{subsubsection.445}%
+\contentsline {subsubsection}{\numberline {3.27.4}UC-35.04 -- Reject ID Verification}{278}{subsubsection.448}%
+\contentsline {subsection}{\numberline {3.28}Manage Forum Trash}{280}{subsection.451}%
+\contentsline {subsubsection}{\numberline {3.28.1}UC-36.01 -- View Deleted Posts/Comments List}{280}{subsubsection.452}%
+\contentsline {subsubsection}{\numberline {3.28.2}UC-36.02 -- View Deleted Posts/Comments Details}{282}{subsubsection.455}%
+\contentsline {subsubsection}{\numberline {3.28.3}UC-36.03 -- Restore Deleted Posts/Comments}{283}{subsubsection.458}%
+\contentsline {subsection}{\numberline {3.29}Following Management}{285}{subsection.461}%
+\contentsline {subsubsection}{\numberline {3.29.1}Class Diagram}{285}{subsubsection.462}%
+\contentsline {subsubsection}{\numberline {3.29.2}UC-29.01 -- View Following List}{286}{subsubsection.464}%
+\contentsline {subsubsection}{\numberline {3.29.3}UC-29.02 -- Follow Freelancer}{287}{subsubsection.466}%
+\contentsline {subsubsection}{\numberline {3.29.4}UC-29.03 -- Unfollow Freelancer}{288}{subsubsection.468}%
+\contentsline {subsection}{\numberline {3.30}Notification Management}{288}{subsection.470}%
+\contentsline {subsubsection}{\numberline {3.30.1}Class Diagram}{289}{subsubsection.471}%
+\contentsline {subsubsection}{\numberline {3.30.2}UC-30.01 -- View Notifications List}{290}{subsubsection.473}%
+\contentsline {subsubsection}{\numberline {3.30.3}UC-30.02 -- Mark Notification as Read}{291}{subsubsection.475}%
+\contentsline {subsubsection}{\numberline {3.30.4}UC-30.03 -- Mark All Notifications as Read}{292}{subsubsection.477}%
+\contentsline {subsubsection}{\numberline {3.30.5}UC-30.04 -- Delete Notification}{293}{subsubsection.479}%
+\contentsline {subsection}{\numberline {3.31}Role Switching}{293}{subsection.481}%
+\contentsline {subsubsection}{\numberline {3.31.1}Class Diagram}{294}{subsubsection.482}%
+\contentsline {subsubsection}{\numberline {3.31.2}UC-31.01 -- Switch Role}{295}{subsubsection.484}%
+\contentsline {subsubsection}{\numberline {3.31.3}UC-31.02 -- Join New Role}{296}{subsubsection.486}%
+\contentsline {subsection}{\numberline {3.32}Dispute Management}{297}{subsection.488}%
+\contentsline {subsubsection}{\numberline {3.32.1}UC-33.01 -- Open Dispute}{297}{subsubsection.489}%
+\contentsline {subsubsection}{\numberline {3.32.2}UC-33.02 -- View Disputes List}{299}{subsubsection.492}%
+\contentsline {subsubsection}{\numberline {3.32.3}UC-33.03 -- View Dispute Details}{300}{subsubsection.495}%
+\contentsline {subsubsection}{\numberline {3.32.4}UC-33.04 -- View Dispute by Milestone}{302}{subsubsection.498}%
+\contentsline {subsubsection}{\numberline {3.32.5}UC-33.05 -- Respond to Dispute}{304}{subsubsection.501}%
+\contentsline {subsubsection}{\numberline {3.32.6}UC-33.06 -- Withdraw Dispute}{306}{subsubsection.504}%
+\contentsline {subsubsection}{\numberline {3.32.7}UC-33.07 -- Escalate Dispute to Expert}{308}{subsubsection.507}%
+\contentsline {subsubsection}{\numberline {3.32.8}UC-33.08 -- View Expert Disputes List}{310}{subsubsection.510}%
+\contentsline {subsubsection}{\numberline {3.32.9}UC-33.09 -- View Expert Dispute Details}{312}{subsubsection.513}%
+\contentsline {subsubsection}{\numberline {3.32.10}UC-33.10 -- Expert Make Dispute Decision}{314}{subsubsection.516}%
+\contentsline {subsubsection}{\numberline {3.32.11}UC-35.11 -- Upload Dispute Evidence File}{316}{subsubsection.519}%
+\contentsline {subsection}{\numberline {3.33}Proposal Management}{317}{subsection.522}%
+\contentsline {subsubsection}{\numberline {3.33.1}UC-32.01 -- View My Proposals List}{318}{subsubsection.523}%
+\contentsline {subsubsection}{\numberline {3.33.2}UC-32.02 -- View My Proposal Details}{320}{subsubsection.526}%
+\contentsline {subsubsection}{\numberline {3.33.3}UC-32.03 -- Submit Proposal}{322}{subsubsection.529}%
+\contentsline {subsubsection}{\numberline {3.33.4}UC-32.04 -- Update Proposal}{324}{subsubsection.532}%
+\contentsline {subsubsection}{\numberline {3.33.5}UC-32.05 -- Withdraw Proposal}{326}{subsubsection.535}%
+\contentsline {subsubsection}{\numberline {3.33.6}UC-32.06 -- Accept Proposal}{328}{subsubsection.538}%
+\contentsline {subsubsection}{\numberline {3.33.7}UC-32.07 -- Reject Proposal}{330}{subsubsection.541}%
+\contentsline {subsubsection}{\numberline {3.33.8}UC-32.08 -- View Job Proposals List}{332}{subsubsection.544}%
+\contentsline {subsubsection}{\numberline {3.33.9}UC-32.09 -- View Proposal Details}{334}{subsubsection.547}%
+\contentsline {subsection}{\numberline {3.34}User Management}{336}{subsection.550}%
+\contentsline {subsubsection}{\numberline {3.34.1}UC-28.01 -- View Users List}{336}{subsubsection.551}%
+\contentsline {subsubsection}{\numberline {3.34.2}UC-28.02 -- View User Details}{338}{subsubsection.554}%
+\contentsline {subsubsection}{\numberline {3.34.3}UC-28.03 -- Create User}{340}{subsubsection.557}%
+\contentsline {subsubsection}{\numberline {3.34.4}UC-28.04 -- Update User}{342}{subsubsection.560}%
+\contentsline {subsubsection}{\numberline {3.34.5}UC-28.05 -- Update Client Profile}{344}{subsubsection.563}%
+\contentsline {subsubsection}{\numberline {3.34.6}UC-28.06 -- Update Freelancer Basic Info}{346}{subsubsection.566}%
+\contentsline {subsubsection}{\numberline {3.34.7}UC-28.07 -- Update Freelancer Skills}{348}{subsubsection.569}%
+\contentsline {subsubsection}{\numberline {3.34.8}UC-28.08 -- Update Freelancer Portfolio}{350}{subsubsection.572}%
+\contentsline {subsection}{\numberline {3.35}AI Content Moderation}{352}{subsection.575}%
+\contentsline {subsubsection}{\numberline {3.35.1}UC-44.01 -- Moderate Content by AI}{352}{subsubsection.576}%
+\contentsline {subsection}{\numberline {3.36}AI Face Scan \& Identity Extraction with Duplicate Check}{353}{subsection.579}%
+\contentsline {subsubsection}{\numberline {3.36.1}UC-45.01 -- Scan Face and Detect Duplicate Identity}{353}{subsubsection.580}%
+\contentsline {subsection}{\numberline {3.37}Review Management}{354}{subsection.583}%
+\contentsline {subsubsection}{\numberline {3.37.1}Class Diagram}{355}{subsubsection.584}%
+\contentsline {subsubsection}{\numberline {3.37.2}UC-39.01 -- View Reviews List}{356}{subsubsection.586}%
+\contentsline {subsubsection}{\numberline {3.37.3}UC-39.02 -- View Review Details}{357}{subsubsection.588}%
+\contentsline {subsubsection}{\numberline {3.37.4}UC-39.03 -- Write Review}{358}{subsubsection.590}%
+\contentsline {subsubsection}{\numberline {3.37.5}UC-39.04 -- Update Review}{359}{subsubsection.592}%
+\contentsline {subsubsection}{\numberline {3.37.6}UC-39.05 -- Delete Review}{360}{subsubsection.594}%
+\contentsline {subsection}{\numberline {3.38}Review Response Management}{360}{subsection.596}%
+\contentsline {subsubsection}{\numberline {3.38.1}Class Diagram}{361}{subsubsection.597}%
+\contentsline {subsubsection}{\numberline {3.38.2}UC-40.01 -- Respond to Review}{362}{subsubsection.599}%
+\contentsline {subsubsection}{\numberline {3.38.3}UC-40.02 -- Update Review Response}{363}{subsubsection.601}%
+\contentsline {subsubsection}{\numberline {3.38.4}UC-40.03 -- Delete Review Response}{364}{subsubsection.603}%
+\contentsline {subsection}{\numberline {3.39}Account Profile Management}{364}{subsection.605}%
+\contentsline {subsubsection}{\numberline {3.39.1}Class Diagram}{365}{subsubsection.606}%
+\contentsline {subsubsection}{\numberline {3.39.2}UC-41.01 -- View Profile}{365}{subsubsection.608}%
+\contentsline {subsubsection}{\numberline {3.39.3}UC-41.02 -- Update Profile}{366}{subsubsection.610}%
+\contentsline {subsubsection}{\numberline {3.39.4}UC-41.03 -- Change Password}{367}{subsubsection.612}%
+\contentsline {subsubsection}{\numberline {3.39.5}UC-41.04 -- Upload Avatar}{368}{subsubsection.614}%
+\contentsline {subsection}{\numberline {3.40}Payment Management}{368}{subsection.616}%
+\contentsline {subsubsection}{\numberline {3.40.1}UC-43.01 -- Connect Stripe Account}{369}{subsubsection.617}%
+\contentsline {subsubsection}{\numberline {3.40.2}UC-43.02 -- Check Stripe Connect Status}{371}{subsubsection.620}%
+\contentsline {subsubsection}{\numberline {3.40.3}UC-43.03 -- View Saved Payment Methods}{373}{subsubsection.623}%
+\contentsline {subsubsection}{\numberline {3.40.4}UC-43.04 -- Set Default Payment Method}{374}{subsubsection.626}%
+\contentsline {subsubsection}{\numberline {3.40.5}UC-43.05 -- Remove Saved Payment Method}{376}{subsubsection.629}%
+\contentsline {subsubsection}{\numberline {3.40.6}UC-43.06 -- Create Contract Hold Deposit Intent}{378}{subsubsection.632}%
+\contentsline {subsubsection}{\numberline {3.40.7}UC-43.07 -- Fund Milestone via Stripe Checkout}{380}{subsubsection.635}%
+\contentsline {subsubsection}{\numberline {3.40.8}UC-43.08 -- Fund Milestone with Saved Card}{382}{subsubsection.638}%
+\contentsline {subsubsection}{\numberline {3.40.9}UC-43.09 -- Release Milestone Escrow Payment}{384}{subsubsection.641}%
+\contentsline {subsubsection}{\numberline {3.40.10}UC-43.10 -- View Payment Transactions History}{386}{subsubsection.644}%
+\contentsline {subsection}{\numberline {3.41}Banner Management}{387}{subsection.647}%
+\contentsline {subsubsection}{\numberline {3.41.1}UC-37.01 -- View Banners List}{387}{subsubsection.648}%
+\contentsline {subsubsection}{\numberline {3.41.2}UC-37.02 -- View Banner Details}{389}{subsubsection.651}%
+\contentsline {subsubsection}{\numberline {3.41.3}UC-37.03 -- Create Banner}{391}{subsubsection.654}%
+\contentsline {subsubsection}{\numberline {3.41.4}UC-37.04 -- Update Banner}{393}{subsubsection.657}%
+\contentsline {subsubsection}{\numberline {3.41.5}UC-37.05 -- Delete Banner}{395}{subsubsection.660}%
+\contentsline {subsection}{\numberline {3.42}Skill Management}{396}{subsection.663}%
+\contentsline {subsubsection}{\numberline {3.42.1}UC-38.01 -- View Skills List}{397}{subsubsection.664}%
+\contentsline {subsubsection}{\numberline {3.42.2}UC-38.02 -- View Skill Details}{399}{subsubsection.667}%
+\contentsline {subsubsection}{\numberline {3.42.3}UC-38.03 -- Create Skill}{401}{subsubsection.670}%
+\contentsline {subsubsection}{\numberline {3.42.4}UC-38.04 -- Update Skill}{403}{subsubsection.673}%
+\contentsline {subsubsection}{\numberline {3.42.5}UC-38.05 -- Delete Skill}{405}{subsubsection.676}%
+\contentsline {subsubsection}{\numberline {3.42.6}UC-38.06 -- Restore Skill}{407}{subsubsection.679}%
+\contentsline {subsection}{\numberline {3.43}Profile Update Review}{408}{subsection.682}%
+\contentsline {subsubsection}{\numberline {3.43.1}Class Diagram}{409}{subsubsection.683}%
+\contentsline {subsubsection}{\numberline {3.43.2}UC-47.01 -- View Pending Profile Update Requests List}{410}{subsubsection.685}%
+\contentsline {subsubsection}{\numberline {3.43.3}UC-47.02 -- View Profile Update Request Details}{411}{subsubsection.687}%
+\contentsline {subsubsection}{\numberline {3.43.4}UC-47.03 -- Approve Profile Update Request}{412}{subsubsection.689}%
+\contentsline {subsubsection}{\numberline {3.43.5}UC-47.04 -- Reject Profile Update Request}{413}{subsubsection.691}%
+\contentsline {subsubsection}{\numberline {3.43.6}UC-47.05 -- View Profile Update Request History}{414}{subsubsection.693}%
+\contentsline {subsection}{\numberline {3.44}Expert Profile Update}{414}{subsection.695}%
+\contentsline {subsubsection}{\numberline {3.44.1}Class Diagram}{415}{subsubsection.696}%
+\contentsline {subsubsection}{\numberline {3.44.2}UC-47.06 -- Update Profile Expert}{416}{subsubsection.698}%
+\contentsline {subsection}{\numberline {3.45}Freelancer CV Management}{416}{subsection.700}%
+\contentsline {subsubsection}{\numberline {3.45.1}Class Diagram}{417}{subsubsection.701}%
+\contentsline {subsubsection}{\numberline {3.45.2}UC-07.03 -- Upload CV}{418}{subsubsection.703}%
+\contentsline {subsubsection}{\numberline {3.45.3}UC-07.04 -- View CV}{419}{subsubsection.705}%
+\contentsline {subsubsection}{\numberline {3.45.4}UC-07.05 -- Replace CV}{420}{subsubsection.707}%
+\contentsline {subsubsection}{\numberline {3.45.5}UC-07.06 -- Delete CV}{421}{subsubsection.709}%
+\contentsline {subsection}{\numberline {3.46}Expert Profile Management}{421}{subsection.711}%
+\contentsline {subsubsection}{\numberline {3.46.1}UC-28.09 -- Update Expert Profile}{422}{subsubsection.712}%
+\contentsline {subsection}{\numberline {3.47}Job Category Management}{423}{subsection.715}%
+\contentsline {subsubsection}{\numberline {3.47.1}UC-46.01 -- View Job Categories List}{424}{subsubsection.716}%
+\contentsline {subsubsection}{\numberline {3.47.2}UC-46.02 -- View Job Category Details}{425}{subsubsection.719}%
+\contentsline {subsubsection}{\numberline {3.47.3}UC-46.03 -- Create Job Category}{426}{subsubsection.722}%
+\contentsline {subsubsection}{\numberline {3.47.4}UC-46.04 -- Update Job Category}{428}{subsubsection.725}%
+\contentsline {subsubsection}{\numberline {3.47.5}UC-46.05 -- Delete Job Category}{430}{subsubsection.728}%
+\contentsline {subsubsection}{\numberline {3.47.6}UC-46.06 -- Restore Job Category}{432}{subsubsection.731}%
+\contentsline {section}{\numberline {4.}Reference}{434}{section.734}%
