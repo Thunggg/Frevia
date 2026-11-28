@@ -42,133 +42,133 @@
 \contentsline {figure}{\numberline {42}{\ignorespaces Edit Job slide-over drawer for updating title, description, budget, hiring type, and schedule}}{62}{figure.caption.340}%
 \contentsline {figure}{\numberline {43}{\ignorespaces Delete Job confirmation dialog prompting permanent soft-deletion of a posting}}{63}{figure.caption.347}%
 \contentsline {figure}{\numberline {44}{\ignorespaces Closing an active Recruiting job via the job action menu with live confirmation toast}}{64}{figure.caption.353}%
-\contentsline {figure}{\numberline {45}{\ignorespaces Reopening a Closed job posting from the Closed tab with confirmation toast}}{65}{figure.caption.360}%
-\contentsline {figure}{\numberline {46}{\ignorespaces Freelancer Saved Jobs tab displaying bookmarked postings and quick unsave controls}}{66}{figure.caption.367}%
-\contentsline {figure}{\numberline {47}{\ignorespaces Job Detail screen displaying the green Job saved to bookmarks confirmation toast}}{67}{figure.caption.374}%
-\contentsline {figure}{\numberline {48}{\ignorespaces Remove saved job confirmation dialog for removing a job from Bookmarks}}{68}{figure.caption.380}%
-\contentsline {figure}{\numberline {49}{\ignorespaces Saved Searches tab listing saved filter presets with View details, Search, and Delete actions}}{69}{figure.caption.387}%
-\contentsline {figure}{\numberline {50}{\ignorespaces Saved Search detail modal showing stored keywords, sort order, budget bounds, and quick launch}}{71}{figure.caption.395}%
-\contentsline {figure}{\numberline {51}{\ignorespaces Save Search modal for naming and storing the current job filter combination}}{72}{figure.caption.401}%
-\contentsline {figure}{\numberline {52}{\ignorespaces Deleting a saved search preset with live confirmation toast notification}}{73}{figure.caption.408}%
-\contentsline {figure}{\numberline {53}{\ignorespaces Job Alerts management grid showing quota pill, active toggle switches, and card actions}}{74}{figure.caption.414}%
-\contentsline {figure}{\numberline {54}{\ignorespaces Job Alert Details modal presenting alert criteria, matching open jobs preview, and full search link}}{75}{figure.caption.422}%
-\contentsline {figure}{\numberline {55}{\ignorespaces Create Job Alert modal for defining keywords, skills, notification frequency, and delivery channels}}{76}{figure.caption.429}%
-\contentsline {figure}{\numberline {56}{\ignorespaces Edit Job Alert modal pre-populated with current alert settings and skill chips}}{77}{figure.caption.437}%
-\contentsline {figure}{\numberline {57}{\ignorespaces Delete job alert confirmation dialog to permanently remove an alert rule}}{78}{figure.caption.445}%
-\contentsline {figure}{\numberline {58}{\ignorespaces Explore Job Categories directory with live search and Popular Categories open-job counts}}{79}{figure.caption.451}%
-\contentsline {figure}{\numberline {59}{\ignorespaces Job Category Detail page listing open jobs filtered to the selected discipline}}{80}{figure.caption.458}%
-\contentsline {figure}{\numberline {60}{\ignorespaces Freelancer My Proposals dashboard with lifecycle status filter tabs and summary cards}}{81}{figure.caption.466}%
-\contentsline {figure}{\numberline {61}{\ignorespaces Freelancer Proposal Detail screen displaying status, cover letter, bid, and summary sidebar}}{83}{figure.caption.474}%
-\contentsline {figure}{\numberline {62}{\ignorespaces Submit a Proposal modal with cover letter composer, bid/delivery safeguards, and Save draft option}}{84}{figure.caption.481}%
-\contentsline {figure}{\numberline {63}{\ignorespaces Draft Proposal editor with budget safeguard notice, Save draft, and Submit proposal actions}}{85}{figure.caption.489}%
-\contentsline {figure}{\numberline {64}{\ignorespaces Withdraw proposal confirmation modal warning that the Client will no longer be able to accept}}{86}{figure.caption.496}%
-\contentsline {figure}{\numberline {65}{\ignorespaces Create Contract \& Hire Freelancer slide-over drawer triggered when accepting a proposal}}{87}{figure.caption.502}%
-\contentsline {figure}{\numberline {66}{\ignorespaces Reject proposal confirmation modal notifying the Freelancer that their bid was not selected}}{89}{figure.caption.510}%
-\contentsline {figure}{\numberline {67}{\ignorespaces Client job proposals pipeline with status filters, freelancer search, sort, and decision buttons}}{90}{figure.caption.516}%
-\contentsline {figure}{\numberline {68}{\ignorespaces Client Proposal Detail drawer showing candidate shortcuts, bid summary, cover letter, and actions}}{91}{figure.caption.523}%
-\contentsline {figure}{\numberline {69}{\ignorespaces Freelancer Best Matches feed displaying AI composite match percentages, Details links, and Refresh}}{92}{figure.caption.530}%
-\contentsline {figure}{\numberline {70}{\ignorespaces Central Administrator Dashboard and operational KPI metrics at \texttt {/admin}}}{94}{figure.caption.539}%
-\contentsline {figure}{\numberline {71}{\ignorespaces Administrator profile identity, standing, and granted privileges at \texttt {/admin/users/1}}}{96}{figure.caption.547}%
-\contentsline {figure}{\numberline {72}{\ignorespaces System and Custom Roles management console at \texttt {/admin/roles} (UC-06.01, UC-06.03--06.05)}}{97}{figure.caption.555}%
-\contentsline {figure}{\numberline {73}{\ignorespaces Role Detail screen displaying role metadata at \texttt {/admin/roles/1} (UC-06.02)}}{98}{figure.caption.561}%
-\contentsline {figure}{\numberline {74}{\ignorespaces Dynamic RBAC role-permission matrix configuration at \texttt {/admin/assign-role} (UC-06.06)}}{99}{figure.caption.564}%
-\contentsline {figure}{\numberline {75}{\ignorespaces System API Permission catalog with method and module filters at \texttt {/admin/permissions} (UC-15.01)}}{100}{figure.caption.574}%
-\contentsline {figure}{\numberline {76}{\ignorespaces Permission Detail view displaying ID, Function Name, Method, Path, and Module (UC-15.02)}}{101}{figure.caption.581}%
-\contentsline {figure}{\numberline {77}{\ignorespaces User directory table and account provisioning interface at \texttt {/admin/users} (UC-28.01, UC-28.03)}}{102}{figure.caption.584}%
-\contentsline {figure}{\numberline {78}{\ignorespaces Edit User modal dialog featuring the Banned account toggle at \texttt {/admin/users}}}{103}{figure.caption.593}%
-\contentsline {figure}{\numberline {79}{\ignorespaces Admin inspection view of Client Profile tab at \texttt {/admin/users/2} (UC-28.02, UC-28.05)}}{104}{figure.caption.602}%
-\contentsline {figure}{\numberline {80}{\ignorespaces Freelancer Profile tab with Edit Profile, Skills, and Portfolio management at \texttt {/admin/users/2} (UC-28.06--28.08)}}{105}{figure.caption.608}%
-\contentsline {figure}{\numberline {81}{\ignorespaces Expert Profile tab and Edit Profile action for Expert accounts (UC-28.09)}}{105}{figure.caption.613}%
-\contentsline {figure}{\numberline {82}{\ignorespaces Skills catalog management console with search and soft delete at \texttt {/admin/skills}}}{106}{figure.caption.617}%
-\contentsline {figure}{\numberline {83}{\ignorespaces Job Categories management console at \texttt {/admin/job-categories}}}{108}{figure.caption.626}%
-\contentsline {figure}{\numberline {84}{\ignorespaces Forum Discussion Categories management console at \texttt {/admin/categories}}}{109}{figure.caption.635}%
-\contentsline {figure}{\numberline {85}{\ignorespaces Advertisement Banners management console at \texttt {/admin/banners} (UC-37.01, UC-37.02, UC-37.04, UC-37.05)}}{110}{figure.caption.644}%
-\contentsline {figure}{\numberline {86}{\ignorespaces Create New Banner dialog configuring title, position, image upload, target link, and schedule (UC-37.03)}}{111}{figure.caption.651}%
-\contentsline {figure}{\numberline {87}{\ignorespaces Review form: rating, breakdown, comment and submit action.}}{112}{figure.caption.656}%
-\contentsline {figure}{\numberline {88}{\ignorespaces Review response editor and Save response action.}}{113}{figure.caption.665}%
-\contentsline {figure}{\numberline {89}{\ignorespaces Banner list, filters and Create Banner action (left); create Banner dialog and form fields.}}{114}{figure.caption.673}%
-\contentsline {figure}{\numberline {90}{\ignorespaces Identity verification queue with search and status tabs.}}{115}{figure.caption.682}%
-\contentsline {figure}{\numberline {91}{\ignorespaces Profile review queue and Review actions (left); published and Submitted field comparison.}}{116}{figure.caption.690}%
-\contentsline {figure}{\numberline {92}{\ignorespaces Forum home displaying discussion tabs and category tags}}{117}{figure.caption.699}%
-\contentsline {figure}{\numberline {93}{\ignorespaces Forum category detail page with search and post creation}}{118}{figure.caption.707}%
-\contentsline {figure}{\numberline {94}{\ignorespaces Paginated list of approved forum posts}}{119}{figure.caption.714}%
-\contentsline {figure}{\numberline {95}{\ignorespaces Forum post detail view with engagement bar and related posts}}{120}{figure.caption.721}%
-\contentsline {figure}{\numberline {96}{\ignorespaces Create Post dialog with rich-text editor}}{121}{figure.caption.729}%
-\contentsline {figure}{\numberline {97}{\ignorespaces Update Post modal for editing title or body}}{122}{figure.caption.736}%
-\contentsline {figure}{\numberline {98}{\ignorespaces Soft-delete confirmation dialog for forum post}}{123}{figure.caption.743}%
-\contentsline {figure}{\numberline {99}{\ignorespaces Liking a forum post}}{124}{figure.caption.749}%
-\contentsline {figure}{\numberline {100}{\ignorespaces Removing a like from a forum post}}{125}{figure.caption.755}%
-\contentsline {figure}{\numberline {101}{\ignorespaces Modal showing users who liked the post}}{126}{figure.caption.761}%
-\contentsline {figure}{\numberline {102}{\ignorespaces Viewing post comments thread}}{127}{figure.caption.767}%
-\contentsline {figure}{\numberline {103}{\ignorespaces Adding a new comment to a forum post}}{128}{figure.caption.773}%
-\contentsline {figure}{\numberline {104}{\ignorespaces Editing an existing comment}}{129}{figure.caption.779}%
-\contentsline {figure}{\numberline {105}{\ignorespaces Soft-deleting a comment}}{130}{figure.caption.785}%
-\contentsline {figure}{\numberline {106}{\ignorespaces Liking a comment}}{131}{figure.caption.791}%
-\contentsline {figure}{\numberline {107}{\ignorespaces Unliking a comment}}{132}{figure.caption.796}%
-\contentsline {figure}{\numberline {108}{\ignorespaces Reporting inappropriate forum content}}{133}{figure.caption.801}%
-\contentsline {figure}{\numberline {109}{\ignorespaces Conversation list with last message preview and unread count}}{134}{figure.caption.808}%
-\contentsline {figure}{\numberline {110}{\ignorespaces Starting or resuming a direct conversation}}{135}{figure.caption.815}%
-\contentsline {figure}{\numberline {111}{\ignorespaces Full chronological message thread view}}{136}{figure.caption.822}%
-\contentsline {figure}{\numberline {112}{\ignorespaces Sending a real-time text message via Socket.IO}}{137}{figure.caption.829}%
-\contentsline {figure}{\numberline {113}{\ignorespaces Marking incoming messages as read}}{138}{figure.caption.836}%
-\contentsline {figure}{\numberline {114}{\ignorespaces Recalling a sent message}}{139}{figure.caption.842}%
-\contentsline {figure}{\numberline {115}{\ignorespaces Pinning or unpinning a conversation to top}}{140}{figure.caption.848}%
-\contentsline {figure}{\numberline {116}{\ignorespaces Real-time Messaging and File Attachment Sharing (/messages)}}{141}{figure.caption.854}%
-\contentsline {figure}{\numberline {117}{\ignorespaces Admin Content Moderation Queue}}{142}{figure.caption.863}%
-\contentsline {figure}{\numberline {118}{\ignorespaces Inspecting flagged moderation item details}}{143}{figure.caption.870}%
-\contentsline {figure}{\numberline {119}{\ignorespaces Approving or rejecting a moderation item}}{144}{figure.caption.877}%
-\contentsline {figure}{\numberline {120}{\ignorespaces Admin ID Verification Request queue}}{145}{figure.caption.883}%
-\contentsline {figure}{\numberline {121}{\ignorespaces Admin Reviewing CCCD Images and Verification Detail}}{146}{figure.caption.890}%
-\contentsline {figure}{\numberline {122}{\ignorespaces Approving an eKYC identity verification request}}{147}{figure.caption.898}%
-\contentsline {figure}{\numberline {123}{\ignorespaces Rejecting an eKYC verification request with reason}}{148}{figure.caption.905}%
-\contentsline {figure}{\numberline {124}{\ignorespaces Admin Forum Trash list of soft-deleted and rejected items}}{149}{figure.caption.912}%
-\contentsline {figure}{\numberline {125}{\ignorespaces Inspecting deleted or rejected forum item details}}{150}{figure.caption.919}%
-\contentsline {figure}{\numberline {126}{\ignorespaces Restoring a deleted or rejected forum item}}{151}{figure.caption.925}%
-\contentsline {figure}{\numberline {127}{\ignorespaces AI Content Moderation scoring during post creation}}{152}{figure.caption.932}%
-\contentsline {figure}{\numberline {128}{\ignorespaces User Guide: Profile Identity Tab -- CCCD Upload and Live AI Liveness Face Scan}}{153}{figure.caption.940}%
-\contentsline {figure}{\numberline {129}{\ignorespaces Create Contract \& Hire Freelancer drawer with milestone builder}}{154}{figure.caption.949}%
-\contentsline {figure}{\numberline {130}{\ignorespaces Edit Contract Agreement drawer for modifying end date and terms}}{156}{figure.caption.957}%
-\contentsline {figure}{\numberline {131}{\ignorespaces My Contracts directory with status tabs, search, and document cards}}{157}{figure.caption.965}%
-\contentsline {figure}{\numberline {132}{\ignorespaces Contract detail workspace displaying legal agreement, signatures, actions, and shared files}}{158}{figure.caption.973}%
-\contentsline {figure}{\numberline {133}{\ignorespaces Sign Contract Agreement confirmation modal}}{159}{figure.caption.981}%
-\contentsline {figure}{\numberline {134}{\ignorespaces Downloading the generated signed Contract PDF agreement}}{160}{figure.caption.987}%
-\contentsline {figure}{\numberline {135}{\ignorespaces Cancel Contract confirmation dialog}}{161}{figure.caption.993}%
-\contentsline {figure}{\numberline {136}{\ignorespaces Complete Contract confirmation dialog for finalizing an active engagement}}{162}{figure.caption.999}%
-\contentsline {figure}{\numberline {137}{\ignorespaces Shared Files panel listing contract documents and download triggers}}{163}{figure.caption.1005}%
-\contentsline {figure}{\numberline {138}{\ignorespaces Uploading a shared file attachment via the contract workspace}}{164}{figure.caption.1011}%
-\contentsline {figure}{\numberline {139}{\ignorespaces Delete Shared File confirmation dialog}}{165}{figure.caption.1018}%
-\contentsline {figure}{\numberline {140}{\ignorespaces Decline Contract Offer dialog explaining automatic Stripe hold release}}{166}{figure.caption.1024}%
-\contentsline {figure}{\numberline {141}{\ignorespaces Contract Milestones list with status filter tabs, search, and escrow actions}}{167}{figure.caption.1032}%
-\contentsline {figure}{\numberline {142}{\ignorespaces Milestone detail workspace displaying tabs, latest delivery, and 95\% net financials}}{169}{figure.caption.1040}%
-\contentsline {figure}{\numberline {143}{\ignorespaces Add New Milestone slide-over drawer with unallocated budget check}}{170}{figure.caption.1047}%
-\contentsline {figure}{\numberline {144}{\ignorespaces Edit Milestone drawer for updating scope, amount, and deadline}}{171}{figure.caption.1054}%
-\contentsline {figure}{\numberline {145}{\ignorespaces Delete Milestone confirmation modal showing budget reallocation}}{172}{figure.caption.1061}%
-\contentsline {figure}{\numberline {146}{\ignorespaces Freelancer advancing a funded milestone to In Progress via Start Work}}{173}{figure.caption.1067}%
-\contentsline {figure}{\numberline {147}{\ignorespaces Milestone Shared Files tab with upload action and download links}}{174}{figure.caption.1073}%
-\contentsline {figure}{\numberline {148}{\ignorespaces Uploading a milestone-specific brief or asset file from disk}}{175}{figure.caption.1080}%
-\contentsline {figure}{\numberline {149}{\ignorespaces Delete Milestone File confirmation prompt}}{176}{figure.caption.1087}%
-\contentsline {figure}{\numberline {150}{\ignorespaces Submit Milestone Deliverables drawer with notes, demo links, and file upload}}{177}{figure.caption.1093}%
-\contentsline {figure}{\numberline {151}{\ignorespaces Deliverables \& Submissions History tab displaying delivery cards and status}}{178}{figure.caption.1101}%
-\contentsline {figure}{\numberline {152}{\ignorespaces Review Work Submission drawer detailing notes, verification links, and fee split}}{179}{figure.caption.1107}%
-\contentsline {figure}{\numberline {153}{\ignorespaces Requesting deliverable revisions with structured feedback and target due date}}{180}{figure.caption.1114}%
-\contentsline {figure}{\numberline {154}{\ignorespaces Approve \& Release deliverable confirmation inside Review Work Submission}}{181}{figure.caption.1122}%
-\contentsline {figure}{\numberline {155}{\ignorespaces Resolution Center drawer for proposing escrow split and uploading evidence}}{182}{figure.caption.1130}%
-\contentsline {figure}{\numberline {156}{\ignorespaces Disputes \& Arbitration queue displaying filter tabs, split outcomes, and details trigger}}{184}{figure.caption.1138}%
-\contentsline {figure}{\numberline {157}{\ignorespaces Resolution detail drawer showing 4-stage timeline, attached evidence, and final ruling}}{185}{figure.caption.1145}%
-\contentsline {figure}{\numberline {158}{\ignorespaces Contextual dispute lock banner on milestone workspace synced via \texttt {GET /api/disputes/milestone/:milestoneId}}}{186}{figure.caption.1152}%
-\contentsline {figure}{\numberline {159}{\ignorespaces Respondent reviewing the claim and submitting an acceptance or reasoned decline}}{187}{figure.caption.1158}%
-\contentsline {figure}{\numberline {160}{\ignorespaces Initiator withdrawing an active dispute via Withdraw Request}}{188}{figure.caption.1165}%
-\contentsline {figure}{\numberline {161}{\ignorespaces Escalating a declined Step 1 dispute to a Frevia Expert arbitrator}}{189}{figure.caption.1171}%
-\contentsline {figure}{\numberline {162}{\ignorespaces Expert Arbitration Console listing escalated and resolved dispute dossiers}}{190}{figure.caption.1177}%
-\contentsline {figure}{\numberline {163}{\ignorespaces Comprehensive Expert case file showing evidence, deliverables, and chat audit log}}{191}{figure.caption.1184}%
-\contentsline {figure}{\numberline {164}{\ignorespaces Expert setting exact escrow split percentages and issuing a final binding decision}}{192}{figure.caption.1191}%
-\contentsline {figure}{\numberline {165}{\ignorespaces Freelancer Billing \& Payments dashboard with Stripe Express onboarding card}}{193}{figure.caption.1200}%
-\contentsline {figure}{\numberline {166}{\ignorespaces Verifying live Stripe Express readiness and payout capability status}}{195}{figure.caption.1207}%
-\contentsline {figure}{\numberline {167}{\ignorespaces Saved Payment Methods wallet dialog displaying tokenized Stripe cards}}{196}{figure.caption.1214}%
-\contentsline {figure}{\numberline {168}{\ignorespaces Promoting a saved Stripe card as the default funding method}}{197}{figure.caption.1220}%
-\contentsline {figure}{\numberline {169}{\ignorespaces Remove Payment Method confirmation dialog showing masked last 4 digits}}{198}{figure.caption.1226}%
-\contentsline {figure}{\numberline {170}{\ignorespaces Authorize Contract Escrow Hold drawer calculating selected milestones plus 3\% client fee}}{199}{figure.caption.1232}%
-\contentsline {figure}{\numberline {171}{\ignorespaces Hosted Stripe Checkout page for milestone escrow deposit}}{200}{figure.caption.1239}%
-\contentsline {figure}{\numberline {172}{\ignorespaces Fund Milestone Escrow drawer with 0\% extra client fee summary and Stripe trigger}}{201}{figure.caption.1246}%
-\contentsline {figure}{\numberline {173}{\ignorespaces Releasing 95\% milestone escrow funds to Freelancer via Stripe Connect}}{202}{figure.caption.1253}%
-\contentsline {figure}{\numberline {174}{\ignorespaces Billing \& Payments ledger with saved card preview, escrow spend metrics, and filters}}{203}{figure.caption.1260}%
+\contentsline {figure}{\numberline {45}{\ignorespaces Confirm Reopening Job dialog transitioning a Closed posting back to Open status}}{65}{figure.caption.360}%
+\contentsline {figure}{\numberline {46}{\ignorespaces Freelancer Saved Jobs tab displaying bookmarked postings and quick unsave controls}}{66}{figure.caption.366}%
+\contentsline {figure}{\numberline {47}{\ignorespaces Job Detail screen displaying the green Job saved to bookmarks confirmation toast}}{67}{figure.caption.373}%
+\contentsline {figure}{\numberline {48}{\ignorespaces Remove saved job confirmation dialog for removing a job from Bookmarks}}{68}{figure.caption.379}%
+\contentsline {figure}{\numberline {49}{\ignorespaces Saved Searches tab listing saved filter presets with View details, Search, and Delete actions}}{69}{figure.caption.386}%
+\contentsline {figure}{\numberline {50}{\ignorespaces Saved Search detail modal showing stored keywords, sort order, budget bounds, and quick launch}}{71}{figure.caption.394}%
+\contentsline {figure}{\numberline {51}{\ignorespaces Save Search modal for naming and storing the current job filter combination}}{72}{figure.caption.400}%
+\contentsline {figure}{\numberline {52}{\ignorespaces Delete saved search confirmation dialog to permanently remove a saved filter preset}}{73}{figure.caption.407}%
+\contentsline {figure}{\numberline {53}{\ignorespaces Job Alerts management grid showing quota pill, active toggle switches, and card actions}}{74}{figure.caption.413}%
+\contentsline {figure}{\numberline {54}{\ignorespaces Job Alert Details modal presenting alert criteria, matching open jobs preview, and full search link}}{75}{figure.caption.421}%
+\contentsline {figure}{\numberline {55}{\ignorespaces Create Job Alert modal for defining keywords, skills, notification frequency, and delivery channels}}{76}{figure.caption.428}%
+\contentsline {figure}{\numberline {56}{\ignorespaces Edit Job Alert modal pre-populated with current alert settings and skill chips}}{77}{figure.caption.436}%
+\contentsline {figure}{\numberline {57}{\ignorespaces Delete job alert confirmation dialog to permanently remove an alert rule}}{78}{figure.caption.444}%
+\contentsline {figure}{\numberline {58}{\ignorespaces Explore Job Categories directory with live search and Popular Categories open-job counts}}{79}{figure.caption.450}%
+\contentsline {figure}{\numberline {59}{\ignorespaces Job Category Detail page listing open jobs filtered to the selected discipline}}{80}{figure.caption.457}%
+\contentsline {figure}{\numberline {60}{\ignorespaces Freelancer My Proposals dashboard with lifecycle status filter tabs and summary cards}}{81}{figure.caption.465}%
+\contentsline {figure}{\numberline {61}{\ignorespaces Freelancer Proposal Detail screen displaying status, cover letter, bid, and summary sidebar}}{83}{figure.caption.473}%
+\contentsline {figure}{\numberline {62}{\ignorespaces Submit a Proposal modal with cover letter composer, bid/delivery safeguards, and Save draft option}}{84}{figure.caption.480}%
+\contentsline {figure}{\numberline {63}{\ignorespaces Draft Proposal editor with budget safeguard notice, Save draft, and Submit proposal actions}}{86}{figure.caption.488}%
+\contentsline {figure}{\numberline {64}{\ignorespaces Withdraw proposal confirmation modal warning that the Client will no longer be able to accept}}{87}{figure.caption.495}%
+\contentsline {figure}{\numberline {65}{\ignorespaces Create Contract \& Hire Freelancer slide-over drawer triggered when accepting a proposal}}{88}{figure.caption.501}%
+\contentsline {figure}{\numberline {66}{\ignorespaces Reject proposal confirmation modal notifying the Freelancer that their bid was not selected}}{90}{figure.caption.509}%
+\contentsline {figure}{\numberline {67}{\ignorespaces Client job proposals pipeline with status filters, freelancer search, sort, and decision buttons}}{91}{figure.caption.515}%
+\contentsline {figure}{\numberline {68}{\ignorespaces Client Proposal Detail drawer showing candidate shortcuts, bid summary, cover letter, and actions}}{92}{figure.caption.522}%
+\contentsline {figure}{\numberline {69}{\ignorespaces Freelancer Best Matches feed displaying AI composite match percentages, Details links, and Refresh}}{93}{figure.caption.529}%
+\contentsline {figure}{\numberline {70}{\ignorespaces Central Administrator Dashboard and operational KPI metrics at \texttt {/admin}}}{95}{figure.caption.538}%
+\contentsline {figure}{\numberline {71}{\ignorespaces Administrator profile identity, standing, and granted privileges at \texttt {/admin/users/1}}}{97}{figure.caption.546}%
+\contentsline {figure}{\numberline {72}{\ignorespaces System and Custom Roles management console at \texttt {/admin/roles} (UC-06.01, UC-06.03--06.05)}}{98}{figure.caption.554}%
+\contentsline {figure}{\numberline {73}{\ignorespaces Role Detail screen displaying role metadata at \texttt {/admin/roles/1} (UC-06.02)}}{99}{figure.caption.560}%
+\contentsline {figure}{\numberline {74}{\ignorespaces Dynamic RBAC role-permission matrix configuration at \texttt {/admin/assign-role} (UC-06.06)}}{100}{figure.caption.563}%
+\contentsline {figure}{\numberline {75}{\ignorespaces System API Permission catalog with method and module filters at \texttt {/admin/permissions} (UC-15.01)}}{101}{figure.caption.573}%
+\contentsline {figure}{\numberline {76}{\ignorespaces Permission Detail view displaying ID, Function Name, Method, Path, and Module (UC-15.02)}}{102}{figure.caption.580}%
+\contentsline {figure}{\numberline {77}{\ignorespaces User directory table and account provisioning interface at \texttt {/admin/users} (UC-28.01, UC-28.03)}}{103}{figure.caption.583}%
+\contentsline {figure}{\numberline {78}{\ignorespaces Edit User modal dialog featuring the Banned account toggle at \texttt {/admin/users}}}{104}{figure.caption.592}%
+\contentsline {figure}{\numberline {79}{\ignorespaces Admin inspection view of Client Profile tab at \texttt {/admin/users/2} (UC-28.02, UC-28.05)}}{105}{figure.caption.601}%
+\contentsline {figure}{\numberline {80}{\ignorespaces Freelancer Profile tab with Edit Profile, Skills, and Portfolio management at \texttt {/admin/users/2} (UC-28.06--28.08)}}{106}{figure.caption.607}%
+\contentsline {figure}{\numberline {81}{\ignorespaces Expert Profile tab and Edit Profile action for Expert accounts (UC-28.09)}}{106}{figure.caption.612}%
+\contentsline {figure}{\numberline {82}{\ignorespaces Skills catalog management console with search and soft delete at \texttt {/admin/skills}}}{107}{figure.caption.616}%
+\contentsline {figure}{\numberline {83}{\ignorespaces Job Categories management console at \texttt {/admin/job-categories}}}{109}{figure.caption.625}%
+\contentsline {figure}{\numberline {84}{\ignorespaces Forum Discussion Categories management console at \texttt {/admin/categories}}}{110}{figure.caption.634}%
+\contentsline {figure}{\numberline {85}{\ignorespaces Advertisement Banners management console at \texttt {/admin/banners} (UC-37.01, UC-37.02, UC-37.04, UC-37.05)}}{111}{figure.caption.643}%
+\contentsline {figure}{\numberline {86}{\ignorespaces Create New Banner dialog configuring title, position, image upload, target link, and schedule (UC-37.03)}}{112}{figure.caption.650}%
+\contentsline {figure}{\numberline {87}{\ignorespaces Review form: rating, breakdown, comment and submit action.}}{113}{figure.caption.655}%
+\contentsline {figure}{\numberline {88}{\ignorespaces Review response editor and Save response action.}}{114}{figure.caption.664}%
+\contentsline {figure}{\numberline {89}{\ignorespaces Banner list, filters and Create Banner action (left); create Banner dialog and form fields.}}{115}{figure.caption.672}%
+\contentsline {figure}{\numberline {90}{\ignorespaces Identity verification queue with search and status tabs.}}{116}{figure.caption.681}%
+\contentsline {figure}{\numberline {91}{\ignorespaces Profile review queue and Review actions (left); published and Submitted field comparison.}}{117}{figure.caption.689}%
+\contentsline {figure}{\numberline {92}{\ignorespaces Forum home displaying discussion tabs and category tags}}{118}{figure.caption.698}%
+\contentsline {figure}{\numberline {93}{\ignorespaces Forum category detail page with search and post creation}}{119}{figure.caption.706}%
+\contentsline {figure}{\numberline {94}{\ignorespaces Paginated list of approved forum posts}}{120}{figure.caption.713}%
+\contentsline {figure}{\numberline {95}{\ignorespaces Forum post detail view with engagement bar and related posts}}{121}{figure.caption.720}%
+\contentsline {figure}{\numberline {96}{\ignorespaces Create Post dialog with rich-text editor}}{122}{figure.caption.728}%
+\contentsline {figure}{\numberline {97}{\ignorespaces Update Post modal for editing title or body}}{123}{figure.caption.735}%
+\contentsline {figure}{\numberline {98}{\ignorespaces Soft-delete confirmation dialog for forum post}}{124}{figure.caption.742}%
+\contentsline {figure}{\numberline {99}{\ignorespaces Liking a forum post}}{125}{figure.caption.748}%
+\contentsline {figure}{\numberline {100}{\ignorespaces Removing a like from a forum post}}{126}{figure.caption.754}%
+\contentsline {figure}{\numberline {101}{\ignorespaces Modal showing users who liked the post}}{127}{figure.caption.760}%
+\contentsline {figure}{\numberline {102}{\ignorespaces Viewing post comments thread}}{128}{figure.caption.766}%
+\contentsline {figure}{\numberline {103}{\ignorespaces Adding a new comment to a forum post}}{129}{figure.caption.772}%
+\contentsline {figure}{\numberline {104}{\ignorespaces Editing an existing comment}}{130}{figure.caption.778}%
+\contentsline {figure}{\numberline {105}{\ignorespaces Soft-deleting a comment}}{131}{figure.caption.784}%
+\contentsline {figure}{\numberline {106}{\ignorespaces Liking a comment}}{132}{figure.caption.790}%
+\contentsline {figure}{\numberline {107}{\ignorespaces Unliking a comment}}{133}{figure.caption.795}%
+\contentsline {figure}{\numberline {108}{\ignorespaces Reporting inappropriate forum content}}{134}{figure.caption.800}%
+\contentsline {figure}{\numberline {109}{\ignorespaces Conversation list with last message preview and unread count}}{135}{figure.caption.807}%
+\contentsline {figure}{\numberline {110}{\ignorespaces Starting or resuming a direct conversation}}{136}{figure.caption.814}%
+\contentsline {figure}{\numberline {111}{\ignorespaces Full chronological message thread view}}{137}{figure.caption.821}%
+\contentsline {figure}{\numberline {112}{\ignorespaces Sending a real-time text message via Socket.IO}}{138}{figure.caption.828}%
+\contentsline {figure}{\numberline {113}{\ignorespaces Marking incoming messages as read}}{139}{figure.caption.835}%
+\contentsline {figure}{\numberline {114}{\ignorespaces Recalling a sent message}}{140}{figure.caption.841}%
+\contentsline {figure}{\numberline {115}{\ignorespaces Pinning or unpinning a conversation to top}}{141}{figure.caption.847}%
+\contentsline {figure}{\numberline {116}{\ignorespaces Real-time Messaging and File Attachment Sharing (/messages)}}{142}{figure.caption.853}%
+\contentsline {figure}{\numberline {117}{\ignorespaces Admin Content Moderation Queue}}{143}{figure.caption.862}%
+\contentsline {figure}{\numberline {118}{\ignorespaces Inspecting flagged moderation item details}}{144}{figure.caption.869}%
+\contentsline {figure}{\numberline {119}{\ignorespaces Approving or rejecting a moderation item}}{145}{figure.caption.876}%
+\contentsline {figure}{\numberline {120}{\ignorespaces Admin ID Verification Request queue}}{146}{figure.caption.882}%
+\contentsline {figure}{\numberline {121}{\ignorespaces Admin Reviewing CCCD Images and Verification Detail}}{147}{figure.caption.889}%
+\contentsline {figure}{\numberline {122}{\ignorespaces Approving an eKYC identity verification request}}{148}{figure.caption.897}%
+\contentsline {figure}{\numberline {123}{\ignorespaces Rejecting an eKYC verification request with reason}}{149}{figure.caption.904}%
+\contentsline {figure}{\numberline {124}{\ignorespaces Admin Forum Trash list of soft-deleted and rejected items}}{150}{figure.caption.911}%
+\contentsline {figure}{\numberline {125}{\ignorespaces Inspecting deleted or rejected forum item details}}{151}{figure.caption.918}%
+\contentsline {figure}{\numberline {126}{\ignorespaces Restoring a deleted or rejected forum item}}{152}{figure.caption.924}%
+\contentsline {figure}{\numberline {127}{\ignorespaces AI Content Moderation scoring during post creation}}{153}{figure.caption.931}%
+\contentsline {figure}{\numberline {128}{\ignorespaces User Guide: Profile Identity Tab -- CCCD Upload and Live AI Liveness Face Scan}}{154}{figure.caption.939}%
+\contentsline {figure}{\numberline {129}{\ignorespaces Create Contract \& Hire Freelancer drawer with milestone builder}}{155}{figure.caption.948}%
+\contentsline {figure}{\numberline {130}{\ignorespaces Edit Contract Agreement drawer for modifying end date and terms}}{157}{figure.caption.956}%
+\contentsline {figure}{\numberline {131}{\ignorespaces My Contracts directory with status tabs, search, and document cards}}{158}{figure.caption.964}%
+\contentsline {figure}{\numberline {132}{\ignorespaces Contract detail workspace displaying legal agreement, signatures, actions, and shared files}}{159}{figure.caption.972}%
+\contentsline {figure}{\numberline {133}{\ignorespaces Sign Contract Agreement confirmation modal}}{160}{figure.caption.980}%
+\contentsline {figure}{\numberline {134}{\ignorespaces Downloading the generated signed Contract PDF agreement}}{161}{figure.caption.986}%
+\contentsline {figure}{\numberline {135}{\ignorespaces Cancel Contract confirmation dialog}}{162}{figure.caption.992}%
+\contentsline {figure}{\numberline {136}{\ignorespaces Complete Contract confirmation dialog for finalizing an active engagement}}{163}{figure.caption.998}%
+\contentsline {figure}{\numberline {137}{\ignorespaces Shared Files panel listing contract documents and download triggers}}{164}{figure.caption.1004}%
+\contentsline {figure}{\numberline {138}{\ignorespaces Uploading a shared file attachment via the contract workspace}}{165}{figure.caption.1010}%
+\contentsline {figure}{\numberline {139}{\ignorespaces Delete Shared File confirmation dialog}}{166}{figure.caption.1017}%
+\contentsline {figure}{\numberline {140}{\ignorespaces Decline Contract Offer dialog explaining automatic Stripe hold release}}{167}{figure.caption.1023}%
+\contentsline {figure}{\numberline {141}{\ignorespaces Contract Milestones list with status filter tabs, search, and escrow actions}}{168}{figure.caption.1031}%
+\contentsline {figure}{\numberline {142}{\ignorespaces Milestone detail workspace displaying tabs, latest delivery, and 95\% net financials}}{170}{figure.caption.1039}%
+\contentsline {figure}{\numberline {143}{\ignorespaces Add New Milestone slide-over drawer with unallocated budget check}}{171}{figure.caption.1046}%
+\contentsline {figure}{\numberline {144}{\ignorespaces Edit Milestone drawer for updating scope, amount, and deadline}}{172}{figure.caption.1053}%
+\contentsline {figure}{\numberline {145}{\ignorespaces Delete Milestone confirmation modal showing budget reallocation}}{173}{figure.caption.1060}%
+\contentsline {figure}{\numberline {146}{\ignorespaces Freelancer advancing a funded milestone to In Progress via Start Work}}{174}{figure.caption.1066}%
+\contentsline {figure}{\numberline {147}{\ignorespaces Milestone Shared Files tab with upload action and download links}}{175}{figure.caption.1072}%
+\contentsline {figure}{\numberline {148}{\ignorespaces Uploading a milestone-specific brief or asset file from disk}}{176}{figure.caption.1079}%
+\contentsline {figure}{\numberline {149}{\ignorespaces Delete Milestone File confirmation prompt}}{177}{figure.caption.1086}%
+\contentsline {figure}{\numberline {150}{\ignorespaces Submit Milestone Deliverables drawer with notes, demo links, and file upload}}{178}{figure.caption.1092}%
+\contentsline {figure}{\numberline {151}{\ignorespaces Deliverables \& Submissions History tab displaying delivery cards and status}}{179}{figure.caption.1100}%
+\contentsline {figure}{\numberline {152}{\ignorespaces Review Work Submission drawer detailing notes, verification links, and fee split}}{180}{figure.caption.1106}%
+\contentsline {figure}{\numberline {153}{\ignorespaces Requesting deliverable revisions with structured feedback and target due date}}{181}{figure.caption.1113}%
+\contentsline {figure}{\numberline {154}{\ignorespaces Approve \& Release deliverable confirmation inside Review Work Submission}}{182}{figure.caption.1121}%
+\contentsline {figure}{\numberline {155}{\ignorespaces Resolution Center drawer for proposing escrow split and uploading evidence}}{183}{figure.caption.1129}%
+\contentsline {figure}{\numberline {156}{\ignorespaces Disputes \& Arbitration queue displaying filter tabs, split outcomes, and details trigger}}{185}{figure.caption.1137}%
+\contentsline {figure}{\numberline {157}{\ignorespaces Resolution detail drawer showing 4-stage timeline, attached evidence, and final ruling}}{186}{figure.caption.1144}%
+\contentsline {figure}{\numberline {158}{\ignorespaces Contextual dispute lock banner on milestone workspace synced via \texttt {GET /api/disputes/milestone/:milestoneId}}}{187}{figure.caption.1151}%
+\contentsline {figure}{\numberline {159}{\ignorespaces Respondent reviewing the claim and submitting an acceptance or reasoned decline}}{188}{figure.caption.1157}%
+\contentsline {figure}{\numberline {160}{\ignorespaces Initiator withdrawing an active dispute via Withdraw Request}}{189}{figure.caption.1164}%
+\contentsline {figure}{\numberline {161}{\ignorespaces Escalating an expired or declined Step 1 dispute to a Frevia Expert arbitrator}}{190}{figure.caption.1170}%
+\contentsline {figure}{\numberline {162}{\ignorespaces Expert Arbitration Console listing escalated and resolved dispute dossiers}}{191}{figure.caption.1176}%
+\contentsline {figure}{\numberline {163}{\ignorespaces Comprehensive Expert case file showing evidence, deliverables, and chat audit log}}{192}{figure.caption.1183}%
+\contentsline {figure}{\numberline {164}{\ignorespaces Expert setting exact escrow split percentages and issuing a final binding decision}}{193}{figure.caption.1190}%
+\contentsline {figure}{\numberline {165}{\ignorespaces Freelancer Billing \& Payments dashboard with Stripe Express onboarding card}}{195}{figure.caption.1199}%
+\contentsline {figure}{\numberline {166}{\ignorespaces Verifying live Stripe Express readiness and payout capability status}}{197}{figure.caption.1206}%
+\contentsline {figure}{\numberline {167}{\ignorespaces Saved Payment Methods wallet dialog displaying tokenized Stripe cards}}{198}{figure.caption.1213}%
+\contentsline {figure}{\numberline {168}{\ignorespaces Promoting a saved Stripe card as the default funding method}}{199}{figure.caption.1219}%
+\contentsline {figure}{\numberline {169}{\ignorespaces Remove Payment Method confirmation dialog showing masked last 4 digits}}{200}{figure.caption.1225}%
+\contentsline {figure}{\numberline {170}{\ignorespaces Authorize Contract Escrow Hold drawer calculating selected milestones plus 3\% client fee}}{201}{figure.caption.1231}%
+\contentsline {figure}{\numberline {171}{\ignorespaces Hosted Stripe Checkout page for milestone escrow deposit}}{202}{figure.caption.1238}%
+\contentsline {figure}{\numberline {172}{\ignorespaces Fund Milestone Escrow drawer with 1-Click Saved Card deposit and fallback Stripe Checkout option}}{203}{figure.caption.1245}%
+\contentsline {figure}{\numberline {173}{\ignorespaces Releasing 95\% milestone escrow funds to Freelancer via Stripe Connect}}{205}{figure.caption.1252}%
+\contentsline {figure}{\numberline {174}{\ignorespaces Billing \& Payments ledger with saved card preview, escrow spend metrics, and filters}}{206}{figure.caption.1259}%

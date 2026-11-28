@@ -257,9 +257,9 @@ The Client clicks the ``Complete Contract'' button on an active contract detail 
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item ``Complete Contract'' primary action button displayed in the active contract header banner.
-      \item Confirmation dialog summarizing milestone settlement status and completion confirmation.
-      \item Action buttons: ``Confirm Completion'' and ``Cancel''.
+      \item Green-outlined ``Complete Contract'' button displayed in the ``ACTIONS'' section of the right-hand contract status sidebar once all milestones are settled with at least one \texttt{RELEASED} milestone.
+      \item Centered confirmation modal dialog displaying the title ``Complete Contract'' and a confirmation message advising that all agreed milestones should be reviewed and approved beforehand.
+      \item Action buttons: full-width green pill button ``Mark as Completed'' and secondary ``Cancel'' button.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -274,10 +274,9 @@ The Client clicks the ``Complete Contract'' button on an active contract detail 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint1/ntin/CompleteContract.png}{Complete Contract confirmation screen}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item A celebratory modal dialog features a project completion icon and clear heading ``Complete Contract Agreement''.
-      \item Summary section lists approved deliverables, total budget paid out (\$USD), and zero outstanding balances.
-      \item Notice informs the user that once completed, the contract cannot be reopened and both parties will be prompted for feedback.
-      \item Footer buttons: ``Cancel'' and ``Confirm \& Close Contract''.
+      \item Behind the modal overlay sits the Contract Agreement workspace showing the contract document and the right-hand Actions sidebar (\texttt{CONTRACT STATUS: Active}, Client and Freelancer signed badges, and ``Complete Contract'').
+      \item The centered white modal renders the heading ``Complete Contract'' and prompt ``Are you sure you want to mark this contract as completed? All agreed milestones should be reviewed and approved prior to completion.''
+      \item Primary green pill button ``Mark as Completed'' with checkmark icon sits above a full-width ``Cancel'' pill button.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -304,9 +303,9 @@ The Client clicks the ``Complete Contract'' button on an active contract detail 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
       \item The Client navigates to the active contract workspace where all milestones are settled.
-      \item The Client clicks ``Complete Contract''.
-      \item The system displays the completion confirmation dialog.
-      \item The Client clicks ``Confirm Completion''.
+      \item The Client clicks ``Complete Contract'' in the right-hand Actions sidebar.
+      \item The system displays the ``Complete Contract'' confirmation modal.
+      \item The Client clicks ``Mark as Completed''.
       \item The system verifies milestone settlement and updates contract status to \texttt{COMPLETED}.
       \item The system sends a completion notification to the Freelancer and transitions the workspace to completed state.
 \end{enumerate}
@@ -631,14 +630,104 @@ A Client or Freelancer clicks the ``Sign Contract'' action button on a pending c
 \end{itemize}
 
 % -----------------------------------------------------------------
+% UC-13.07: Export Contract PDF
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Export Contract PDF}
+
+\fnhead{Function Trigger}
+A Client, Freelancer, or Administrator clicks the ``Download PDF Contract'' button on the Contract Detail workspace or PDF toolbar.\newline
+\textbf{Navigation path:} Contract Detail (\texttt{/contracts/:slug}) $\rightarrow$ Contract Paper Toolbar $\rightarrow$ Click ``Download PDF Contract''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer.
+      \item \textbf{Secondary Actor:} Administrator (\texttt{ADMIN} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Contract PDF Generation Service, Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Compiles and exports the electronic contract agreement into a standard PDF document (\texttt{pdf-lib}). Includes contractual clauses, milestones, financial totals, and recorded participant signature timestamps.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Document paper toolbar action ``Download PDF Contract'' at \texttt{/contracts/:slug}.
+      \item Browser download dialog or integrated PDF preview viewer.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The client issues an HTTP request: \texttt{GET /api/contracts/:id/pdf}.
+      \item The API validates that the caller is an authorized contract participant or an Administrator.
+      \item \texttt{ContractPdfService.getContractPdfBuffer()} compiles contract metadata, milestone details, and digital signatures.
+      \item The server sets \texttt{Content-Type: application/pdf} and streams the compiled PDF binary to the browser.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/ExportContractPdf.png}{Export Contract PDF document preview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Header displays Frevia formal agreement branding, contract code, and creation date.
+      \item Contract body renders party details, terms, milestone tables, and financial summary.
+      \item Footer displays digital signature verification stamps with signing timestamps.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The contract must exist and be accessible to the calling user.
+      \item The caller must be the Client, Freelancer, or an Administrator.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-16: The exported PDF must display exact contractual terms, milestones, and platform fees at the time of export.
+      \item BR-CT-17: If the contract is signed, the PDF must render verified signature blocks with signing timestamps.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user navigates to the Contract Detail workspace.
+      \item The user clicks ``Download PDF Contract''.
+      \item The system verifies access authorization.
+      \item The backend compiles the contract PDF binary and streams it to the client.
+      \item The browser downloads the PDF file.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & User is not a participant of the contract and not an Admin. The API returns HTTP 403 Forbidden.\\ \hline
+      A2 & Contract not found. The API returns HTTP 404 Not Found.\\ \hline
+      A3 & PDF compilation failure. The API returns HTTP 500: ``Unable to export contract PDF.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{fileBuffer} & Streamable binary PDF file payload (\texttt{application/pdf}).\\ \hline
+      \texttt{fileName} & Standardized filename: \texttt{Contract-[slug].pdf}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The PDF contract is streamed to the user device.
+\end{itemize}
+
+% -----------------------------------------------------------------
 % UC-13.08: Cancel Contract
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Cancel Contract}
 
 \fnhead{Function Trigger}
-A Client or Freelancer clicks the ``Cancel Contract'' option from the contract action menu.\newline
-\textbf{Navigation path:} Contract Detail (\texttt{/contracts/:slug}) $\rightarrow$ Action Menu $\rightarrow$ Click ``Cancel Contract''.
+A Client or Freelancer clicks the red-outlined ``Cancel Contract'' button in the right-hand Actions sidebar of the contract workspace.\newline
+\textbf{Navigation path:} Contract Detail (\texttt{/contracts/:slug}) $\rightarrow$ Actions Sidebar $\rightarrow$ Click ``Cancel Contract''.
 
 \fnhead{Function Description}
 
@@ -653,9 +742,10 @@ A Client or Freelancer clicks the ``Cancel Contract'' option from the contract a
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item ``Cancel Contract'' menu item in the contract header action dropdown.
-      \item Cancellation confirmation dialog detailing financial settlement consequences.
-      \item Action buttons: ``Confirm Cancellation'' and ``Keep Contract''.
+      \item Red-outlined ``Cancel Contract'' button in the right-hand Actions sidebar (hidden once all milestones are settled with at least one \texttt{RELEASED} milestone).
+      \item Centered ``Cancel Contract'' confirmation modal previewing role-dependent funded escrow settlement (e.g., unstarted milestones refunded to the Client).
+      \item Notice advising participants to open a Dispute instead of cancelling if unsatisfied with submitted work.
+      \item Action buttons: red pill ``Confirm Cancellation'' and neutral pill ``Go Back''.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -663,16 +753,17 @@ A Client or Freelancer clicks the ``Cancel Contract'' option from the contract a
       \item The user submits an HTTP request without a request body: \texttt{PATCH /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}id/\allowbreak{}cancel}.
       \item \texttt{ContractService.cancelContract()} validates caller authorization against \texttt{clientId} and \texttt{freelancerId}, rejecting \texttt{CANCELLED}, \texttt{COMPLETED}, or \texttt{DISPUTED} contracts.
       \item If the contract has a pre-capture \texttt{holdPaymentIntentId} and is not \texttt{ACTIVE}, cancels the Stripe pre-authorization hold.
-      \item {\sloppy If the contract is \texttt{ACTIVE}, checks that no milestone is \texttt{DISPUTED} and invokes \texttt{PaymentService.\allowbreak{}settleContractEscrowOnCancel(\allowbreak{}contractId, cancelledByRole)}: when Client cancels, funded \texttt{IN\_PROGRESS}/\texttt{CHANGES\_REQUESTED}/\texttt{SUBMITTED} milestones release to Freelancer and unstarted \texttt{PENDING} funded milestones refund to Client; when Freelancer cancels, all funded milestones refund to Client.\par}
+      \item {\sloppy If the contract is \texttt{ACTIVE}, checks that no milestone is \texttt{DISPUTED} and rejects cancellation with \texttt{ContractCannotCancelCompletedMilestonesException} when all milestones are already settled (with at least one \texttt{RELEASED}); otherwise invokes \texttt{PaymentService.\allowbreak{}settleContractEscrowOnCancel(\allowbreak{}contractId, cancelledByRole)}: when Client cancels, funded \texttt{IN\_PROGRESS}/\texttt{CHANGES\_REQUESTED}/\texttt{SUBMITTED} milestones release to Freelancer and unstarted \texttt{PENDING} funded milestones refund to Client; when Freelancer cancels, all funded milestones refund to Client.\par}
       \item Updates contract \texttt{status = CANCELLED} and dispatches an urgent notification to the counterpart party.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint1/ntin/CancelContract.png}{Cancel Contract modal}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Modal displays warning banner: ``Cancelling a contract is irreversible and immediately halts all project work.''
-      \item Financial summary explains the role-dependent escrow settlement behavior.
-      \item Footer buttons: red destructive ``Confirm Cancellation'' and neutral ``Keep Contract''.
+      \item Centered modal displays heading ``Cancel Contract'' and subtext ``Review how funded escrow amounts will be settled upon cancellation:''.
+      \item Highlighted summary box breaks down funded escrow settlement by milestone state (e.g., ``Unstarted milestones (refunded to you): \$1,000'').
+      \item Helper text advises: ``If you are unsatisfied with the submitted work, please open a Dispute instead of cancelling.''
+      \item Full-width crimson primary button ``Confirm Cancellation'' sits above a full-width ``Go Back'' outline button.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -687,6 +778,7 @@ A Client or Freelancer clicks the ``Cancel Contract'' option from the contract a
       \item Caller must be the Client or Freelancer participant of the contract.
       \item Contract must not already be in \texttt{COMPLETED}, \texttt{CANCELLED}, or \texttt{DISPUTED} status.
       \item Active contracts with any milestone in \texttt{DISPUTED} status cannot be cancelled.
+      \item Active contracts whose milestones are all settled (with at least one \texttt{RELEASED}) cannot be cancelled and must be completed instead.
 \end{itemize}
 
 \sublabel{Business Rules}
@@ -707,7 +799,7 @@ A Client or Freelancer clicks the ``Cancel Contract'' option from the contract a
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
       A1 & Contract is already completed or cancelled. The API returns HTTP 422 (\texttt{ContractAlreadyCompletedException} or \texttt{ContractAlreadyCancelledException}).\\ \hline
-      A2 & Contract or an active milestone is disputed. The API returns HTTP 422 (\texttt{ContractDisputedException}); cancellation blocked.\\ \hline
+      A2 & Contract or an active milestone is disputed, or all milestones are already completed and settled. The API returns HTTP 422 (\texttt{ContractDisputedException} or \texttt{ContractCannotCancelCompletedMilestonesException}); cancellation blocked.\\ \hline
       A3 & Caller is not a contract participant. The API returns HTTP 403 Forbidden (\texttt{ContractForbiddenException}).\\ \hline
       A4 & Database update fails. The API returns HTTP 500 (\texttt{FailedToUpdateContractException}).\\ \hline
 \end{flowtable}
