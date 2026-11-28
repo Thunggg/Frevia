@@ -111,9 +111,7 @@ UC-13.05 & View Contract Details &  & Client,\newline Freelancer,\newline Admin 
 \hhline{|--|~|--|}\noalign{\penalty10000}
 UC-13.06 & Sign Contract &  & Client,\newline Freelancer & Allows users to digitally accept and sign a contract to activate it. \\
 \hline
-UC-13.07 & Export Contract PDF & \multirow{20.9}{2.75cm}{\centering\arraybackslash Contract Management (Files \& Closing)} & Client,\newline Freelancer,\newline Admin & Generates and exports contract terms, clauses, and signatures into a downloadable PDF document. \\*
-\hhline{|--|~|--|}\noalign{\penalty10000}
-UC-13.08 & Cancel Contract &  & Client,\newline Freelancer & Allows either party to cancel or terminate a contract prior to completion. \\*
+UC-13.08 & Cancel Contract & \multirow{17.4}{2.75cm}{\centering\arraybackslash Contract Management (Files \& Closing)} & Client,\newline Freelancer & Allows either party to cancel or terminate a contract prior to completion. \\*
 \hhline{|--|~|--|}\noalign{\penalty10000}
 UC-13.09 & View Contract Files &  & Client,\newline Freelancer,\newline Admin & Manages and accesses all files and documentation associated with a contract. \\*
 \hhline{|--|~|--|}\noalign{\penalty10000}
@@ -315,7 +313,7 @@ UC-32.08 & View Job Proposals List &  & Client & List all incoming freelancer pr
 \hhline{|--|~|--|}\noalign{\penalty10000}
 UC-32.09 & View Proposal Details &  & Client & Inspect a candidate freelancer's submitted proposal, bid details, and cover letter. \\
 \hline
-UC-33.01 & Open Dispute & \multirow{24.5}{2.75cm}{\centering\arraybackslash Dispute Management (Participants)} & Client,\newline Freelancer & Allows a client or freelancer to initiate a formal dispute on a funded milestone with evidence. \\*
+UC-33.01 & Open Dispute & \multirow{28.0}{2.75cm}{\centering\arraybackslash Dispute Management (Participants)} & Client,\newline Freelancer & Allows a client or freelancer to initiate a formal dispute on a funded milestone with evidence. \\*
 \hhline{|--|~|--|}\noalign{\penalty10000}
 UC-33.02 & View Disputes List &  & Client,\newline Freelancer & Retrieves paginated overview of participant dispute cases with status filtering. \\*
 \hhline{|--|~|--|}\noalign{\penalty10000}
@@ -327,7 +325,9 @@ UC-33.05 & Respond to Dispute &  & Client,\newline Freelancer & Allows the respo
 \hhline{|--|~|--|}\noalign{\penalty10000}
 UC-33.06 & Withdraw Dispute &  & Client,\newline Freelancer & Allows the initiating party to voluntarily withdraw a waiting dispute (\texttt{CANCELLED}) before escalation. \\*
 \hhline{|--|~|--|}\noalign{\penalty10000}
-UC-33.07 & Escalate Dispute to Expert &  & Client,\newline Freelancer & Escalates a declined or overdue dispute to expert review (\texttt{UNDER\_REVIEW}). \\
+UC-33.07 & Escalate Dispute to Expert &  & Client,\newline Freelancer & Escalates a declined or overdue dispute to expert review (\texttt{UNDER\_REVIEW}). \\*
+\hhline{|--|~|--|}\noalign{\penalty10000}
+UC-33.11 & Upload Dispute Evidence File &  & Client,\newline Freelancer & Uploads supporting evidence files to Cloudinary or protected local storage and records file metadata for dispute claims and responses. \\
 \hline
 UC-33.08 & View Expert Disputes List & \multirow{10.3}{2.75cm}{\centering\arraybackslash Dispute Management (Expert)} & Expert & Displays specialized arbitration queue for expert arbitrators (\texttt{EXPERT} role). \\*
 \hhline{|--|~|--|}\noalign{\penalty10000}
@@ -413,7 +413,7 @@ UC-43.04 & Set Default Payment Method &  & Client & Designates a preferred saved
 \hhline{|--|~|--|}\noalign{\penalty10000}
 UC-43.05 & Remove Saved Payment Method &  & Client & Detaches and removes an obsolete or expired payment card from the customer's Stripe wallet. \\
 \hline
-UC-43.06 & Create Contract Hold Deposit Intent & \multirow{28.0}{2.75cm}{\centering\arraybackslash Payment Management (Escrow \& Webhooks)} & Client & Authorizes an initial contract hold deposit via Stripe PaymentIntent to secure freelancer commitment. \\*
+UC-43.06 & Create Contract Hold Deposit Intent & \multirow{17.4}{2.75cm}{\centering\arraybackslash Payment Management (Escrow \& Transfers)} & Client & Authorizes an initial contract hold deposit via Stripe PaymentIntent to secure freelancer commitment. \\*
 \hhline{|--|~|--|}\noalign{\penalty10000}
 UC-43.07 & Fund Milestone via Stripe Checkout &  & Client & Creates a hosted Stripe Checkout Session for secure escrow deposit funding on a milestone. \\*
 \hhline{|--|~|--|}\noalign{\penalty10000}
@@ -421,13 +421,7 @@ UC-43.08 & Fund Milestone with Saved Card &  & Client & Directly executes escrow
 \hhline{|--|~|--|}\noalign{\penalty10000}
 UC-43.09 & Release Milestone Escrow Payment &  & Client,\newline System & Authorizes the transfer of escrowed milestone funds to the freelancer's Stripe connected account. \\*
 \hhline{|--|~|--|}\noalign{\penalty10000}
-UC-43.10 & View Payment Transactions History &  & Client,\newline Freelancer,\newline Admin & Retrieves a comprehensive, paginated financial ledger of all deposits, releases, fees, and transfers. \\*
-\hhline{|--|~|--|}\noalign{\penalty10000}
-UC-43.11 & Sync Payment Intent Status &  & Client,\newline System & Polls and reconciles pending authorization states of PaymentIntents directly with Stripe. \\*
-\hhline{|--|~|--|}\noalign{\penalty10000}
-UC-43.12 & Sync Checkout Session Status &  & Client,\newline System & Verifies completion of hosted Checkout Sessions and synchronizes milestone escrow status. \\*
-\hhline{|--|~|--|}\noalign{\penalty10000}
-UC-43.13 & Handle Stripe Webhook Events &  & Stripe,\newline System & Listens for and verifies cryptographic webhook signatures to process asynchronous Stripe events. \\
+UC-43.10 & View Payment Transactions History &  & Client,\newline Freelancer,\newline Admin & Retrieves a comprehensive, paginated financial ledger of all deposits, releases, fees, and transfers. \\
 \hline
 UC-44.01 & Moderate Content by AI & \multirow{3.2}{2.75cm}{\centering\arraybackslash AI Content Moderation} & Client,\newline Freelancer & Automatically evaluate forum posts and comments using AI moderation scoring and classification. \\
 \hline

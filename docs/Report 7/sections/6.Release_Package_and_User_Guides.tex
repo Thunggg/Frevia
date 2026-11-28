@@ -1,30 +1,289 @@
+\newcommand{\wffig}[4][0.85]{\begin{figure}[H]\centering\screenshotframe[#1]{#2}\caption{#3}\label{#4}\end{figure}}
+
 % ========================================================
 % FILE: sections/6.Release_Package_and_User_Guides.tex
-% Part VI: Release Package & User Guides (Verbatim from Report 6)
+% Part VI: Release Package & User Guides (Executive format matching docs_NA)
 % ========================================================
 \part{Release Package \& User Guides}
 
-\def\ReportSixCombined{1}
-\input{../report 6/sections/sec1_deliverables_install}
+\section{Release Package}
 
-\input{../report 6/sections/sec2_docker_ai}
+The official \textbf{Frevia v1.0} release package (\url{https://github.com/Thunggg/Frevia}) bundles the monorepo application source code, database schemas and seed scripts, containerized Python AI services, quality verification artifacts, and formal project documentation. Table~\ref{tab:rel_deliverables} summarizes the release package inventory, and Table~\ref{tab:rel_ports} lists the orchestrated runtime services.
 
-\input{../report 6/sections/sec3_m02_auth_session}
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{|C{0.9cm}|L{3.8cm}|L{7.2cm}|C{2.5cm}|}
+\caption{Frevia v1.0 Release Package Deliverables}\label{tab:rel_deliverables} \\
+\hline
+\rowcolor{fptHeader}
+\textbf{No.} & \textbf{Deliverable Item} & \textbf{Description \& Repository Path} & \textbf{Format} \\ \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}
+\textbf{No.} & \textbf{Deliverable Item} & \textbf{Description \& Repository Path} & \textbf{Format} \\ \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & Source Code (Monorepo) & Next.js 16 web portal (\texttt{apps/web}), NestJS 11 API + WebSocket server (\texttt{apps/api}), and shared workspace libraries (\texttt{packages/shared-type}, \texttt{packages/ui}). & Git / TS \\ \hline
+2 & AI Microservices & Independent FastAPI services for CCCD OCR \& liveness (\texttt{ai-services/id-verification}) and semantic CV--job matching (\texttt{ai-services/cv-matching} + Ollama). & Python / FastAPI \\ \hline
+3 & Database Schema \& Seeds & PostgreSQL schema containing 71 models (\texttt{apps/api/prisma/schema.prisma}), 72 SQL migrations, and RBAC/demo seeders (\texttt{apps/api/src/seed-datas/}). & Prisma / SQL \\ \hline
+4 & Container Orchestration & Unified \texttt{docker-compose.yml}, multi-stage service \texttt{Dockerfile}s, and \texttt{.env.example} templates. & Docker YAML \\ \hline
+5 & QA \& Verification Suite & Unit, Integration, System, and UAT test specifications, execution logs, and Jest coverage reports (\texttt{docs/Report 5/}). & \texttt{.xls/.xlsx/.html} \\ \hline
+6 & Technical Documentation & Formal Reports 1--7 conforming to FPT University Capstone standards (\texttt{docs/Report 1..7/}). & \texttt{.tex/.pdf} \\ \hline
+\end{longtable}
+\endgroup
 
-\clearpage
-\input{../report 6/sections/sec3_m03_account}
-\input{../report 6/sections/sec3_m05_ekyc}
+\begin{table}[H]
+\centering
+\caption{Orchestrated Container Service Port Mapping}\label{tab:rel_ports}
+\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{5pt}
+\small
+\begin{tabular}{|L{3.4cm}|L{3.8cm}|C{1.4cm}|L{5.8cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{Service Name} & \textbf{Container Name} & \textbf{Port} & \textbf{Endpoint URL \& Role} \\ \hline
+Frontend Web App & \texttt{frevia-frontend} & \texttt{3003} & \url{http://localhost:3003} (Next.js 16 Client \& Admin UI) \\ \hline
+Backend REST/WS API & \texttt{frevia-backend} & \texttt{3002} & \url{http://localhost:3002} (NestJS 11 \texttt{/api} \& Socket.IO) \\ \hline
+CV Matching AI & \texttt{frevia-cv-matching} & \texttt{8000} & \url{http://localhost:8000} (BGE-M3 + ChromaDB CV Matching) \\ \hline
+ID Verification AI & \texttt{frevia-id-verification} & \texttt{8001} & \url{http://localhost:8001} (RapidOCR, UltraFace, MediaPipe) \\ \hline
+Ollama LLM Runtime & \texttt{frevia-ollama} & \texttt{11434} & \url{http://localhost:11434} (Local \texttt{qwen3:4b} inference) \\ \hline
+PostgreSQL DB & Host / External & \texttt{5432} & \texttt{localhost:5432} (Configured via \texttt{DATABASE\_URL}) \\ \hline
+\end{tabular}
+\end{table}
 
-\input{../report 6/sections/sec3_m14_admin_rbac_users}
+\paragraph*{Deployment Quick-Start:} After configuring \texttt{.env} from \texttt{.env.example}, operators launch the full stack with \texttt{docker compose up -d --build}, confirm container health via \texttt{docker compose ps} (Figure~\ref{fig:rel_docker_up}), and verify both the web frontend (Figure~\ref{fig:rel_web_verify}) and REST API Swagger documentation (Figure~\ref{fig:rel_api_verify}).
 
-\input{../report 6/sections/sec3_m15_admin_catalogs}
+\wffig[0.86]{images/install/a08_docker_compose_up.png}{Building and launching all five system containers via Docker Compose}{fig:rel_docker_up}
 
-\input{../report 6/sections/sec3_m14_forum_management}
+\screenfigure[0.86]{images/install/a09_verify_web_running.png}{Post-deployment verification of the Frevia web application (\url{http://localhost:3003})}
+\label{fig:rel_web_verify}
 
-\input{../report 6/sections/sec3_m27_conversation_management}
+\screenfigure[0.86]{images/install/a10_verify_api_swagger.png}{Post-deployment verification of the NestJS Swagger API console (\url{http://localhost:3002})}
+\label{fig:rel_api_verify}
 
-\input{../report 6/sections/sec3_m34_moderation_management}
+\section{Representative User Workflows}
 
-\input{../report 6/sections/sec3_m44_ai_features}
+Detailed operation guides covering every screen across all 44 functional routes are maintained in Report 6 (Software User Guides). The subsections below present the seven representative end-to-end user journeys of \textbf{Frevia}, spanning onboarding, contract governance, milestone execution, Stripe escrow settlement, dispute arbitration, and AI-assisted community operations.
 
-\input{../report 6/sections/sec3_m16_reviews}
+% -------------------------------------------------------------------------
+\subsection{Authentication \& Role-Based Administration}
+\noindent\textit{Workflow Path: Guest $\rightarrow$ Sign Up (OTP Verification) $\rightarrow$ Login $\rightarrow$ Session Control $\rightarrow$ Admin RBAC Matrix \& Catalogs}
+
+\subsubsection{Purpose}
+Allows prospective users to onboard securely with email one-time password (OTP) validation or Google OAuth, manage active device sessions, and enables platform administrators to govern dynamic role permissions and system skill catalogs.
+
+\subsubsection{Step-by-Step User Guide}
+
+\wfstep{Step 1: Register and Verify Account via OTP}
+Guests open \texttt{/register}, enter credentials, choose an initial role (\textbf{Client} or \textbf{Freelancer}), and confirm registration with the 6-digit email OTP (Figure~\ref{fig:wf_auth_register}).
+
+\wffig[0.85]{images/auth/m02_01_register.png}{Account registration screen with email OTP verification and role selection}{fig:wf_auth_register}
+
+\wfstep{Step 2: Sign In and Audit Active Device Sessions}
+Registered users authenticate at \texttt{/login} (Figure~\ref{fig:wf_auth_login}) and inspect active device sessions with IP/user-agent telemetry to remotely revoke unauthorized logins (Figure~\ref{fig:wf_auth_sessions}).
+
+\wffig[0.85]{images/auth/m02_02_login.png}{Sign-in screen supporting email/password credentials and Google OAuth 2.0}{fig:wf_auth_login}
+
+\wffig[0.85]{images/auth/m02_05_sessions_list.png}{Active device sessions management view}{fig:wf_auth_sessions}
+
+\wfstep{Step 3: Administer RBAC Roles, Permissions \& System Catalogs}
+Administrators access \texttt{/admin} (Figure~\ref{fig:wf_admin_dash}), configure roles (Figure~\ref{fig:wf_admin_roles}) and route-level permissions via the RBAC matrix (Figure~\ref{fig:wf_admin_matrix}), and maintain standardized skill tags (Figure~\ref{fig:wf_admin_skills}).
+
+\wffig[0.85]{images/admin/m14_01_admin_dashboard.png}{Administrator operations overview dashboard}{fig:wf_admin_dash}
+
+\wffig[0.85]{images/admin/m14_03_admin_roles.png}{RBAC role management interface}{fig:wf_admin_roles}
+
+\wffig[0.85]{images/admin/m14_04_role_permissions_matrix.png}{Granular route-level RBAC permission assignment matrix}{fig:wf_admin_matrix}
+
+\wffig[0.85]{images/admin/m15_01_admin_skills.png}{Administrator master skills catalog management}{fig:wf_admin_skills}
+
+% -------------------------------------------------------------------------
+\subsection{Profile Setup \& eKYC Identity Verification}
+\noindent\textit{Workflow Path: Profile Management $\rightarrow$ Upload Identity Card (CCCD) $\rightarrow$ AI Face Liveness Scan $\rightarrow$ Admin Verification Audit}
+
+\subsubsection{Purpose}
+Establishes credible participant profiles and verifiable freelancer identities by pairing national identity document upload and AI facial liveness verification with mandatory administrator inspection.
+
+\subsubsection{Step-by-Step User Guide}
+
+\wfstep{Step 1: Manage Client \& Workspace Profiles}
+Users maintain biography, company details, and social credentials from their workspace profile panel (Figures~\ref{fig:wf_prof_client} and \ref{fig:wf_prof_workspace}).
+
+\wffig[0.85]{images/client/m3_01_view_client_profile.png}{Account profile overview and presentation settings}{fig:wf_prof_client}
+
+\wffig[0.85]{images/client/m7_01_client_workspace.png}{Client company workspace and saved talent controls}{fig:wf_prof_workspace}
+
+\wfstep{Step 2: Submit eKYC Documents and AI Facial Liveness}
+Freelancers upload front and back images of their Vietnamese Citizen Identity Card (CCCD) alongside webcam liveness capture routed to the \texttt{id-verification} AI microservice (Figures~\ref{fig:wf_kyc_upload} and \ref{fig:wf_kyc_face}).
+
+\wffig[0.85]{images/freelancer/m5_01_upload_identity_documents.png}{Identity document (CCCD) upload interface}{fig:wf_kyc_upload}
+
+\wffig[0.85]{images/ai/ai_face_scan_guide.png}{AI facial liveness detection and identity matching workflow}{fig:wf_kyc_face}
+
+\wfstep{Step 3: Audit Verification Requests (Administrator)}
+Administrators inspect AI match scores alongside uploaded card scans and approve or reject verified freelancer badges (Figures~\ref{fig:wf_kyc_review} and \ref{fig:wf_kyc_approve}).
+
+\wffig[0.85]{images/admin/identity/m35_02_id_review_guide.png}{Administrator eKYC request inspection queue}{fig:wf_kyc_review}
+
+\wffig[0.85]{images/admin/identity/m35_03_approve_id_verification.png}{Approving an identity verification request}{fig:wf_kyc_approve}
+
+% -------------------------------------------------------------------------
+\subsection{Contract Creation, Bilateral Signing \& Shared Files}
+\noindent\textit{Workflow Path: Hire Winning Proposal $\rightarrow$ Create Contract \& Milestones $\rightarrow$ Edit Terms $\rightarrow$ Sign Contract $\rightarrow$ Upload Shared Files $\rightarrow$ Export PDF / Complete}
+
+\subsubsection{Purpose}
+Converts accepted proposals into legally binding fixed-price agreements with customizable scope terms, bilateral digital signatures, shared file collaboration, PDF archiving, and formal contract closure.
+
+\subsubsection{Step-by-Step User Guide}
+
+\wfstep{Step 1: Create Contract \& Define Initial Milestones}
+When hiring a winning proposal, the Client opens the \textbf{Create Contract \& Hire Freelancer} drawer, sets the total budget and end date, configures milestone splits, and issues the contract (Figure~\ref{fig:wf_m13_create}).
+
+\wffig[0.85]{images/contracts/m13_01_create_contract_guide.png}{Create Contract \& Hire Freelancer drawer with milestone builder}{fig:wf_m13_create}
+
+\wfstep{Step 2: Review Agreement Details \& Update Terms}
+Prior to bilateral signature completion, the Client can adjust delivery clauses and contract end dates from the agreement workspace (Figures~\ref{fig:wf_m13_update} and \ref{fig:wf_m13_detail}).
+
+\wffig[0.85]{images/contracts/m13_02_update_contract_guide.png}{Edit Contract Agreement drawer for modifying terms and end date}{fig:wf_m13_update}
+
+\wffig[0.85]{images/contracts/m13_04_view_contract_detail_guide.png}{Unified Contract Detail workspace displaying status, milestones, and actions}{fig:wf_m13_detail}
+
+\wfstep{Step 3: Execute Bilateral Digital Signature \& Share Workspace Files}
+Once the initial hold fee is confirmed, both Client and Freelancer digitally sign the contract (Figure~\ref{fig:wf_m13_sign}) and upload specification assets into the contract's shared files repository (Figure~\ref{fig:wf_m13_upload_file}).
+
+\wffig[0.85]{images/contracts/m13_05_sign_contract_guide.png}{Bilateral digital contract signing confirmation modal}{fig:wf_m13_sign}
+
+\wffig[0.85]{images/contracts/m13_10_upload_contract_file_guide.png}{Uploading shared workspace reference files to an active contract}{fig:wf_m13_upload_file}
+
+\wfstep{Step 4: Export PDF Record \& Complete Contract}
+Parties can export a formatted PDF copy of the signed contract (Figure~\ref{fig:wf_m13_export}), and the Client marks the engagement completed once all milestones conclude (Figure~\ref{fig:wf_m13_complete}).
+
+\wffig[0.85]{images/contracts/m13_06_export_contract_pdf_guide.png}{Exporting signed agreement documentation to PDF}{fig:wf_m13_export}
+
+\wffig[0.85]{images/contracts/m13_08_complete_contract_guide.png}{Final contract completion confirmation workflow}{fig:wf_m13_complete}
+
+% -------------------------------------------------------------------------
+\subsection{Milestone Deliverable Execution \& Review}
+\noindent\textit{Workflow Path: Create Milestone $\rightarrow$ Upload Deliverable Files $\rightarrow$ Submit Deliverable $\rightarrow$ Request Changes / Approve Milestone}
+
+\subsubsection{Purpose}
+Breaks active contracts into verifiable staged deliverables, tracking uploaded work assets, formal freelancer submissions, iterative client change requests, and final milestone approval.
+
+\subsubsection{Step-by-Step User Guide}
+
+\wfstep{Step 1: Add Stage Milestone to Active Contract}
+The Client defines an additional deliverable stage via the \textbf{Create Milestone} drawer, specifying deliverable expectations, USD allocation, and due date within the contract ceiling (Figure~\ref{fig:wf_m24_create}).
+
+\wffig[0.85]{images/milestones/m24_03_create_milestone_guide.png}{Create Milestone drawer for defining staged deliverables}{fig:wf_m24_create}
+
+\wfstep{Step 2: Upload Deliverable Files \& Submit Milestone}
+The Freelancer attaches deliverable artifacts (up to 25~MB per file) in the milestone repository (Figure~\ref{fig:wf_m25_upload}) and submits the deliverable package with completion notes for client review (Figure~\ref{fig:wf_m26_submit}).
+
+\wffig[0.85]{images/milestones/m25_02_upload_milestone_file_guide.png}{Uploading deliverable files into a milestone workspace}{fig:wf_m25_upload}
+
+\wffig[0.85]{images/milestones/m26_01_submit_milestone_guide.png}{Submitting a completed milestone deliverable for client review}{fig:wf_m26_submit}
+
+\wfstep{Step 3: Request Changes or Approve Milestone Release}
+The Client inspects submitted artifacts and either issues structured revision feedback with a new deadline (Figure~\ref{fig:wf_m26_changes}) or approves the milestone to unlock escrow payout (Figure~\ref{fig:wf_m26_approve}).
+
+\wffig[0.85]{images/milestones/m26_04_request_milestone_changes_guide.png}{Client revision request dialog with due date and change notes}{fig:wf_m26_changes}
+
+\wffig[0.85]{images/milestones/m26_05_approve_milestone_guide.png}{Client milestone acceptance confirming deliverable satisfaction}{fig:wf_m26_approve}
+
+% -------------------------------------------------------------------------
+\subsection{Stripe Connect Escrow \& Milestone Settlement}
+\noindent\textit{Workflow Path: Onboard Stripe Express $\rightarrow$ Pay Contract Hold Fee $\rightarrow$ Fund Milestone Escrow (Checkout / Saved Card) $\rightarrow$ Release Escrow Payout $\rightarrow$ Audit Ledger}
+
+\subsubsection{Purpose}
+Provides transparent financial security by holding client funds in Stripe escrow prior to work execution, charging only a flat \$5.00 USD fee per contract, and transferring 100\% of milestone value to the freelancer upon approval.
+
+\subsubsection{Step-by-Step User Guide}
+
+\wfstep{Step 1: Onboard Freelancer Payout Account via Stripe Connect Express}
+Before signing contracts, Freelancers link their payout destination using the hosted Stripe Connect Express flow (Figure~\ref{fig:wf_m43_connect}).
+
+\wffig[0.85]{images/payments/m43_01_connect_stripe_guide.png}{Stripe Connect Express payout onboarding banner and activation flow}{fig:wf_m43_connect}
+
+\wfstep{Step 2: Authorize Flat \$5.00 Contract Hold Deposit}
+Upon contract creation, the Client authorizes the \$5.00 USD platform hold fee to transition the agreement from \texttt{AWAITING\_PAYMENT} into signature readiness (Figure~\ref{fig:wf_m43_hold}).
+
+\wffig[0.85]{images/payments/m43_06_contract_hold_deposit_guide.png}{Authorizing the flat \$5.00 USD contract hold fee via Stripe}{fig:wf_m43_hold}
+
+\wfstep{Step 3: Fund Individual Milestone Escrow (Checkout or Saved Card)}
+Clients fund upcoming milestones either through hosted Stripe Checkout (Figure~\ref{fig:wf_m43_checkout}) or one-click saved card authorization (Figure~\ref{fig:wf_m43_savedcard}).
+
+\wffig[0.85]{images/payments/m43_07_fund_milestone_checkout_guide.png}{Funding a milestone into escrow via Stripe Checkout Session}{fig:wf_m43_checkout}
+
+\wffig[0.85]{images/payments/m43_08_fund_milestone_saved_card_guide.png}{Funding a milestone directly with a saved Stripe payment method}{fig:wf_m43_savedcard}
+
+\wfstep{Step 4: Release Escrow Payout \& Inspect Transaction Ledger}
+Once the milestone deliverable is approved, the Client releases held escrow funds to trigger a Stripe transfer (Figure~\ref{fig:wf_m43_release}), and both parties can audit every settled event in the payment history ledger (Figure~\ref{fig:wf_m43_history}).
+
+\wffig[0.85]{images/payments/m43_09_release_milestone_escrow_guide.png}{Releasing funded milestone escrow payout to the freelancer}{fig:wf_m43_release}
+
+\wffig[0.85]{images/payments/m43_10_view_payment_transactions_guide.png}{Reconciled platform payment transactions ledger}{fig:wf_m43_history}
+
+% -------------------------------------------------------------------------
+\subsection{Dispute Filing, Arbitration \& Bilateral Reviews}
+\noindent\textit{Workflow Path: Open Dispute $\rightarrow$ Submit Respondent Defense $\rightarrow$ Escalate Dispute $\rightarrow$ Expert Arbitrator Decision $\rightarrow$ Post-Contract Review}
+
+\subsubsection{Purpose}
+Protects funded milestones against deadlocks through a symmetrical 5-stage arbitration procedure with evidence tracking and split escrow distribution, followed by mutual post-contract reputation reviews.
+
+\subsubsection{Step-by-Step User Guide}
+
+\wfstep{Step 1: Open Milestone Dispute \& Submit Respondent Defense}
+Either contracting party initiates a dispute on a funded milestone (Figure~\ref{fig:wf_m33_open}), freezing funds until the counterparty files an official response and supporting evidence (Figure~\ref{fig:wf_m33_respond}).
+
+\wffig[0.85]{images/disputes/m33_01_open_dispute_guide.png}{Opening a formal dispute with claim statement and evidence}{fig:wf_m33_open}
+
+\wffig[0.85]{images/disputes/m33_05_respond_to_dispute_guide.png}{Submitting the respondent counter-statement and evidence files}{fig:wf_m33_respond}
+
+\wfstep{Step 2: Escalate to Arbitration \& Render Expert Decision}
+Unresolved disputes escalate with payment of the arbitration fee (Figure~\ref{fig:wf_m33_escalate}), allowing an assigned Expert or Administrator to issue a binding full or split escrow ruling (Figure~\ref{fig:wf_m33_decision}).
+
+\wffig[0.85]{images/disputes/m33_07_escalate_dispute_guide.png}{Escalating an unresolved dispute to formal arbitration review}{fig:wf_m33_escalate}
+
+\wffig[0.85]{images/disputes/m33_10_expert_decision_guide.png}{Expert arbitrator decision form allocating held escrow funds}{fig:wf_m33_decision}
+
+\wfstep{Step 3: Submit Bilateral Contract Reviews \& Public Reply}
+Upon completion, Clients and Freelancers publish star ratings and written feedback (Figure~\ref{fig:wf_rev_write}), to which recipients may issue one public response (Figure~\ref{fig:wf_rev_reply}).
+
+\wffig[0.85]{images/community/m11_05_write_review.png}{Writing a post-contract bilateral rating and review}{fig:wf_rev_write}
+
+\wffig[0.85]{images/community/m11_06_respond_to_review.png}{Publishing a response to a received contract review}{fig:wf_rev_reply}
+
+% -------------------------------------------------------------------------
+\subsection{Community Forum, Direct Messaging \& AI Moderation}
+\noindent\textit{Workflow Path: Browse Forum $\rightarrow$ Author Post (AI Screening) $\rightarrow$ Real-Time Socket.IO Chat $\rightarrow$ Admin Moderation Queue \& Trash Recovery}
+
+\subsubsection{Purpose}
+Fosters community engagement and real-time collaboration while safeguarding content quality through automated AI toxicity scoring, administrative moderation queues, and soft-delete recovery.
+
+\subsubsection{Step-by-Step User Guide}
+
+\wfstep{Step 1: Browse Categories \& Create Forum Posts}
+Members explore topic categories (Figure~\ref{fig:wf_forum_list}) and publish rich-text forum posts screened automatically for policy violations (Figures~\ref{fig:wf_forum_post} and \ref{fig:wf_ai_mod}).
+
+\wffig[0.85]{images/forum/f14_01_guide.png}{Community forum category explorer}{fig:wf_forum_list}
+
+\wffig[0.85]{images/forum/f14_05_guide.png}{Creating a community discussion post with category tagging}{fig:wf_forum_post}
+
+\wffig[0.85]{images/ai/ai_moderate_guide.png}{Automated AI content toxicity screening during post submission}{fig:wf_ai_mod}
+
+\wfstep{Step 2: Exchange Real-Time Direct Messages}
+Participants coordinate project specifications via authenticated 1-on-1 Socket.IO conversations supporting attachments, read receipts, and message recall (Figures~\ref{fig:wf_chat_list} and \ref{fig:wf_chat_send}).
+
+\wffig[0.85]{images/conversation/c27_01_guide.png}{Direct messaging conversation list with unread and pinned threads}{fig:wf_chat_list}
+
+\wffig[0.85]{images/conversation/c27_04_guide.png}{Sending real-time text and attachment messages}{fig:wf_chat_send}
+
+\wfstep{Step 3: Resolve Moderation Queue \& Restore Trash Items (Admin)}
+Administrators inspect AI-flagged or reported forum content in the moderation queue (Figure~\ref{fig:wf_admin_mod}) and restore mistakenly deleted items from soft-delete trash (Figure~\ref{fig:wf_admin_trash}).
+
+\wffig[0.85]{images/admin/moderation/m34_01_moderation_guide.png}{Administrator content moderation queue inspection}{fig:wf_admin_mod}
+
+\wffig[0.85]{images/admin/trash/m36_01_trash_guide.png}{Soft-deleted forum post and comment recovery interface}{fig:wf_admin_trash}

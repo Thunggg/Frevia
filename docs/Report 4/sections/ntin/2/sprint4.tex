@@ -5,7 +5,7 @@
 
 \subsection{Payment Management}
 
-The Payment Management module integrates Stripe to support escrow protection, customer payment tokenization, pre-authorized contract hold deposits, and automated freelancer disbursements. It enables freelancers to link verified bank accounts via Stripe Connect Express, clients to manage payment methods, milestone escrow funding via hosted Checkout or saved cards, and automated escrow payout release upon deliverable acceptance. Real-time reconciliation routines and cryptographic webhook listeners ensure distributed ledger consistency.
+The Payment Management module integrates Stripe to support escrow protection, customer payment tokenization, pre-authorized contract hold deposits, and automated freelancer disbursements. It enables freelancers to link verified bank accounts via Stripe Connect Express, clients to manage payment methods, milestone escrow funding via hosted Checkout or saved cards, automated escrow payout release upon deliverable acceptance, and payment transaction history tracking.
 
 \subsubsection{UC-43.01 -- Connect Stripe Account}
 
@@ -86,27 +86,3 @@ The Payment Management module integrates Stripe to support escrow protection, cu
 
 \paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.10-view-payment-transactions-history}{Sequence diagram of UC-43.10 View Payment Transactions History}{fig:ntin-seq-uc-43-10}
-
-\subsubsection{UC-43.11 -- Sync Payment Intent Status}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.11 Sync Payment Intent Status}{fig:ntin-cls-uc-43-11}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.11-sync-payment-intent-status}{Sequence diagram of UC-43.11 Sync Payment Intent Status}{fig:ntin-seq-uc-43-11}
-
-\subsubsection{UC-43.12 -- Sync Checkout Session Status}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.12 Sync Checkout Session Status}{fig:ntin-cls-uc-43-12}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.12-sync-checkout-session-status}{Sequence diagram of UC-43.12 Sync Checkout Session Status}{fig:ntin-seq-uc-43-12}
-
-\subsubsection{UC-43.13 -- Handle Stripe Webhook Events}
-
-\paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.13 Handle Stripe Webhook Events}{fig:ntin-cls-uc-43-13}
-
-\paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.13-handle-stripe-webhook-events}{Sequence diagram of UC-43.13 Handle Stripe Webhook Events}{fig:ntin-seq-uc-43-13}

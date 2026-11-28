@@ -1,57 +1,80 @@
 % ========================================================
 % FILE: sections/2.Project_Management_Plan.tex
-% Part II: Project Management Plan (Verbatim from Report 2)
+% Part II: Project Management Overview (Executive format matching docs_NA)
 % ========================================================
-\part{Project Management Plan}
+\part{Project Management Overview}
 
-\section{Overview}
+\section{Development Approach}
 
-\subsection{Scope \& Estimation}
-\input{../Report 2/sections/1.1-scope-and-estimation}
+To deliver a multi-role marketplace spanning web frontend, RESTful/WebSocket backend, payment escrow orchestration, and external AI microservices within a 15-week capstone window, Group \texttt{SEP490\_04} adopted the \textbf{Agile Scrum} framework:
 
-\subsection{Project Objectives}
-\input{../Report 2/sections/1.2-project-objectives}
+\begin{itemize}[leftmargin=1.0cm, itemsep=4pt]
+    \item \textbf{Iterative 2-Week Sprints:} Product delivery was decomposed into \textbf{five progressive increments} (Sprints 1--5). Each sprint followed a disciplined cadence of Sprint Planning, daily stand-up synchronization, bi-weekly Sprint Reviews with the Supervisor, and Sprint Retrospectives.
+    \item \textbf{Monorepo \& Feature-Branch Workflow:} All application workspaces (\texttt{apps/web}, \texttt{apps/api}, \texttt{packages/shared-type}, \texttt{packages/ui}) were coordinated through \textbf{Turborepo} and \textbf{pnpm}. Every Use Case followed the branch naming rule \texttt{uc-[id]-[action-name]} and merged only after peer code review.
+    \item \textbf{Automated Quality Gates \& Environment Parity:} Before merging or closing any task, developers ran static linting (\texttt{pnpm lint}), TypeScript type verification (\texttt{pnpm check-types}), Jest unit suites (\texttt{pnpm test}), and multi-service \texttt{docker compose build} checks.
+    \item \textbf{Living Documentation:} Software Requirements (SRS), Design (SDS), Test Cases, and User Guides were updated iteratively alongside each functional sprint rather than deferred to the end of the project.
+\end{itemize}
 
-\subsection{Project Risks}
-\input{../Report 2/sections/1.3-project-risk}
+\section{Project Timeline}
 
-\section{Management Approach}
-\input{../Report 2/sections/2-management-approach}
+The project ran from \textbf{September 7, 2026 to November 27, 2026}. Table~\ref{tab:pmp_timeline} summarizes the major phases, milestone sprints, deliverable packages, and target completion dates.
 
-\subsection{Project Process}
-\input{../Report 2/sections/2.1-project-process}
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{|L{2.8cm}|C{3.2cm}|L{8.4cm}|}
+\caption{Project Execution Timeline and Sprint Deliverables}\label{tab:pmp_timeline} \\
+\hline
+\rowcolor{fptHeader}
+\textbf{Phase / Sprint} & \textbf{Duration} & \textbf{Key Deliverables \& Delivered Increments} \\ \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}
+\textbf{Phase / Sprint} & \textbf{Duration} & \textbf{Key Deliverables \& Delivered Increments} \\ \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+Initiation \& Planning & 07/09 -- 19/09/2026 & Product Introduction (Report 1) and Project Management Plan (Report 2); repository setup and database schema initialization. \\ \hline
+Sprint 1 & 20/09 -- 03/10/2026 & Initial SRS (Report 3) \& SDS (Report 4); Increment 1 (\texttt{UC-01}--\texttt{UC-14}): authentication, RBAC roles, freelancer profiles/skills/portfolios, jobs, contracts, and community forum foundation. \\ \hline
+Sprint 2 & 04/10 -- 17/10/2026 & Updated SRS/SDS (iter. 2); Increment 2 (\texttt{UC-15}--\texttt{UC-27}): fine-grained permissions, session revocation, eKYC upload, client profiles, job alerts, milestones/submissions, and real-time messaging. \\ \hline
+Sprint 3 & 18/10 -- 31/10/2026 & Updated SRS/SDS (iter. 3); Increment 3 (\texttt{UC-28}--\texttt{UC-36}): admin user management, notifications, proposals \& hiring, 5-stage dispute arbitration, content moderation, and eKYC audit review. \\ \hline
+Sprint 4 & 01/11 -- 14/11/2026 & Updated SRS/SDS (iter. 4); Increment 4 (\texttt{UC-37}--\texttt{UC-45}): banners, system skills, bilateral contract reviews, Stripe escrow checkout \& Connect transfers, AI CV recommendation, AI moderation, and AI face liveness. \\ \hline
+Sprint 5 & 15/11 -- 27/11/2026 & Increment 5 (\texttt{UC-46}, \texttt{UC-07.03}--\texttt{07.06}): job categories \& CV extraction; full regression, UAT, Docker release package (Reports 5--7), and final defense. \\ \hline
+\end{longtable}
+\endgroup
 
-\subsection{Quality Management}
-\input{../Report 2/sections/2.2-quality-management}
+\section{Team Roles}
 
-\subsection{Training Plan}
-\input{../Report 2/sections/2.3-training-plan}
+Group \texttt{SEP490\_04} consists of five members sharing cross-functional engineering, QA, and documentation ownership. Figure~\ref{fig:pmp_team} illustrates the team structure, and Table~\ref{tab:pmp_roles} summarizes member assignments.
 
-\section{Project Deliverables}
-\input{../Report 2/sections/3-project-deliverables}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{../Report 2/image/team-structure.png}
+    \caption{Team Organization Structure}
+    \label{fig:pmp_team}
+\end{figure}
 
-\section{Responsibility Assignments}
-\input{../Report 2/sections/4-responsibility-assignments}
-
-\subsection{Team Structures}
-\input{../Report 2/sections/4.1-team-structures}
-
-\subsection{Role Responsibilities}
-\input{../Report 2/sections/4.2-role-responsibilities}
-
-\subsection{Responsibility Matrix}
-\input{../Report 2/sections/4.3-responsibility-matrix}
-
-\section{Project Communications}
-\input{../Report 2/sections/5-project-communications}
-
-\section{Configuration Management}
-
-\subsection{Document Management}
-\input{../Report 2/sections/6.1-document-management}
-
-\subsection{Source Code Management}
-\input{../Report 2/sections/6.2-source-code-management}
-
-\subsection{Tools \& Infrastructures}
-\input{../Report 2/sections/6.3-tools-infrastructures}
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{|L{3.5cm}|C{2.0cm}|L{3.5cm}|L{5.6cm}|}
+\caption{Project Team Members and Role Assignments}\label{tab:pmp_roles} \\
+\hline
+\rowcolor{fptHeader}
+\textbf{Member Name} & \textbf{Student ID} & \textbf{Project Roles} & \textbf{Primary Module Ownership} \\ \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}
+\textbf{Member Name} & \textbf{Student ID} & \textbf{Project Roles} & \textbf{Primary Module Ownership} \\ \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+Pham Kha Vy & CE182254 & Product Owner, Team Leader, AI \& QA Lead & Community forum, 1-on-1 real-time messaging, moderation queues, ID review audit, AI content moderation \& eKYC face-liveness pipeline. \\ \hline
+Nguyen Tien Thuan & CE181024 & Software Architect, DevOps & Auth (OTP/Google OAuth), RBAC roles \& permissions, active device sessions, user/catalog/banner admin, Docker \& CI/CD setup. \\ \hline
+Tran Phat Tai & CE181632 & Full-stack Developer, Functional Tester & Job discovery marketplace, job CRUD \& lifecycle, bookmarks, saved searches, job alerts, proposal bidding \& AI recommendation consumer. \\ \hline
+Vo Nhut Tin & CE180619 & Payment \& Governance Lead, Developer & Contract templates \& bilateral signing, shared files, milestone deliverables \& submissions, Stripe Connect escrow, and 5-stage disputes. \\ \hline
+Nguyen Lu Nhat Huy & CE181196 & UX/UI \& Profile Lead, Developer & Freelancer/Client/Expert profiles, skills, portfolios, social links, eKYC upload, notifications, reviews, and AI CV extraction. \\ \hline
+\end{longtable}
+\endgroup

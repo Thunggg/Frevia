@@ -945,3 +945,88 @@ An Expert arbitrator completes evaluation and clicks ``Issue Binding Decision''.
       \item Dispute status finalized; financial escrow settlement executed.
       \item Milestone marked resolved; participants notified.
 \end{itemize}
+
+% -----------------------------------------------------------------
+% UC-33.11: Upload Dispute Evidence File
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Upload Dispute Evidence File}
+
+\fnhead{Function Trigger}
+A Client or Freelancer selects an evidence file in the evidence uploader inside the Open Dispute or Respond to Dispute dialog.\newline
+\textbf{Navigation path:} Open Dispute / Respond to Dispute Modal $\rightarrow$ Evidence Upload Control $\rightarrow$ Select File.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer.
+      \item \textbf{Secondary Actor:} Cloudinary Storage Service.
+      \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API (\texttt{DisputeController}, \texttt{DisputeService}), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Validates, uploads, and registers supporting evidence files (documents, images, archives) so participants can attach verifiable proof to dispute claims and responses.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Embedded file dropzone and file picker inside \texttt{OpenDisputeDialog} and \texttt{RespondDisputeDialog}.
+      \item Uploaded attachment chips showing filename, file size, and remove control.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Web client sends \texttt{POST /api/disputes/files/upload} as \texttt{multipart/form-data} with field \texttt{file}.
+      \item \texttt{DisputeController.uploadEvidenceFile()} runs \texttt{FileInterceptor('file')} and \texttt{buildUploadFilePipe()}.
+      \item \texttt{DisputeService.uploadEvidenceFile()} uploads the buffer to Cloudinary (\texttt{frevia/disputes}) when configured, or writes to local \texttt{uploads/disputes/} fallback storage.
+      \item Persists file metadata via \texttt{DisputeRepository.createDisputeFile()} and returns \texttt{UploadDisputeFileResponseDTO}.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\noindent This function operates as an embedded attachment upload component within the Open Dispute and Respond to Dispute modals; it does not possess a standalone screen. Selected files are uploaded asynchronously and rendered as attached evidence badges before form submission.
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{file} & Uploaded binary evidence file (\texttt{multipart/form-data}, field name \texttt{file}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be authenticated with an active non-banned account and valid route permission.
+      \item File must be non-empty and pass \texttt{buildUploadFilePipe()} file constraints.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-DISPUTE-03: At most 5 evidence files can be attached during a dispute claim.
+      \item BR-DISPUTE-06: Uploaded evidence files are bound to the uploader and exposed strictly to dispute participants and assigned Experts.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item User selects a supporting evidence file in the dispute modal.
+      \item Web client posts the file to \texttt{POST /api/disputes/files/upload}.
+      \item Server validates the file and stores it on Cloudinary or local fallback storage.
+      \item Server saves metadata in PostgreSQL and returns the file record.
+      \item Modal displays the uploaded evidence file chip ready to be linked on submit.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & No file provided or invalid file type/size. API returns HTTP 400 Bad Request (\texttt{File is required}).\\ \hline
+      A2 & Caller unauthenticated or unauthorized. API returns HTTP 401/403.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{fileUrl} & Public or protected storage URL of the uploaded evidence file.\\ \hline
+      \texttt{publicId} & Storage identifier in Cloudinary or local fallback prefix.\\ \hline
+      \texttt{fileName} & Original uploaded file name, byte size, and MIME type.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Evidence file persisted in storage and metadata stored in PostgreSQL for attachment to a dispute.
+\end{itemize}

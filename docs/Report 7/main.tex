@@ -28,6 +28,7 @@
   {../Report 3/}{../Report 3/image/}
   {../Report 4/}{../Report 4/images/}
   {../Report 5/}
+  {../Report 6/}{../Report 6/images/}
   {../report 6/}{../report 6/images/}
 }
 
@@ -76,6 +77,8 @@
 % COLORS
 %====================================================
 \definecolor{fptred}{RGB}{192,0,0}
+\definecolor{sectionred}{RGB}{255,0,0}
+\definecolor{captiongray}{RGB}{68,84,106}
 \definecolor{fptBlue}{RGB}{0,0,139}
 \definecolor{fptblue}{RGB}{46,117,181}
 \definecolor{wordblue}{RGB}{79,129,189}
@@ -102,20 +105,32 @@
   {\normalfont\fontsize{16}{19}\selectfont\bfseries\color{fptred}}
   {\thepart}{0.8em}{}
 
-% Section: 1., 2., ...
+% Section: 1., 2., ... (13pt Bold #FF0000 matching docs_NA)
 \titleformat{\section}
-  {\normalfont\fontsize{13}{16}\selectfont\bfseries\color{black}}
+  {\normalfont\fontsize{13}{16}\selectfont\bfseries\color{sectionred}}
   {\thesection}{0.8em}{}
 
-% Subsection: 1.1, 1.2, ...
+% Subsection: 1.1, 1.2, ... (12pt Bold black)
 \titleformat{\subsection}
   {\normalfont\fontsize{12}{14}\selectfont\bfseries\color{black}}
   {\thesubsection}{0.8em}{}
 
-% Subsubsection: 1.1.1, ...
+% Subsubsection: 1.1.1, ... (11pt Bold Italic black)
 \titleformat{\subsubsection}
-  {\normalfont\fontsize{12}{14}\selectfont\bfseries\itshape\color{black}}
+  {\normalfont\fontsize{11}{14}\selectfont\bfseries\itshape\color{black}}
   {\thesubsubsection}{0.8em}{}
+
+% Paragraph / Level 4: 4.1.1.1, ... (11pt Regular #2E75B5)
+\titleformat{\paragraph}[block]
+  {\normalfont\fontsize{11}{14}\selectfont\color{fptblue}}
+  {\theparagraph}{0.8em}{}
+\titlespacing*{\paragraph}{0pt}{0.6ex plus .2ex}{0.2ex plus .1ex}
+
+\newcommand{\wfstep}[1]{%
+  \par\addvspace{4pt}%
+  \noindent{\normalfont\fontsize{11}{14}\selectfont\color{fptblue}#1}%
+  \par\nopagebreak\vspace{2pt}%
+}
 
 \renewcommand{\thepart}{\Roman{part}.}
 \renewcommand{\thesection}{\arabic{section}.}
@@ -139,31 +154,51 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyfoot[C]{\small\thepage}
+\fancyfoot[R]{\small Page \thepage}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
 \fancypagestyle{plain}{
   \fancyhf{}
-  \fancyfoot[C]{\small\thepage}
+  \fancyfoot[R]{\small Page \thepage}
   \renewcommand{\headrulewidth}{0pt}
   \renewcommand{\footrulewidth}{0pt}
 }
 
 %====================================================
-% CAPTIONS
+% CAPTIONS (9pt Italic #44546A, dot separator, matching docs_NA)
 %====================================================
 \captionsetup{
-    font=small,
-    labelfont=bf,
+    labelsep=period,
+    font={footnotesize,it,color=captiongray},
+    labelfont={footnotesize,it,color=captiongray},
     justification=centering,
     skip=6pt
 }
+\captionsetup[table]{position=above}
+\captionsetup[figure]{position=below}
 
 %====================================================
 % TABLE OF CONTENTS FORMATTING
 %====================================================
 \usepackage{tocloft}
+
+\renewcommand{\cfttoctitlefont}{\normalfont\fontsize{16}{19}\selectfont\bfseries\color{fptred}}
+\renewcommand{\cftloftitlefont}{\normalfont\fontsize{16}{19}\selectfont\bfseries\color{fptred}}
+\renewcommand{\cftlottitlefont}{\normalfont\fontsize{16}{19}\selectfont\bfseries\color{fptred}}
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftbeforeloftitleskip}{0pt}
+\setlength{\cftbeforelottitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{12pt}
+\setlength{\cftafterloftitleskip}{12pt}
+\setlength{\cftafterlottitleskip}{12pt}
+
+\renewcommand{\cftfigpresnum}{Figure~}
+\renewcommand{\cftfigaftersnum}{.}
+\setlength{\cftfignumwidth}{6.4em}
+\renewcommand{\cfttabpresnum}{Table~}
+\renewcommand{\cfttabaftersnum}{.}
+\setlength{\cfttabnumwidth}{5.8em}
 
 \renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
@@ -347,8 +382,8 @@
 % Cover page
 \input{cover}
 
-% Table of contents right after cover (matching Word sample)
-\setcounter{page}{2}
+% Table of contents right after cover (Page 1, matching docs_NA)
+\setcounter{page}{1}
 \input{table_of_contents}
 
 % Front matter sections
@@ -374,6 +409,9 @@
 \input{sections/6.Release_Package_and_User_Guides}
 \newpage
 
-\input{sections/7.Appendix}
+\input{sections/7.Conclusion_and_Future_Work}
+\newpage
+
+\input{sections/8.References}
 
 \end{document}

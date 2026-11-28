@@ -1,20 +1,3 @@
-% Hide captured development badges in this contributor's report figures only.
-\newsavebox{\nhuyScreenBox}
-\newcommand{\nhuycleanscreenfigure}[8]{%
-  \begin{figure}[H]\centering
-  \begingroup
-  \setlength{\fboxrule}{0.4pt}\setlength{\fboxsep}{2pt}%
-  \sbox{\nhuyScreenBox}{\includegraphics[width=0.95\linewidth,height=0.72\textheight,keepaspectratio]{#1}}%
-  \setlength{\unitlength}{\wd\nhuyScreenBox}%
-  \fcolorbox{black!20}{white}{%
-    \begin{picture}(1,#3)
-      \put(0,0){\usebox{\nhuyScreenBox}}%
-      \put(#4,#5){\color[RGB]{#8}\rule{#6\unitlength}{#7\unitlength}}%
-    \end{picture}}%
-  \endgroup
-  \caption{#2}
-  \end{figure}}
-
 % =================================================================
 % Sprint 1 - Freelancer Profile Management, Freelancer Skills Management, Portfolio Management (nhuy)
 % Following the detailed form of the report template:
@@ -61,7 +44,7 @@ The actor selects View Freelancer Profile.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\nhuycleanscreenfigure{image/screenshot/sprint1/nhuy/View Freelancer Profile.png}{View Freelancer Profile interface}{0.478125000}{0.001562500}{0.001041667}{0.033854167}{0.034375000}{246,245,249}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Freelancer Profile.png}{View Freelancer Profile interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Profile header with name and availability.
     \item Professional sections.
@@ -346,7 +329,7 @@ The actor selects Add Freelancer Skill.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\nhuycleanscreenfigure{image/screenshot/sprint1/nhuy/Add Freelancer Skill.png}{Add Freelancer Skill interface}{0.476566614}{0.002632965}{0.001579779}{0.040547657}{0.041074250}{245,244,248}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/Add Freelancer Skill.png}{Add Freelancer Skill interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Skill list with catalog name, proficiency /10 and owner-only remove action.
     \item Add Skill dialog with suggestions and level selector.
@@ -439,7 +422,7 @@ The actor selects Delete Freelancer Skill.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\nhuycleanscreenfigure{image/screenshot/sprint1/nhuy/Delete Freelancer Skill.png}{Delete Freelancer Skill interface}{0.475520833}{0.003125000}{0.002604167}{0.040104167}{0.040625000}{245,244,248}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/Delete Freelancer Skill.png}{Delete Freelancer Skill interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Skill list with catalog name, proficiency /10 and owner-only remove action.
     \item Add Skill dialog with suggestions and level selector.
@@ -630,7 +613,7 @@ The actor selects Add Portfolio.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\nhuycleanscreenfigure{image/screenshot/sprint1/nhuy/Add Portfolio.png}{Add Portfolio interface}{0.474070194}{0.003143007}{0.001047669}{0.040859089}{0.040859089}{49,49,50}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/Add Portfolio.png}{Add Portfolio interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Portfolio card grid with title, description and technologies.
     \item Detail dialog.

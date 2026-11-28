@@ -1,17 +1,88 @@
 % ========================================================
 % FILE: sections/1.Project_Introduction.tex
-% Part I: Project Introduction (Verbatim from Report 1)
+% Part I: Project Introduction (Executive format matching docs_NA)
 % ========================================================
 \part{Project Introduction}
 
-\input{../Report 1/sections/overview}
+\section{Overview}
 
-\input{../Report 1/sections/product_background}
+\textbf{Frevia -- Verified Freelance Marketplace Platform} (Project Code: \texttt{SEP490\_04}) is a full-stack bilingual (English and Vietnamese) freelance marketplace and professional community platform developed by five FPT University students over 15 weeks (September to December 2026). Rather than relying solely on open unverified bidding, Frevia combines structured contract governance, milestone-scoped \textbf{Stripe Connect} escrow payments, transparent bilateral dispute arbitration, real-time messaging, and \textbf{explainable AI services} for electronic identity verification (eKYC) and CV-to-job matching.
 
-\input{../Report 1/sections/existing_system}
+Table~\ref{tab:intro_summary} summarizes the high-level project profile and core engineering boundaries.
 
-\input{../Report 1/sections/business_opportunity}
+\begin{table}[H]
+\centering
+\caption{Project Overview Summary}\label{tab:intro_summary}
+\renewcommand{\arraystretch}{1.35}
+\setlength{\tabcolsep}{6pt}
+\small
+\begin{tabular}{|L{4.4cm}|L{10.4cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{Attribute} & \textbf{Description} \\ \hline
+\textbf{Project Name} & Frevia -- Verified Freelance Marketplace Platform \\ \hline
+\textbf{Project Code / Supervisor} & \texttt{SEP490\_04} -- Supervised by Ms. Cao Hong Nga (FPT University Can Tho) \\ \hline
+\textbf{Architecture} & Turborepo Monorepo: Next.js 16 (React 19) Web App, NestJS 11 API + Socket.IO, PostgreSQL 16 (Prisma 7 ORM), FastAPI Python AI Microservices \\ \hline
+\textbf{User Roles} & Guest, Client, Freelancer, Expert, and Platform Administrator \\ \hline
+\textbf{Monetization Model} & Flat \$5.00 USD platform fee per contract paid by Client; Freelancers retain 100\% of milestone payouts \\ \hline
+\textbf{Scope Summary} & 10 Functional Modules covering 21 Major Features (\texttt{FE-01} to \texttt{FE-21}), 71 database entities, and Docker Compose deployment \\ \hline
+\end{tabular}
+\end{table}
 
-\input{../Report 1/sections/software_product_vision}
+\section{Problem Statement}
 
-\input{../Report 1/sections/project_scope_limitations}
+Contemporary freelance marketplaces have largely solved initial job discovery, yet critical trust, financial settlement, and screening inefficiencies remain widespread across major platforms (such as Upwork, Fiverr, Freelancer, and Toptal):
+
+\begin{enumerate}[leftmargin=1.2cm, itemsep=4pt]
+    \item \textbf{Identity Fraud and Credential Misrepresentation:} Open marketplaces often suffer from rented accounts, fabricated portfolios, and automated spam proposals, eroding client confidence in remote contractors---particularly in cross-border engagements without shared legal jurisdiction.
+    \item \textbf{Opaque and High Double-Sided Fees:} Legacy platforms deduct heavy percentage commissions from both clients and freelancers across every milestone, inflating project budgets and significantly reducing contractor net income.
+    \item \textbf{Manual Screening Fatigue:} Popular job postings attract large volumes of unstructured proposals and unformatted CVs, forcing clients to spend hours manually inspecting candidate qualifications without structured skill or experience comparisons.
+    \item \textbf{Financial Settlement and Lump-Sum Risk:} Platforms lacking per-milestone escrow force clients to pay upfront for entire orders or leave freelancers working without verified funding guarantees, leading to abandoned engagements and payment disputes.
+    \item \textbf{Unstructured Dispute Resolution and Scattered Communication:} When disagreements arise over deliverables, external chat logs and opaque support tickets make evidence gathering slow and arbitration decisions difficult to audit or appeal.
+\end{enumerate}
+
+Frevia addresses these problems through four concrete mechanisms: (i) \textbf{multi-step eKYC verification} combining CCCD OCR, facial liveness, and administrator review; (ii) \textbf{flat-fee milestone escrow} using Stripe Checkout and Connect Express transfers; (iii) \textbf{rule-bound 5-stage dispute arbitration} with evidence tracking, split settlement, and appeal review; and (iv) \textbf{explainable AI assistance} that parses uploaded CVs and pre-scores forum content while leaving every final hiring and moderation decision under explicit human control.
+
+\section{Report 1 -- Feature List}
+
+The functional scope delivered in Frevia comprises \textbf{10 cohesive modules} and \textbf{21 Major Features} (\texttt{FE-01} to \texttt{FE-21}), summarized in Table~\ref{tab:intro_features}.
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.28}
+\begin{longtable}{|C{1.4cm}|L{3.9cm}|L{2.8cm}|L{6.5cm}|}
+\caption{Summary of Frevia Major Features (FE-01 to FE-21)}\label{tab:intro_features} \\
+\hline
+\rowcolor{fptHeader}
+\textbf{ID} & \textbf{Feature Name} & \textbf{Primary Actors} & \textbf{Core Capabilities} \\ \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}
+\textbf{ID} & \textbf{Feature Name} & \textbf{Primary Actors} & \textbf{Core Capabilities} \\ \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+FE-01 & Manage Authentication & Guest, All Auth Users & OTP signup, email/password \& Google OAuth login, password reset, logout. \\ \hline
+FE-02 & Manage Roles \& Permissions & Admin, All Auth Users & Dynamic RBAC CRUD, permission matrix binding, join/switch active role. \\ \hline
+FE-03 & Manage Accounts \& Sessions & Admin, All Auth Users & Active device session list/revoke, admin user search, update, ban/unban. \\ \hline
+FE-04 & Manage Profiles & Guest, Client, Freelancer, Expert, Admin & Public/role profiles, education, work history, profile revisions, expert directory. \\ \hline
+FE-05 & Manage Skills Catalogue & Freelancer, Admin & Freelancer skill proficiency (1--10), Admin skill catalogue CRUD \& restore. \\ \hline
+FE-06 & Manage Portfolios & Guest, Client, Freelancer & Portfolio project showcase CRUD, media cover, tech tags, demo URLs. \\ \hline
+FE-07 & Manage CV \& AI Extraction & Freelancer & PDF CV upload (max 10~MB), browser preview, AI skill/experience parsing. \\ \hline
+FE-08 & Manage Identity Verification & Freelancer, Admin & CCCD/Passport OCR, webcam liveness capture, Admin KYC audit approve/reject. \\ \hline
+FE-09 & Manage Job Postings & Guest, Client, Freelancer & Fixed-price job CRUD, publish/close/reopen, multi-filter search \& view. \\ \hline
+FE-10 & Manage Job Categories & Guest, Client, Freelancer, Admin & Hierarchical job classification browsing and Admin CRUD/soft-delete restore. \\ \hline
+FE-11 & Manage Bookmarks \& Alerts & Freelancer & Job bookmarks, saved search filter presets, personalized job alert rules. \\ \hline
+FE-12 & Manage Proposals \& Hiring & Client, Freelancer & Draft/submit/withdraw proposals, AI match scoring, hire to initiate contract. \\ \hline
+FE-13 & Manage Contracts & Client, Freelancer & Contract editing, bilateral signing, shared files, PDF export, cancel/complete. \\ \hline
+FE-14 & Manage Milestones & Client, Freelancer & Milestone scheduling, file upload, deliverable submission, request changes, approve. \\ \hline
+FE-15 & Manage Payments \& Escrow & Client, Freelancer & Stripe Express onboarding, saved cards, hold deposit, escrow fund/release, ledger. \\ \hline
+FE-16 & Manage Disputes & Client, Freelancer, Expert & 5-stage milestone dispute filing, evidence, fee checkout, escalate, expert ruling. \\ \hline
+FE-17 & Manage Reviews & Client, Freelancer & Post-contract bilateral star ratings, comments, and single public reply. \\ \hline
+FE-18 & Direct Messaging \& Alerts & Client, Freelancer, Expert & Real-time Socket.IO 1-on-1 chat, attachments, read/pin/recall, notifications. \\ \hline
+FE-19 & Manage Community Forum & Guest, All Auth, Admin & Category/post/comment browsing, authoring, likes, reporting, Admin trash restore. \\ \hline
+FE-20 & Manage Content Moderation & Admin, AI Service & Automated AI toxicity risk scoring, moderation queue triage, approve/remove. \\ \hline
+FE-21 & Banners \& Platform Settings & Guest, Admin & Active announcement/promotional banners across 5 zones, Admin banner CRUD. \\ \hline
+\end{longtable}
+\endgroup
