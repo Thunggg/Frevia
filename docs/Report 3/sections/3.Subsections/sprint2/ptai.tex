@@ -313,10 +313,10 @@ A freelancer clicks the delete (trash) icon button on a saved search entry.\newl
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ptai/DeleteSavedSearch.png}{Delete saved search result and confirmation toast}
+\screenfigure[0.95]{image/screenshot/sprint2/ptai/DeleteSavedSearch.png}{Delete saved search confirmation dialog interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Updated Saved Searches list immediately removing the deleted entry and decrementing the tab badge count.
-    \item Top-right green confirmation toast displaying ``Saved search deleted''.
+    \item Confirmation modal ``Delete saved search?'' naming the selected preset with \textbf{Cancel} and destructive \textbf{Delete} buttons.
+    \item Upon confirmation, the deleted entry is removed from the Saved Searches list, the tab badge count decrements, and a green ``Saved search deleted'' toast appears.
 \end{itemize}
 
 \fnhead{Function Details}

@@ -28,6 +28,14 @@ import savedSearchApiRequest from "@/apiRequests/saved-search";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { Button } from "@repo/ui/components/shadcn/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/ui/components/shadcn/dialog";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type {
@@ -156,6 +164,9 @@ export function FindWorkContent({
   const [searchInput, setSearchInput] = useState(initialKeyword);
   const [viewingSavedSearch, setViewingSavedSearch] =
     useState<SavedSearchType | null>(null);
+  const [deletingSavedSearch, setDeletingSavedSearch] =
+    useState<SavedSearchType | null>(null);
+  const [isDeletingSavedSearch, setIsDeletingSavedSearch] = useState(false);
 
   const [bookmarkedSlugs, setBookmarkedSlugs] = useState(
     () => new Set(initialBookmarkedSlugs),
@@ -578,13 +589,27 @@ export function FindWorkContent({
     router.push(query ? `/freelancer/search/jobs?${query}` : "/freelancer/search/jobs");
   };
 
-  const handleDeleteSavedSearch = async (id: number) => {
+  const handleConfirmDeleteSavedSearch = async () => {
+    if (
+      !deletingSavedSearch ||
+      !canDeleteSavedSearch ||
+      isDeletingSavedSearch
+    ) {
+      return;
+    }
+
+    const targetId = deletingSavedSearch.id;
+    setIsDeletingSavedSearch(true);
+
     try {
-      await savedSearchApiRequest.delete(id);
-      setSavedSearches((prev) => prev.filter((item) => item.id !== id));
+      await savedSearchApiRequest.delete(targetId);
+      setSavedSearches((prev) => prev.filter((item) => item.id !== targetId));
+      setDeletingSavedSearch(null);
       toastSuccess({ message: t("savedSearchDeleted") });
     } catch {
       toastError({ message: t("savedSearchDeleteFailed") });
+    } finally {
+      setIsDeletingSavedSearch(false);
     }
   };
 
@@ -1043,13 +1068,15 @@ export function FindWorkContent({
                                 </Button>
                                 {canDeleteSavedSearch && (
                                   <Button
+                                    type="button"
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() =>
-                                      handleDeleteSavedSearch(item.id)
-                                    }
+                                    onClick={() => setDeletingSavedSearch(item)}
                                     className="size-8 rounded-full text-muted-foreground hover:text-destructive cursor-pointer"
-                                    title="Delete saved search"
+                                    title={tSaved("delete")}
+                                    aria-label={tSaved("deleteAria", {
+                                      name: item.name,
+                                    })}
                                   >
                                     <Trash2 className="size-3.5" />
                                   </Button>
@@ -1130,6 +1157,58 @@ export function FindWorkContent({
         categories={initialCategories}
         onApply={applySavedSearch}
       />
+
+      {/* Delete Saved Search Confirmation Dialog */}
+      {deletingSavedSearch && (
+        <Dialog
+          open
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen && !isDeletingSavedSearch) {
+              setDeletingSavedSearch(null);
+            }
+          }}
+        >
+          <DialogContent className="sm:max-w-sm rounded-2xl border border-border bg-card p-6 shadow-2xl font-sans">
+            <DialogHeader>
+              <DialogTitle className="text-base font-bold text-foreground">
+                {tSaved("deleteTitle")}
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground">
+                {tSaved("deleteHint", { name: deletingSavedSearch.name })}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mt-3 flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-full text-xs"
+                disabled={isDeletingSavedSearch}
+                onClick={() => setDeletingSavedSearch(null)}
+              >
+                {tSaved("cancel")}
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                className="rounded-full text-xs font-semibold"
+                disabled={isDeletingSavedSearch}
+                onClick={() => void handleConfirmDeleteSavedSearch()}
+              >
+                {isDeletingSavedSearch ? (
+                  <>
+                    <Loader2 className="size-3.5 mr-1.5 animate-spin" />
+                    {tSaved("deleting")}
+                  </>
+                ) : (
+                  tSaved("delete")
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
