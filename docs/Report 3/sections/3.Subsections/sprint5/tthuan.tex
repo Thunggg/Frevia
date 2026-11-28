@@ -8,7 +8,7 @@
 \subsection{Job Category Management}
 
 % -----------------------------------------------------------------
-% UC-46.01: View Job Categories List
+% UC-48.01: View Job Categories List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ View Job Categories List}
@@ -133,7 +133,7 @@ pagination.totalPages & Total calculated pages available.\\ \hline
 \noindent The administrator inspects the job category catalog, views job usage metrics, and can initiate creation, inspection, editing, deletion, or restoration.
 
 % -----------------------------------------------------------------
-% UC-46.02: View Job Category Details
+% UC-48.02: View Job Category Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ View Job Category Details}
@@ -245,7 +245,7 @@ jobs & Array of up to 10 latest active jobs: \texttt{id}, \texttt{title}, \textt
 \noindent The administrator reviews category details, operational status, and associated jobs, and can initiate editing, deletion, or restoration.
 
 % -----------------------------------------------------------------
-% UC-46.03: Create Job Category
+% UC-48.03: Create Job Category
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Create Job Category}
@@ -365,7 +365,7 @@ jobs & Empty array for newly created categories.\\ \hline
 \noindent A new job category record is stored in the database, indexed for search, and immediately available for classification of new job postings.
 
 % -----------------------------------------------------------------
-% UC-46.04: Update Job Category
+% UC-48.04: Update Job Category
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Update Job Category}
@@ -485,7 +485,7 @@ jobs & Array of related jobs.\\ \hline
 \noindent The category record and its generated slug are updated in the database, with immediate propagation across search queries and job submission forms.
 
 % -----------------------------------------------------------------
-% UC-46.05: Delete Job Category
+% UC-48.05: Delete Job Category
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Delete Job Category}
@@ -594,7 +594,7 @@ message & Success confirmation message string (\texttt{Success.JobCategoryDelete
 \noindent The category is marked as soft-deleted (\texttt{deletedAt != null}), hidden from default active listings, and can be restored if needed.
 
 % -----------------------------------------------------------------
-% UC-46.06: Restore Job Category
+% UC-48.06: Restore Job Category
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Restore Job Category}

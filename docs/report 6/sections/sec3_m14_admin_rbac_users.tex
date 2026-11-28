@@ -140,7 +140,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection[M14.05 -- API Permission Catalog \& Detail (UC-15.01--15.02)]{M14.05 -- System API Permission Catalog \& Detail View (UC-15.01 to UC-15.02)}
+\subsubsection[M14.05 -- API Permission Catalog \& Detail (UC-17.01--17.02)]{M14.05 -- System API Permission Catalog \& Detail View (UC-17.01 to UC-17.02)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Permissions Catalog -- \texttt{/admin/permissions}.
@@ -151,7 +151,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.80\textwidth]{images/admin/m14_05_admin_permissions.png}
-  \caption{System API Permission catalog with method and module filters at \texttt{/admin/permissions} (UC-15.01)}
+  \caption{System API Permission catalog with method and module filters at \texttt{/admin/permissions} (UC-17.01)}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
@@ -160,13 +160,13 @@ The Administrator System, RBAC, and User Management module empowers system gover
   \item \rbadge{1} \textbf{Search Permissions by Name or Path (\textit{Search box}):} Input keywords matching permission names, paths, or modules.
   \item \rbadge{2} \textbf{Filter by HTTP Method \& Module (\textit{All methods / All modules}):} Filter records by HTTP verb (\textit{GET}, \textit{POST}, \textit{PATCH}, \textit{DELETE}) and module.
   \item \rbadge{3} \textbf{Inspect Permissions Table (\textit{Permissions table}):} View records with \textit{ID}, \textit{Function Name}, \textit{Method}, \textit{Path}, \textit{Module}, and \textit{Created} date.
-  \item \rbadge{4} \textbf{View Permission Detail (\textit{Eye icon}):} Click the eye icon on any row to inspect full permission metadata at \texttt{/admin/permissions/[id]} (\texttt{UC-15.02}).
+  \item \rbadge{4} \textbf{View Permission Detail (\textit{Eye icon}):} Click the eye icon on any row to inspect full permission metadata at \texttt{/admin/permissions/[id]} (\texttt{UC-17.02}).
 \end{enumerate}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.78\textwidth]{images/admin/m14_05b_admin_permission_detail.png}
-  \caption{Permission Detail view displaying ID, Function Name, Method, Path, and Module (UC-15.02)}
+  \caption{Permission Detail view displaying ID, Function Name, Method, Path, and Module (UC-17.02)}
 \end{figure}
 
 \paragraph{Expected Output \& Exception Handling:}
@@ -176,7 +176,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection[M14.06 -- User Directory \& Account Provisioning (UC-28.01, UC-28.03)]{M14.06 -- User Directory Administration \& Direct Account Provisioning (UC-28.01, UC-28.03)}
+\subsubsection[M14.06 -- User Directory \& Account Provisioning (UC-30.01, UC-30.03)]{M14.06 -- User Directory Administration \& Direct Account Provisioning (UC-30.01, UC-30.03)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} User Management Console -- \texttt{/admin/users}.
@@ -187,7 +187,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.82\textwidth]{images/admin/m14_06_admin_users_list_create.png}
-  \caption{User directory table and account provisioning interface at \texttt{/admin/users} (UC-28.01, UC-28.03)}
+  \caption{User directory table and account provisioning interface at \texttt{/admin/users} (UC-30.01, UC-30.03)}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
@@ -195,8 +195,8 @@ The Administrator System, RBAC, and User Management module empowers system gover
   \item In the Admin sidebar, click \textbf{Users} $\rightarrow$ \textbf{User Management}.
   \item \rbadge{1} \textbf{Search Users by Name or Email (\textit{Search input}):} Type a query to search across user records in real time.
   \item \rbadge{2} \textbf{Filter Accounts by Role (\textit{Filter Role}):} Select \textit{All Roles}, \textit{ADMIN}, \textit{CLIENT}, \textit{FREELANCER}, \textit{EXPERT}, or custom roles.
-  \item \rbadge{3} \textbf{Direct Account Provisioning (\textit{+ Create User}):} Click \textbf{+ Create User} (\texttt{UC-28.03}) to create an account and select initial role(s).
-  \item \rbadge{4} \textbf{Inspect User Table \& Row Actions (\textit{Actions column}):} Click the eye icon to open \texttt{/admin/users/[id]} (\texttt{UC-28.02}), or click the pencil icon to open the \textit{Edit user} dialog (\texttt{UC-28.04}).
+  \item \rbadge{3} \textbf{Direct Account Provisioning (\textit{+ Create User}):} Click \textbf{+ Create User} (\texttt{UC-30.03}) to create an account and select initial role(s).
+  \item \rbadge{4} \textbf{Inspect User Table \& Row Actions (\textit{Actions column}):} Click the eye icon to open \texttt{/admin/users/[id]} (\texttt{UC-30.02}), or click the pencil icon to open the \textit{Edit user} dialog (\texttt{UC-30.04}).
 \end{enumerate}
 
 \paragraph{Expected Output \& Exception Handling:}
@@ -206,7 +206,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection[M14.07 -- User Account Status \& Suspension (UC-28.04)]{M14.07 -- User Account Status Management \& Suspension/Reactivation (UC-28.04)}
+\subsubsection[M14.07 -- User Account Status \& Suspension (UC-30.04)]{M14.07 -- User Account Status Management \& Suspension/Reactivation (UC-30.04)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Edit User Dialog -- \texttt{/admin/users}.
@@ -236,7 +236,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection[M14.08 -- User Multi-Profile Management (UC-28.02, UC-28.05--28.09)]{M14.08 -- Comprehensive User Multi-Profile Management (UC-28.02, UC-28.05 to UC-28.09)}
+\subsubsection[M14.08 -- User Multi-Profile Management (UC-30.02, UC-30.05--30.09)]{M14.08 -- Comprehensive User Multi-Profile Management (UC-30.02, UC-30.05 to UC-30.09)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Multi-Profile Inspection View -- \texttt{/admin/users/[id]}.
@@ -247,34 +247,34 @@ The Administrator System, RBAC, and User Management module empowers system gover
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.82\textwidth]{images/admin/m14_08_admin_user_profile_tabs.png}
-  \caption{Admin inspection view of Client Profile tab at \texttt{/admin/users/2} (UC-28.02, UC-28.05)}
+  \caption{Admin inspection view of Client Profile tab at \texttt{/admin/users/2} (UC-30.02, UC-30.05)}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item Navigate to \texttt{/admin/users/[id]} (or click the eye icon for a user in the directory) to inspect general account metrics and role profiles (\texttt{UC-28.02}).
+  \item Navigate to \texttt{/admin/users/[id]} (or click the eye icon for a user in the directory) to inspect general account metrics and role profiles (\texttt{UC-30.02}).
   \item \rbadge{1} \textbf{Switch Role Profile Tabs (\textit{Client / Freelancer / Expert}):} Select the role-specific profile tab associated with the user account.
-  \item \rbadge{2} \textbf{Update Client Profile (\textit{Edit profile} -- UC-28.05):} On the \textit{Client Profile} tab, click \textbf{Edit profile} to modify Company Name, Company Overview, and Website.
+  \item \rbadge{2} \textbf{Update Client Profile (\textit{Edit profile} -- UC-30.05):} On the \textit{Client Profile} tab, click \textbf{Edit profile} to modify Company Name, Company Overview, and Website.
   \item \rbadge{3} \textbf{Inspect Client Activity (\textit{Client summary cards}):} Review \textit{Jobs Posted by Client} and \textit{Contracts Commissioned}.
 \end{enumerate}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.74\textwidth]{images/admin/m14_08b_freelancer_tab.png}
-  \caption{Freelancer Profile tab with Edit Profile, Skills, and Portfolio management at \texttt{/admin/users/2} (UC-28.06--28.08)}
+  \caption{Freelancer Profile tab with Edit Profile, Skills, and Portfolio management at \texttt{/admin/users/2} (UC-30.06--30.08)}
 \end{figure}
 
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item \rbadge{1} \textbf{Update Freelancer Basic Info (\textit{Edit profile} -- UC-28.06):} Modify Professional Title, Bio, Languages, Education, and Certifications.
-  \item \rbadge{2} \textbf{Update Freelancer Skills (\textit{Skills} -- UC-28.07):} Select skills from the master catalog and assign proficiency levels (1--10).
-  \item \rbadge{3} \textbf{Manage Freelancer Portfolio (\textit{Portfolio} -- UC-28.08):} Add, update, or soft-delete portfolio projects (title, description, technologies, project URL).
+  \item \rbadge{1} \textbf{Update Freelancer Basic Info (\textit{Edit profile} -- UC-30.06):} Modify Professional Title, Bio, Languages, Education, and Certifications.
+  \item \rbadge{2} \textbf{Update Freelancer Skills (\textit{Skills} -- UC-30.07):} Select skills from the master catalog and assign proficiency levels (1--10).
+  \item \rbadge{3} \textbf{Manage Freelancer Portfolio (\textit{Portfolio} -- UC-30.08):} Add, update, or soft-delete portfolio projects (title, description, technologies, project URL).
   \item \rbadge{4} \textbf{Review Skills \& Showcased Portfolio:} Verify updated badges and project cards rendered below.
 \end{enumerate}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.74\textwidth]{images/admin/m14_08c_expert_tab.png}
-  \caption{Expert Profile tab and Edit Profile action for Expert accounts (UC-28.09)}
+  \caption{Expert Profile tab and Edit Profile action for Expert accounts (UC-30.09)}
 \end{figure}
 
 \paragraph{Expected Output \& Exception Handling:}

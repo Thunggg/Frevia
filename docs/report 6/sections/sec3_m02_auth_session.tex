@@ -168,7 +168,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection[M2.05 -- Active Sessions \& Detail Audit (UC-16.01, UC-16.02)]{M2.05 -- Active Login Session Monitoring \& Device Detail Audit (UC-16.01, UC-16.02)}
+\subsubsection[M2.05 -- Active Sessions \& Detail Audit (UC-18.01, UC-18.02)]{M2.05 -- Active Login Session Monitoring \& Device Detail Audit (UC-18.01, UC-18.02)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Session Management Console -- \texttt{/sessions}.
@@ -187,13 +187,13 @@ The Authentication and Session Management module delivers defense-in-depth secur
   \item Navigate to \texttt{/sessions} from the user account menu.
   \item \rbadge{1} \textbf{Search Sessions by Device or IP (\textit{Search}):} Type a browser, device string, or IP address and click \textbf{Search} to filter listed records.
   \item \rbadge{2} \textbf{Inspect Active Session Records (\textit{Sessions table}):} Review session attributes across columns: \textit{Device}, \textit{IP address}, \textit{Status} (\textbf{Active} and \textbf{Current} badge for the active browser), \textit{Created}, and \textit{Expires}.
-  \item \rbadge{3} \textbf{View Session Detail or Revoke (\textit{Actions column}):} Click the eye icon to inspect full device metadata (\texttt{UC-16.02}), or click the red shield icon to terminate a remote session (\texttt{UC-16.03}).
+  \item \rbadge{3} \textbf{View Session Detail or Revoke (\textit{Actions column}):} Click the eye icon to inspect full device metadata (\texttt{UC-18.02}), or click the red shield icon to terminate a remote session (\texttt{UC-18.03}).
 \end{enumerate}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.76\textwidth]{images/auth/m02_05b_session_detail.png}
-  \caption{Session Detail modal displaying Session ID, User ID, Device, IP Address, and timestamps (UC-16.02)}
+  \caption{Session Detail modal displaying Session ID, User ID, Device, IP Address, and timestamps (UC-18.02)}
 \end{figure}
 
 \paragraph{Expected Output \& Exception Handling:}
@@ -203,7 +203,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M2.06 -- Remote Session Revocation \& Security Enforcement (UC-16.03)}
+\subsubsection{M2.06 -- Remote Session Revocation \& Security Enforcement (UC-18.03)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Remote Session Termination Confirmation Dialog -- \texttt{/sessions}.

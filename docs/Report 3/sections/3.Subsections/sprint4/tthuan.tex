@@ -8,7 +8,7 @@
 \subsection{Banner Management}
 
 % -----------------------------------------------------------------
-% UC-37.01: View Banners List
+% UC-39.01: View Banners List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ View Banners List}
@@ -129,7 +129,7 @@ pagination.totalPages & Total calculated pages available.\\ \hline
 \noindent The administrator views the paginated list of advertisement banners, inspects status and positions, and can initiate creation, inspection, modification, or deletion actions.
 
 % -----------------------------------------------------------------
-% UC-37.02: View Banner Details
+% UC-39.02: View Banner Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ View Banner Details}
@@ -237,7 +237,7 @@ updatedAt & Timestamp of last modification.\\ \hline
 \noindent The administrator reviews complete banner configuration, image assets, schedule boundaries, and can initiate editing.
 
 % -----------------------------------------------------------------
-% UC-37.03: Create Banner
+% UC-39.03: Create Banner
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Create Banner}
@@ -371,7 +371,7 @@ updatedAt & Timestamp of last update.\\ \hline
 \noindent A new advertisement banner is stored in the database, assigned to the selected position slot, and immediately rendered on the admin table.
 
 % -----------------------------------------------------------------
-% UC-37.04: Update Banner
+% UC-39.04: Update Banner
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Update Banner}
@@ -504,7 +504,7 @@ updatedAt & Updated modification timestamp.\\ \hline
 \noindent The modified banner attributes are committed to the database and immediately reflected across the administrative console.
 
 % -----------------------------------------------------------------
-% UC-37.05: Delete Banner
+% UC-39.05: Delete Banner
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Delete Banner}
@@ -610,7 +610,7 @@ message & Success confirmation message string (\texttt{Success.BannerDeleted}).\
 \subsection{Skill Management}
 
 % -----------------------------------------------------------------
-% UC-38.01: View Skills List
+% UC-40.01: View Skills List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ View Skills List}
@@ -733,7 +733,7 @@ pagination.totalPages & Total calculated pages available.\\ \hline
 \noindent The administrator inspects the master skill catalog, views job usage metrics, and can initiate creation, editing, deletion, or restoration.
 
 % -----------------------------------------------------------------
-% UC-38.02: View Skill Details
+% UC-40.02: View Skill Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ View Skill Details}
@@ -842,7 +842,7 @@ jobCount & Total number of jobs referencing this skill.\\ \hline
 \noindent The administrator reviews skill details and usage metrics, and can initiate editing, deletion, or restoration.
 
 % -----------------------------------------------------------------
-% UC-38.03: Create Skill
+% UC-40.03: Create Skill
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Create Skill}
@@ -957,7 +957,7 @@ jobCount & Zero for newly created skills.\\ \hline
 \noindent A new skill record is added to the master catalog, indexed for search, and immediately selectable by freelancers and clients.
 
 % -----------------------------------------------------------------
-% UC-38.04: Update Skill
+% UC-40.04: Update Skill
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Update Skill}
@@ -1072,7 +1072,7 @@ jobCount & Count of active jobs using this skill.\\ \hline
 \noindent The skill record and its generated slug are updated in the database, with immediate propagation across search queries and profile forms.
 
 % -----------------------------------------------------------------
-% UC-38.05: Delete Skill
+% UC-40.05: Delete Skill
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Delete Skill}
@@ -1182,7 +1182,7 @@ message & Success confirmation message string (\texttt{Success.SkillDeleted}).\\
 \noindent The skill is marked as soft-deleted (\texttt{deletedAt != null}), removed from freelancer profiles, hidden from default active listings, and preserved for historical jobs.
 
 % -----------------------------------------------------------------
-% UC-38.06: Restore Skill
+% UC-40.06: Restore Skill
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Restore Skill}

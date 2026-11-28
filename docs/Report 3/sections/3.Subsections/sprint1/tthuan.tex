@@ -299,7 +299,7 @@ An authenticated user clicks the ``Log out'' action from the account dropdown me
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
 A1 & The refresh token is expired, invalid, or already revoked remotely. Backend returns HTTP 401 \texttt{RefreshTokenRevokedException}; BFF still clears local cookies and finishes redirect to \texttt{/login}.\\ \hline
-A2 & The session record was deleted remotely (e.g. via Revoke Session UC-16.03 on another device). System acknowledges logout request without error and purges local credentials.\\ \hline
+A2 & The session record was deleted remotely (e.g. via Revoke Session UC-18.03 on another device). System acknowledges logout request without error and purges local credentials.\\ \hline
 A3 & Database failure occurs during session row removal. The BFF proxy forcefully clears client \texttt{httpOnly} cookies regardless, guaranteeing the user is locally signed out.\\ \hline
 A4 & The user clicks the ``Log out'' button rapidly multiple times. The first call succeeds; subsequent calls encounter no active session and redirect gracefully.\\ \hline
 A5 & Client network drops during the logout dispatch. The browser client detects the failure, purges in-memory auth tokens, and forces navigation to \texttt{/login}.\\ \hline
